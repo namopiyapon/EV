@@ -1,5 +1,5 @@
 <template>
-  <form @submit="onSuccess" @reset="onReset">
+  <form @submit="onSuccess">
     <card>
       <template slot="header">
         <h5 class="title">Register</h5>
@@ -21,7 +21,6 @@
       <template slot="footer">
         <!-- <base-button type="submit" variant="primary">Sign Up</base-button> -->
         <button type="submit">Sign Up</button>
-        <button type="reset">reset</button>
       </template>
 
     </card>
@@ -57,21 +56,18 @@ export default {
       },
     };
   },
-  created(){
-  },
-  mounted() {
-    console.log( this.model.email , '++++++++++++++++++++++++',this.model.password)
-  },
+
+
   methods: {
     onSuccess(event) {
       event.preventDefault();
       const auth = getAuth();
       alert("Register")
-      console.log( this.model.email , '++++++++++++++++++++++++',this.model.password)
       createUserWithEmailAndPassword(auth, this.model.email, this.model.password)
       
         .then(async (userCredential) => {
           //await updateProfile(userCredential.username, { displayName: this.model.username });
+          this.$store.commit('login', this.model.email)
           this.$router.push("/dashboard").catch(() => { });
           
         })
@@ -81,13 +77,13 @@ export default {
 
         //this.$store.commit('login', this.model.email)
     },
-    onReset(event) {
+    // onReset(event) {
       
-      event.preventDefault();
-      this.model.email = "";
-      this.model.password = "";
-      alert("Reset");
-    },
+    //   event.preventDefault();
+    //   this.model.email = "";
+    //   this.model.password = "";
+    //   alert("Reset");
+    // },
   },
 
 };

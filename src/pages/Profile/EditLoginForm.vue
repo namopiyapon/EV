@@ -1,14 +1,13 @@
 <template>
-  <form @submit="onSuccess" >
+  <form @submit="onSuccess">
     <card>
       <template slot="header">
-        <h5 class="title">Login 333333</h5>
+        <h5 class="title">Login</h5>
       </template>
       <div class="row">
         <div class="col-md-5 text-left">
           <base-input label="E-mail" type="email" placeholder="E-mail" v-model="form.email">
           </base-input>
-          <!-- <input label="E-mail" type="email" placeholder="E-mail" v-model="form.email"> -->
         </div>
       </div>
 
@@ -16,12 +15,11 @@
         <div class="col-md-5 text-left">
           <base-input label="password" type="password" v-model="form.password" placeholder="password">
           </base-input>
-          <!-- <input label="password" type="password" v-model="form.password" placeholder="password"> -->
         </div>
       </div>
-      {{ form }}
       <template slot="footer">
-        <button type="submit" >Login</button>
+        <button type="submit">Login</button> <br>
+        <a href="/#/Register" >   Register</a>
       </template>
     </card>
   </form>
@@ -32,8 +30,8 @@ import { Card, BaseInput } from "@/components/index";
 import BaseButton from "@/components/BaseButton";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 export default {
-  data(){
-    return{
+  data() {
+    return {
       form: {
         email: "",
         password: "",
@@ -48,18 +46,19 @@ export default {
   //     }
   //   });
   // },
-
+  created(){
+    this.$store.commit('login', "")
+  },
   methods: {
     async onSuccess(event) {
       event.preventDefault();
       const auth = getAuth();
       alert("Login")
-      console.log( this.form.email , '++++++++++++++++++++++++',this.form.password)
       signInWithEmailAndPassword(auth, this.form.email, this.form.password)
 
         .then(() => {
+          this.$store.commit('login', this.form.email)
           this.$router.push("/dashboard").catch(() => { });
-          //this.$store.commit('login', this.model.email)
         })
         .catch((error) => {
           alert(error.message);

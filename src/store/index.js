@@ -14,7 +14,6 @@ const store = new Vuex.Store({
   state () {
     return {
       email: '',
-      user: '',
       isLoggedIn: false,
       namecar: {},
       id: 0,
