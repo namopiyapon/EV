@@ -2,7 +2,7 @@
   <form @submit="onSuccess" >
     <card>
       <template slot="header">
-        <h5 class="title">Login 333333</h5>
+        <h5 class="title">Login</h5>
       </template>
       <div class="row">
         <div class="col-md-5 text-left">
