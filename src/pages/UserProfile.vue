@@ -2,6 +2,7 @@
   <div class="content">
     <div class="row">
       <div class="col-md-12">
+        {{ this.$store.state.idtest }}
         <edit-profile-form :model="model"> </edit-profile-form>
       </div>
       

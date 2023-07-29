@@ -18,6 +18,7 @@ const store = new Vuex.Store({
     return {
       email: '',
       idname: '',
+      idtest: 'aaa'
     //   count: 0
     }
   },
@@ -27,6 +28,9 @@ const store = new Vuex.Store({
     },
     idd (state,idname) {
       state.idname= idname;
+    },
+    SET_IDTEST(state, idtest) {
+      state.idtest = idtest
     }
 
   }

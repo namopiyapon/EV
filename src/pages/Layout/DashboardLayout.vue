@@ -4,9 +4,9 @@
 
     <side-bar :background-color="backgroundColor">
       <!-- <mobile-menu slot="content"></mobile-menu> -->
-
-      <div v-for="user in Usercar" :key="user.namecar" >
-        <sidebar-link to="/user " >
+      
+      <div v-for="user in Usercar" :key="user.namecar" @click="setId(user.ID)">
+        <sidebar-link to="/user">
           <i class="tim-icons icon-single-02"></i>
           <template>
             <div class="row">
@@ -24,8 +24,6 @@
         </template>
       </sidebar-link>
 
-
-
     </side-bar>
 
     <sidebar-share :background-color.sync="backgroundColor"></sidebar-share>
@@ -37,6 +35,8 @@
 
       <content-footer></content-footer>
     </div>
+
+
   </div>
 </template>
 
@@ -98,12 +98,16 @@ export default {
       onSnapshot(collection(firebase.db, 'Usercar'), (snap) => {
 
         snap.forEach((doc) => {
-          this.Usercar.push(doc.data())
+          this.Usercar.push({ID: doc.id, ...doc.data()})
           console.log(doc.id, " => ", doc.data());
 
         })
       })
 
+    },
+    setId(id) {
+      console.log("id is", id);
+      this.$store.commit('SET_IDTEST', id)
     }
 
   },
