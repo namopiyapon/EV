@@ -65,10 +65,16 @@ export default {
   },
   mounted() {
     this.getCountry()
+
   //  console.log(firebase.db)
   },
   
   methods: {
+    // async add(event) {
+    //   event.preventDefault();
+    //   this.$store.dispatch('setid', user.namecar )
+    //   console.log(this.$store.state.id,'*******************')
+    // },
     
     async getCountry() {
       const docSnap = await getDoc(doc(firebase.db, 'Usercar', 'NmykRAp0E1v9QhZiEhpK'))

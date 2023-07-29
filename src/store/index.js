@@ -8,15 +8,16 @@ const store = new Vuex.Store({
   getters: {
   },
   actions: {
+    setid (context,idname) {
+      context.commit('idd', idname)
+    }
   },
   modules: {
   },
   state () {
     return {
       email: '',
-      isLoggedIn: false,
-      namecar: {},
-      id: 0,
+      idname: '',
     //   count: 0
     }
   },
@@ -24,14 +25,10 @@ const store = new Vuex.Store({
     login (state,email) {
       state.email=email;
     },
-    setid (state,id) {
-      state.id=id;
-    },
-    settext (state,text) {
-      state.namecar[i]=text
-      i++;
+    idd (state,idname) {
+      state.idname= idname;
     }
-    
+
   }
 })
 

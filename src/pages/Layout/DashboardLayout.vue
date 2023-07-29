@@ -5,13 +5,12 @@
     <side-bar :background-color="backgroundColor">
       <!-- <mobile-menu slot="content"></mobile-menu> -->
 
-      <div v-for="user in Usercar" :key="user.namecar">
-        <sidebar-link to="/user" >
+      <div v-for="user in Usercar" :key="user.namecar" >
+        <sidebar-link to="/user " >
           <i class="tim-icons icon-single-02"></i>
           <template>
             <div class="row">
               <p>{{ user.namecar }} </p>
-
               <i class="tim-icons icon-simple-remove col-6 m-0 p-0 "></i>
             </div>
           </template>
@@ -81,8 +80,13 @@ export default {
   },
   created() {
     this.getUsers()
+    
   },
   methods: {
+    add: function () {
+      this.$store.dispatch('setid', user.namecar )
+      console.log(this.$store.state.idname,'*******************')
+    },
 
     toggleSidebar() {
       if (this.$sidebar.showSidebar) {
@@ -96,6 +100,7 @@ export default {
         snap.forEach((doc) => {
           this.Usercar.push(doc.data())
           console.log(doc.id, " => ", doc.data());
+
         })
       })
 
