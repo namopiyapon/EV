@@ -50,8 +50,8 @@
 
               <p class="d-lg-none">Profile</p>
             </a>
-            <tag v-if="this.$store.state.email != ''">
-              <ul class="dropdown-menu dropdown-navbar">
+
+              <ul class="dropdown-menu dropdown-navbar" v-if="this.$store.state.email != ''">
                 <li class="nav-link">
                   <a href="/#/profile" class="nav-item dropdown-item">
                     {{ this.$store.state.email }}
@@ -74,15 +74,13 @@
                 <li class="dropdown-divider"></li>
 
                 <li class="nav-link">
-                  <a href="/#/login" class="nav-item dropdown-item">
+                  <a href="/#/login" class="nav-item dropdown-item" @click="signout()">
                     Log out
                   </a>
                 </li>
               </ul>
-            </tag>
 
-            <tag v-if="this.$store.state.email == ''">
-              <ul class="dropdown-menu dropdown-navbar">
+              <ul class="dropdown-menu dropdown-navbar" v-if="this.$store.state.email == ''">
 
                 <li class="nav-link">
                   <a href="/#/login" class="nav-item dropdown-item">
@@ -90,7 +88,6 @@
                   </a>
                 </li>
               </ul>
-            </tag>
 
           </drop-down>
 
@@ -103,6 +100,7 @@
 <script>
 import DropDown from "@/components/Dropdown.vue";
 import Modal from "@/components/Modal.vue";
+import firebase from '@/Firebase.js'
 
 export default {
   components: {
@@ -124,6 +122,15 @@ export default {
     toggleMenu() {
       this.showMenu = !this.showMenu;
     },
+
+    signout() {
+       firebase
+       .auth()
+       .signOut()
+       .then(() => {
+         this.$router.replace("/login");
+       });
+    }
 
   },
   computed: {

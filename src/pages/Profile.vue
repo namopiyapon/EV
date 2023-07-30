@@ -9,6 +9,15 @@
   </div>
 </template>
 <script>
+export default {
+  mounted() {
+    if(this.$store.state.idtest != ''){
+      this.$router.push('/user')
+    }
+    
+  },
+  
+}
 
 </script>
 <style></style>

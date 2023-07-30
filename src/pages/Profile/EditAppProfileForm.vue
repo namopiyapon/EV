@@ -59,6 +59,7 @@ export default {
       Brand: '',
       Model: '',
       Energy: '',
+      email: '',
     }
   },
   created() {
@@ -89,6 +90,7 @@ export default {
         Brand: this.Brand,
         Model: this.Model,
         Energy: this.Energy,
+        email: this.$store.state.email,
       }
       // create document and return reference to it
       const docRef = await addDoc(colRef, dataObj)

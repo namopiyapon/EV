@@ -1,5 +1,5 @@
 <template>
- <form >  <!-- //@submit="addUsercar" -->
+ <form @submit="onSuccess" @reset="ondelete" >  <!-- //@submit="addUsercar" -->
     <card>
       <template slot="header">
         <h5 class="title">Edit Profile</h5>
@@ -41,6 +41,7 @@
       <template slot="footer">
         <!-- <base-button type="success" fill>Save</base-button> -->
         <button type="submit" fill>Save</button>
+        <button type="reset" fill>delete</button>
       </template>
     </card>
   </form>
@@ -48,10 +49,9 @@
 <script>
 
 import { Card, BaseInput } from "@/components/index";
-import { doc, getDoc } from "firebase/firestore"
+import { doc, getDoc ,updateDoc, deleteDoc} from "firebase/firestore"
 import firebase from './Firebase.js'
 import BaseButton from "@/components/BaseButton";
-import { ref } from 'vue'
 
 export default {
   data() {
@@ -61,23 +61,16 @@ export default {
       Brand: '',
       Model: '',
       Energy: '',
+      email: '',
     }
   },
   mounted() {
     this.getCountry()
-
-  //  console.log(firebase.db)
   },
   
   methods: {
-    // async add(event) {
-    //   event.preventDefault();
-    //   this.$store.dispatch('setid', user.namecar )
-    //   console.log(this.$store.state.id,'*******************')
-    // },
-    
     async getCountry() {
-      const docSnap = await getDoc(doc(firebase.db, 'Usercar', 'NmykRAp0E1v9QhZiEhpK'))
+      const docSnap = await getDoc(doc(firebase.db, 'Usercar',  this.$store.state.idtest ))
       
       if (docSnap.exists()) {
         // assign document fields
@@ -91,7 +84,24 @@ export default {
         console.log('Document does not exist')
       }
       
-    }
+    },
+    async onSuccess(event) {
+      event.preventDefault();
+      await updateDoc(doc(firebase.db, 'Usercar', this.$store.state.idtest), {
+        namecar: this.namecar,
+        Type: this.Type,
+        Brand: this.Brand,
+        Model: this.Model,
+        Energy: this.Energy,
+      })
+      this.$router.push('/profile')
+    },
+    async ondelete(event) {
+      console.log('delete =>',this.$store.state.idtest )
+      event.preventDefault();
+      await deleteDoc(doc(firebase.db, 'Usercar', this.$store.state.idtest));
+      this.$router.push('/profile')
+    },
     
   },
 

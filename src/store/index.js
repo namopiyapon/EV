@@ -18,16 +18,13 @@ const store = new Vuex.Store({
     return {
       email: '',
       idname: '',
-      idtest: 'aaa'
+      idtest: '',
     //   count: 0
     }
   },
   mutations: {
     login (state,email) {
       state.email=email;
-    },
-    idd (state,idname) {
-      state.idname= idname;
     },
     SET_IDTEST(state, idtest) {
       state.idtest = idtest

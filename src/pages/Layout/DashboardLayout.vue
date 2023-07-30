@@ -5,11 +5,11 @@
     <side-bar :background-color="backgroundColor">
       <!-- <mobile-menu slot="content"></mobile-menu> -->
       
-      <div v-for="user in Usercar" :key="user.namecar" @click="setId(user.ID)">
-        <sidebar-link to="/user">
-          <i class="tim-icons icon-single-02"></i>
-          <template>
-            <div class="row">
+      <div v-for="user in Usercar" :key="user.namecar"  @click="setId(user.ID)" >
+        <sidebar-link to="/user"  >
+          <i class="tim-icons icon-single-02" ></i>
+          <template >
+            <div class="row"  >
               <p>{{ user.namecar }} </p>
               <i class="tim-icons icon-simple-remove col-6 m-0 p-0 "></i>
             </div>
@@ -49,7 +49,7 @@ import DashboardContent from "./DashboardContent.vue";
 import MobileMenu from "./MobileMenu.vue";
 import SideBar from "@/components/SidebarPlugin/SideBar.vue";
 import SidebarLink from "@/components/SidebarPlugin/SidebarLink.vue";
-import { collection, onSnapshot } from "firebase/firestore"
+import { collection, where, query, getDocs } from "firebase/firestore"
 import firebase from '@/Firebase.js'
 
 
@@ -83,31 +83,33 @@ export default {
     
   },
   methods: {
-    add: function () {
-      this.$store.dispatch('setid', user.namecar )
-      console.log(this.$store.state.idname,'*******************')
-    },
-
     toggleSidebar() {
       if (this.$sidebar.showSidebar) {
         this.$sidebar.displaySidebar(false);
       }
     },
     async getUsers() {
-      // use 'collection()' instead of 'doc()'
-      onSnapshot(collection(firebase.db, 'Usercar'), (snap) => {
 
-        snap.forEach((doc) => {
-          this.Usercar.push({ID: doc.id, ...doc.data()})
-          console.log(doc.id, " => ", doc.data());
+      const q = query(collection(firebase.db, 'Usercar'), where('email', '==', this.$store.state.email))
+      const querySnap = await getDocs(q);
 
-        })
+      querySnap.forEach((doc) => {
+        this.Usercar.push({ID: doc.id, ...doc.data()})
       })
+      // use 'collection()' instead of 'doc()'
+      // onSnapshot(collection(firebase.db, 'Usercar'), (snap) => {
+
+      //   snap.forEach((doc) => {
+      //     this.Usercar.push({ID: doc.id, ...doc.data()})
+      //   })
+      // })
+      
 
     },
     setId(id) {
-      console.log("id is", id);
+
       this.$store.commit('SET_IDTEST', id)
+      this.$router.push('/profile')
     }
 
   },

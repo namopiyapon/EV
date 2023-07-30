@@ -38,17 +38,7 @@ export default {
       },
     };
   },
-  // created(){
-  //   const auth = geteAuth();
-  //   onAuthStateChanged(auth,(user)=> {
-  //     if(user){
-  //       this.$router.push("/dashboard").catch(() => {});
-  //     }
-  //   });
-  // },
-  created(){
-    this.$store.commit('login', "")
-  },
+
   methods: {
     async onSuccess(event) {
       event.preventDefault();
