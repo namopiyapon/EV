@@ -32,6 +32,7 @@ import Notify from "@/components/NotificationPlugin";
 import i18n from "./i18n";
 import SideBar from "@/components/SidebarPlugin";
 import './Firebase'
+import { globalCookiesConfig } from "vue3-cookies";
 
 
 Vue.config.productionTip = false;
@@ -45,11 +46,17 @@ const router = new VueRouter({
   linkExactActiveClass: "active",
 });
 
+globalCookiesConfig({
+  expireTimes: "1d",
+  path: "/",
+  domain: "",
+  secure: true,
+  sameSite: "None",
+});
+
 import Vuex from 'vuex'
 
-
-
-Vue.use(Vuex)
+Vue.use(Vuex);
 Vue.use(VueRouter);
 Vue.use(SocialSharing);
 Vue.use(VueGitHubButtons, { useCache: true });

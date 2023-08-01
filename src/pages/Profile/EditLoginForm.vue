@@ -26,10 +26,22 @@
 </template>
 <script>
 import { Card, BaseInput } from "@/components/index";
-
+import { useCookies } from "vue3-cookies";
 import BaseButton from "@/components/BaseButton";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-export default {
+
+
+export default  {
+  setup() {
+    const { cookies } = useCookies();
+    return { cookies };
+  },
+
+  // <data, methods...>
+  
+  mounted() {
+    
+  },
   data() {
     return {
       form: {
@@ -45,8 +57,16 @@ export default {
       const auth = getAuth();
       alert("Login")
       signInWithEmailAndPassword(auth, this.form.email, this.form.password)
-
         .then(() => {
+          //session
+          // this.$session.start()
+          // this.$session.set('email', this.form.email)
+          // console.log('keyemail => ',this.$session.get('email'),'ID => ', this.$session.id())
+          //cookies
+          this.cookies.set("email", this.form.email, 60*60);
+          console.log(this.cookies.get("email"));
+          // console.log(this.cookies.isKey('email'));
+          //store
           this.$store.commit('login', this.form.email)
           this.$router.push("/dashboard").catch(() => { });
         })

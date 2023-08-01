@@ -74,7 +74,7 @@
                 <li class="dropdown-divider"></li>
 
                 <li class="nav-link">
-                  <a href="/#/login" class="nav-item dropdown-item" @click="signout()">
+                  <a href="/#/login" class="nav-item dropdown-item">
                     Log out
                   </a>
                 </li>
@@ -100,14 +100,20 @@
 <script>
 import DropDown from "@/components/Dropdown.vue";
 import Modal from "@/components/Modal.vue";
-import firebase from '@/Firebase.js'
+import { useCookies } from "vue3-cookies";
 
 export default {
+  setup() {
+    const { cookies } = useCookies();
+    return { cookies };
+  },
   components: {
     DropDown,
     Modal,
   },
-
+  mounted() {
+    console.log(Vue.$cookies.get('email'))
+  },
   data() {
     return {
       searchModalVisible: false,
@@ -123,14 +129,6 @@ export default {
       this.showMenu = !this.showMenu;
     },
 
-    signout() {
-       firebase
-       .auth()
-       .signOut()
-       .then(() => {
-         this.$router.replace("/login");
-       });
-    }
 
   },
   computed: {
