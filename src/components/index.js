@@ -11,7 +11,7 @@ import Modal from "./Modal";
 import CloseButton from "./CloseButton";
 import DropDown from "./Dropdown.vue";
 import Notifications from "./NotificationPlugin/index";
-import cookies from "./cookies";
+// import cookies from "./cookies";
 
 // eslint-disable-next-line no-unused-vars
 let components = {
@@ -28,7 +28,7 @@ let components = {
   CloseButton,
   DropDown,
   Notifications,
-  cookies,
+  // cookies,
 };
 
 export {
@@ -45,5 +45,5 @@ export {
   CloseButton,
   DropDown,
   Notifications,
-  cookies,
+  // cookies,
 };
