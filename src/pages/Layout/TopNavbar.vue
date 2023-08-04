@@ -100,19 +100,14 @@
 <script>
 import DropDown from "@/components/Dropdown.vue";
 import Modal from "@/components/Modal.vue";
-import { useCookies } from "vue3-cookies";
 
 export default {
-  setup() {
-    const { cookies } = useCookies();
-    return { cookies };
-  },
   components: {
     DropDown,
     Modal,
   },
   mounted() {
-    console.log(Vue.$cookies.get('email'))
+    // console.log(Vue.$cookies.get('email'))
   },
   data() {
     return {

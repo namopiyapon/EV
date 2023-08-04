@@ -26,18 +26,13 @@
 </template>
 <script>
 import { Card, BaseInput } from "@/components/index";
-import { useCookies } from "vue3-cookies";
 import BaseButton from "@/components/BaseButton";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {cookies} from "@/components/index";
 
 
 export default  {
-  setup() {
-    const { cookies } = useCookies();
-    return { cookies };
-  },
 
-  // <data, methods...>
   
   mounted() {
     
@@ -63,11 +58,12 @@ export default  {
           // this.$session.set('email', this.form.email)
           // console.log('keyemail => ',this.$session.get('email'),'ID => ', this.$session.id())
           //cookies
-          this.cookies.set("email", this.form.email, 60*60);
-          console.log(this.cookies.get("email"));
-          // console.log(this.cookies.isKey('email'));
+          // this.cookies.set("email", this.form.email, 60*60);
+          // console.log(this.cookies.get("email"));
+
           //store
           this.$store.commit('login', this.form.email)
+          // this.$cookies.set("email", this.form.email, 60*60);
           this.$router.push("/dashboard").catch(() => { });
         })
         .catch((error) => {
@@ -79,6 +75,7 @@ export default  {
     Card,
     BaseInput,
     BaseButton,
+    cookies,
   },
   props: {
     model: {

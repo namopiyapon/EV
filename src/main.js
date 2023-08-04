@@ -32,8 +32,9 @@ import Notify from "@/components/NotificationPlugin";
 import i18n from "./i18n";
 import SideBar from "@/components/SidebarPlugin";
 import './Firebase'
-import { globalCookiesConfig } from "vue3-cookies";
 
+import { globalCookiesConfig } from "vue3-cookies";
+import VueCookies from 'vue3-cookies'
 
 Vue.config.productionTip = false;
 
@@ -46,13 +47,7 @@ const router = new VueRouter({
   linkExactActiveClass: "active",
 });
 
-globalCookiesConfig({
-  expireTimes: "1d",
-  path: "/",
-  domain: "",
-  secure: true,
-  sameSite: "None",
-});
+
 
 import Vuex from 'vuex'
 
@@ -65,10 +60,22 @@ Vue.use(GlobalDirectives);
 Vue.use(RTLPlugin);
 Vue.use(SideBar);
 Vue.use(Notify);
+Vue.use(VueCookies);
+
+
+globalCookiesConfig({
+  expireTimes: "1d",
+  path: "/",
+  domain: "",
+  secure: true,
+  sameSite: "None",
+});
+
 
 new Vue({
   router,
   i18n,
   store,
+  VueCookies,
   render: (h) => h(App),
 }).$mount("#app");

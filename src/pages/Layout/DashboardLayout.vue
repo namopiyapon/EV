@@ -11,7 +11,6 @@
           <template >
             <div class="row"  >
               <p>{{ user.namecar }} </p>
-              <i class="tim-icons icon-simple-remove col-6 m-0 p-0 "></i>
             </div>
           </template>
         </sidebar-link>
@@ -64,6 +63,7 @@ export default {
     MobileMenu,
     SideBar,
     SidebarLink,
+    
   },
   data() {
     return {
