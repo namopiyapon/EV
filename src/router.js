@@ -1,6 +1,5 @@
 import DashboardLayout from "@/pages/Layout/DashboardLayout.vue";
 import DashboardLayoutmap from "@/pages/Layout/DashboardLayoutmap.vue";
-import DashboardLayoutGive from "@/pages/Layout/DashboardLayoutGive.vue";
 
 import Dashboard from "@/pages/Dashboard.vue";
 import Profile from "@/pages/Profile.vue";
@@ -10,6 +9,7 @@ import GiveEVCharger from "@/pages/GiveEVCharger.vue";
 import GiveFeedback from "@/pages/GiveFeedback.vue";
 import Register from "@/pages/Register.vue";
 
+
 import Login from "@/pages/Login.vue";
 
 const routes = [
@@ -17,11 +17,32 @@ const routes = [
     path: "/",
     component: DashboardLayoutmap,
     redirect: "dashboard",
+    name: "Map",
     children: [
       {
         path: "dashboard",
         name: "Map",
         component: Dashboard,
+      },
+      {
+        path: "evcharger",
+        name: "Give EV Charger",
+        component: GiveEVCharger,
+      },
+      {
+        path: "feedback",
+        name: "Give Feedback",
+        component: GiveFeedback,
+      },
+      {
+        path: "register",
+        name: "Register",
+        component: Register,
+      },
+      {
+        path: "login",
+        name: "Login",
+        component: Login,
       },
     ],
   },
@@ -47,33 +68,7 @@ const routes = [
       },
     ],
   },
-  {
-    path: "/",
-    component: DashboardLayoutGive,
-    redirect: "dashboard",
-    children: [
-      {
-        path: "evcharger",
-        name: "Give EV Charger",
-        component: GiveEVCharger,
-      },
-      {
-        path: "feedback",
-        name: "Give Feedback",
-        component: GiveFeedback,
-      },
-      {
-        path: "register",
-        name: "Register",
-        component: Register,
-      },
-      {
-        path: "login",
-        name: "Login",
-        component: Login,
-      },
-    ],
-  },
+  
   
 ];
 

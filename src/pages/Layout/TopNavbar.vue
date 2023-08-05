@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-absolute" :class="{ 'bg-white': showMenu, 'navbar-transparent': !showMenu }">
     <div class="container-fluid">
       <div class="navbar-wrapper">
-        <div class="navbar-toggle d-inline" :class="{ toggled: $sidebar.showSidebar }">
+        <div class="navbar-toggle d-inline" :class="{ toggled: $sidebar.showSidebar }" v-if="$route.name != 'Map'" >
           <button type="button" class="navbar-toggler" @click="toggleSidebar">
             <span class="navbar-toggler-bar bar1"></span>
 
@@ -12,7 +12,7 @@
           </button>
         </div>
 
-        <a class="navbar-brand" href="javascript:void(0)"> {{ $route.name }}</a>
+        <a class="navbar-brand" href="/#/dashboard" @click=""> MAP </a>
       </div>
 
       <button class="navbar-toggler" type="button" @click="toggleMenu" data-toggle="collapse" data-target="#navigation"
@@ -26,13 +26,6 @@
 
       <div class="collapse navbar-collapse show text-left" v-show="showMenu">
         <ul class="navbar-nav" :class="$rtl.isRTL ? 'mr-auto' : 'ml-auto'">
-          <li class="search-bar input-group" @click="searchModalVisible = true">
-            <button class="btn btn-link" id="search-button" data-toggle="modal" data-target="#searchModal">
-              <i class="tim-icons icon-zoom-split"></i>
-
-              <span class="d-lg-none d-md-block">Search</span>
-            </button>
-          </li>
 
           <modal :show.sync="searchModalVisible" class="modal-search" id="searchModal" :centered="false"
             :show-close="true">

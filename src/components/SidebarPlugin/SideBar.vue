@@ -37,7 +37,7 @@ export default {
     },
     title: {
       type: String,
-      default: "MAP",
+      default: "Information",
     },
     backgroundColor: {
       type: String,
