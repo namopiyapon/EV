@@ -95,6 +95,7 @@ export default {
 
       querySnap.forEach((doc) => {
         this.Usercar.push({ID: doc.id, ...doc.data()})
+        console.log(doc.data());
       })
       // use 'collection()' instead of 'doc()'
       // onSnapshot(collection(firebase.db, 'Usercar'), (snap) => {
