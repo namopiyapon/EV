@@ -7,7 +7,7 @@
       <div>
         <section>
           <div style="position: relative; z-index: 1; " class="col-md-12 text-left">
-            <input type="text" id="autocomplete" name="autocomplete" v-model="address"><i class="icon-refresh-02"
+            <input type="text" id="address" name="address" v-model="address"><i class="icon-refresh-02"
               @click="locatorButtonPressed"> </i><br>
             <input type="text" id="addressto" name="addressto" v-model="addressto"><br>
             <select v-model="myselect">
@@ -46,6 +46,24 @@ export default {
   created() {
     this.getUsers()
   },
+  computed: {
+    map() {
+      // const directionsService = new google.maps.DirectionsService();
+      // const directionsRenderer = new google.maps.DirectionsRenderer();
+      let myLatlng = new window.google.maps.LatLng(13.7563, 100.5018);
+      let mapOptions = {
+        mapTypeControl: false,
+        zoom: 9,
+        center: myLatlng,
+        scrollwheel: false,
+      }
+      let map = new window.google.maps.Map(
+        document.getElementById("map"),
+        mapOptions
+      );
+      return map
+    }
+  },
   methods: {
     locatorButtonPressed() {
       if (navigator.geolocation) {
@@ -77,17 +95,20 @@ export default {
           }
         })
     },
+    //-------------------ShowMarker----------------------------------
+
     showUserLocationOnTheMap(latitude, longitude) {
-      let map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 15,
-        center: new google.maps.LatLng(latitude, longitude),
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      });
+
+      // let map = new google.maps.Map(document.getElementById("map"), {
+      //   zoom: 15,
+      //   center: new google.maps.LatLng(latitude, longitude),
+      //   mapTypeId: google.maps.MapTypeId.ROADMAP
+      // });
 
       new google.maps.Marker({
         position: new google.maps.LatLng(latitude, longitude),
-        map: map
-      })
+        map: this.map
+      });
     },
 
     async getUsers() {
@@ -97,15 +118,56 @@ export default {
 
       querySnap.forEach((doc) => {
         this.Usercar.push({ ID: doc.id, ...doc.data() })
-        // console.log(doc.data());
+        console.log(doc.data());
       })
     },
+    callback(results, status) {
+      if (status == google.maps.places.PlacesServiceStatus.OK) {
+        for (var i = 0; i < results.length; i++) {
+          console.log("----> ", results[i]);
+          this.createMarker(results[i]);
+          // new google.maps.Marker({
+          //   position: new google.maps.LatLng(latitude, longitude),
+          //   map: map
+          // });
+        }
+      }
+    },
+    createMarker(place) {
+      if (!place.geometry || !place.geometry.location) return;
+
+      const marker = new google.maps.Marker({
+        map: this.map,
+        position: place.geometry.location,
+      });
+
+      google.maps.event.addListener(marker, "click", () => {
+        infowindow.setContent(place.name || "");
+        infowindow.open(this.map);
+      });
+    }
+    // calculateAndDisplayRoute(directionsService, directionsRenderer) { //-----------------test
+    //   directionsService
+    //     .route({
+    //       origin: {
+    //         query: document.getElementById("address").value,
+    //       },
+    //       destination: {
+    //         query: document.getElementById("addressto").value,
+    //       },
+    //       travelMode: google.maps.TravelMode.DRIVING,
+    //     })
+    //     .then((response) => {
+    //       directionsRenderer.setDirections(response);
+    //     })
+    //     .catch((e) => window.alert("Directions request failed due to " + status));
+    // }
   },
 
   mounted() {
-    //autocomplete
+    // autocomplete----------------------------------------------------
     let autocomplete = new google.maps.places.Autocomplete(
-      document.getElementById("autocomplete"),
+      document.getElementById("address"),
       {
         bounds: new google.maps.LatLngBounds(
           new google.maps.LatLng(40.748817, -73.985428)
@@ -135,21 +197,32 @@ export default {
       this.showUserLocationOnTheMap(
         place.geometry.location.lat(), place.geometry.location.lng());
     });
+    //autocomplete----------------------------------------------------
 
-      //Set map
-      let myLatlng = new window.google.maps.LatLng(13.7563, 100.5018);
-      let mapOptions = {
-        zoom: 9,
-        center: myLatlng,
-        scrollwheel: false,
-      }
-      let map = new window.google.maps.Map(
-        document.getElementById("map"),
-        mapOptions
-      );
+    //Set map
+    let myLatlng = new window.google.maps.LatLng(13.7563, 100.5018);
+    // let mapOptions = {
+    // mapTypeControl: false,
+    //   zoom: 9,
+    //   center: myLatlng,
+    //   scrollwheel: false,
+    // }
+    // let map = new window.google.maps.Map(
+    //   document.gemapOptionstElementById("map"),
+    //   
+    // );
 
+    var request = {
+      location: myLatlng,
+      radius: 500,
+      type: 'restaurant'
+    };
+
+    const service = new google.maps.places.PlacesService(this.map);
+    // service.nearbySearch(request, this.callback);
 
   },
+
 };
 </script>
 <style>
