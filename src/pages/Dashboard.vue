@@ -48,8 +48,8 @@ export default {
   },
   computed: {
     map() {
-      // const directionsService = new google.maps.DirectionsService();
-      // const directionsRenderer = new google.maps.DirectionsRenderer();
+      const directionsService = new google.maps.DirectionsService();
+      const directionsRenderer = new google.maps.DirectionsRenderer();
       let myLatlng = new window.google.maps.LatLng(13.7563, 100.5018);
       let mapOptions = {
         mapTypeControl: false,
@@ -62,6 +62,7 @@ export default {
         mapOptions
       );
       return map
+      
     }
   },
   methods: {
