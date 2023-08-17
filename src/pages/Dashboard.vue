@@ -37,7 +37,9 @@ export default {
       addressto: "",
       Usercar: [],
       id: [],
-      myselect: ""
+      myselect: "",
+      originPlaceId:"",
+      destinationPlaceId:"",
     };
   },
   components: {
@@ -47,9 +49,12 @@ export default {
     this.getUsers()
   },
   computed: {
+    //-------------------------------SHOW MAP--------------------------------//
     map() {
-      const directionsService = new google.maps.DirectionsService();
-      const directionsRenderer = new google.maps.DirectionsRenderer();
+      this.directionsService = new google.maps.DirectionsService();
+      this.directionsRenderer = new google.maps.DirectionsRenderer();
+      
+      
       let myLatlng = new window.google.maps.LatLng(13.7563, 100.5018);
       let mapOptions = {
         mapTypeControl: false,
@@ -60,14 +65,13 @@ export default {
       let map = new window.google.maps.Map(
         document.getElementById("map"),
         mapOptions
-      );
-
+        );
+        this.directionsRenderer.setMap(map);
       return map
-
     }
   },
   methods: {
-    //------------------------------------
+    //-------------------------------SHOW ROUTE--------------------------------//
     setupPlaceChangedListener(autocomplete, mode) {
       autocomplete.bindTo("bounds", this.map);
       autocomplete.addListener("place_changed", () => {
@@ -110,7 +114,7 @@ export default {
       );
       return route
     },
-    //--------------------------------
+    //-------------------------------Button CurrentPosition--------------------------------//
 
     locatorButtonPressed() {
       if (navigator.geolocation) {
@@ -127,6 +131,7 @@ export default {
         console.log("Your browser does not support geolocation API ");
       }
     },
+    //-------------------------------KEY--------------------------------//
     getAddressFrom(lat, long) {
       axios.get("https://maps.googleapis.com/maps/api/geocode/json?latlng="
         + lat +
@@ -142,7 +147,7 @@ export default {
           }
         })
     },
-    //-------------------ShowMarker----------------------------------
+    //-------------------------------SHOW MARKER--------------------------------//
 
     showUserLocationOnTheMap(latitude, longitude) {
 
@@ -150,9 +155,10 @@ export default {
         position: new google.maps.LatLng(latitude, longitude),
         map: this.map
       });
-      
+
     },
 
+    //-------------------------------SHOW firebase Usercar--------------------------------//
     async getUsers() {
 
       const q = query(collection(firebase.db, 'Usercar'), where('email', '==', "mo@gmail.com")) //this.$store.state.email
@@ -163,15 +169,13 @@ export default {
         console.log(doc.data());
       })
     },
+
+    //-------------------------------CALLBACK--------------------------------//
     callback(results, status) {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
         for (var i = 0; i < results.length; i++) {
           console.log("----> ", results[i]);
           this.createMarker(results[i]);
-          // new google.maps.Marker({
-          //   position: new google.maps.LatLng(latitude, longitude),
-          //   map: map
-          // });
         }
       }
     },
@@ -191,8 +195,8 @@ export default {
   },
 
   mounted() {
-    // autocomplete----------------------------------------------------
-    let autocomplete = new google.maps.places.Autocomplete(
+    //-------------------------------Autocomplete--------------------------------//
+    let originAutocomplete = new google.maps.places.Autocomplete(
       document.getElementById("address"),
       {
         bounds: new google.maps.LatLngBounds(
@@ -201,18 +205,14 @@ export default {
       }, { fields: ["place_id"] },
     );
 
-    autocomplete.addListener("place_changed", () => {
-      let place = autocomplete.getPlace();
-      console.log(place)
-      this.showUserLocationOnTheMap(
-        place.geometry.location.lat(), place.geometry.location.lng());
-        this.setupPlaceChangedListener(autocomplete, "ORIG");
-        this.setupPlaceChangedListener(autocomplete2, "DEST");
-        this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(autocomplete);
-        this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(autocomplete2,);
-    });
+    // originAutocomplete.addListener("place_changed", () => {
+    //   let place = originAutocomplete.getPlace();
+    //   console.log(place)
+    //   this.showUserLocationOnTheMap(
+    //     place.geometry.location.lat(), place.geometry.location.lng());
+    // });
 
-    let autocomplete2 = new google.maps.places.Autocomplete(
+    let destinationAutocomplete = new google.maps.places.Autocomplete(
       document.getElementById("addressto"),
       {
         bounds: new google.maps.LatLngBounds(
@@ -221,30 +221,16 @@ export default {
       }, { fields: ["place_id"] },
     );
 
-    autocomplete2.addListener("place_changed", () => {
-      let place = autocomplete2.getPlace();
+    destinationAutocomplete.addListener("place_changed", () => {
+      let place = destinationAutocomplete.getPlace();
       console.log(place)
       this.showUserLocationOnTheMap(
         place.geometry.location.lat(), place.geometry.location.lng());
-        this.setupPlaceChangedListener(autocomplete, "ORIG");
-      this.setupPlaceChangedListener(autocomplete2, "DEST");
-      this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(autocomplete);
-      this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(autocomplete2,);
+      
     });
-    //autocomplete----------------------------------------------------
-
-    //Set map
+    
+    //callback restaurant map
     let myLatlng = new window.google.maps.LatLng(13.7563, 100.5018);
-    // let mapOptions = {
-    // mapTypeControl: false,
-    //   zoom: 9,
-    //   center: myLatlng,
-    //   scrollwheel: false,
-    // }
-    // let map = new window.google.maps.Map(
-    //   document.gemapOptionstElementById("map"),
-    //   
-    // );
 
     var request = {
       location: myLatlng,
