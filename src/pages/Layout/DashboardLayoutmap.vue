@@ -24,7 +24,7 @@
 
     </side-bar> -->
 
-    <sidebar-share :background-color.sync="backgroundColor"></sidebar-share>
+    <!-- <sidebar-share :background-color.sync="backgroundColor"></sidebar-share> -->
 
     <div class="main-panel" :data="backgroundColor">
       <top-navbar></top-navbar>
