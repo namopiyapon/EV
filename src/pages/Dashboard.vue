@@ -38,8 +38,8 @@ export default {
       Usercar: [],
       id: [],
       myselect: "",
-      originPlaceId:"",
-      destinationPlaceId:"",
+      originPlaceId: "",
+      destinationPlaceId: "",
     };
   },
   components: {
@@ -53,8 +53,8 @@ export default {
     map() {
       this.directionsService = new google.maps.DirectionsService();
       this.directionsRenderer = new google.maps.DirectionsRenderer();
-      
-      
+
+
       let myLatlng = new window.google.maps.LatLng(13.7563, 100.5018);
       let mapOptions = {
         mapTypeControl: false,
@@ -64,18 +64,17 @@ export default {
       }
       let map = new window.google.maps.Map(
         document.getElementById("map"),
-        mapOptions
-        );
-        this.directionsRenderer.setMap(map);
+        mapOptions);
+      this.directionsRenderer.setMap(map);
       return map
     }
   },
   methods: {
     //-------------------------------SHOW ROUTE--------------------------------//
-    setupPlaceChangedListener(autocomplete, mode) {
-      autocomplete.bindTo("bounds", this.map);
-      autocomplete.addListener("place_changed", () => {
-        const place = autocomplete.getPlace();
+    setupPlaceChangedListener(originAutocomplete, mode) {
+      originAutocomplete.bindTo("bounds", this.map);
+      originAutocomplete.addListener("place_changed", () => {
+        const place = originAutocomplete.getPlace();
 
         if (!place.place_id) {
           window.alert("Please select an option from the dropdown list.");
@@ -84,8 +83,10 @@ export default {
 
         if (mode === "ORIG") {
           this.originPlaceId = place.place_id;
+          // window.alert("Please select an option from the dropdown list.  "+ place.place_id);
         } else {
           this.destinationPlaceId = place.place_id;
+          // window.alert("Please select an option from the dropdown list.  "+ place.place_id);
         }
 
         this.route();
@@ -116,12 +117,11 @@ export default {
     },
     //-------------------------------Button CurrentPosition--------------------------------//
 
-    locatorButtonPressed() {
+    locatorButtonPressed() { //options.placeId
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
           this.getAddressFrom(position.coords.latitude, position.coords.longitude);
           this.showUserLocationOnTheMap(position.coords.latitude, position.coords.longitude);
-          // console.log(position.coords.latitude + " /" + position.coords.longitude);
         },
           error => {
             console.log(error.message);
@@ -130,13 +130,18 @@ export default {
       } else {
         console.log("Your browser does not support geolocation API ");
       }
+
+
     },
+
     //-------------------------------KEY--------------------------------//
     getAddressFrom(lat, long) {
       axios.get("https://maps.googleapis.com/maps/api/geocode/json?latlng="
         + lat +
         ","
         + long
+        // + "&destination=place_id:"
+        // + placeId
         + "&key=AIzaSyCEwuKRd9Fqz_RCZoonrVZAbNuVzvrA8JU")
         .then(response => {
           if (response.data.error_message) {
@@ -196,13 +201,17 @@ export default {
 
   mounted() {
     //-------------------------------Autocomplete--------------------------------//
+    const originInput = document.getElementById("address")
+    const destinationInput = document.getElementById("addressto")
+
     let originAutocomplete = new google.maps.places.Autocomplete(
-      document.getElementById("address"),
+      originInput,
       {
         bounds: new google.maps.LatLngBounds(
           new google.maps.LatLng(40.748817, -73.985428)
         )
-      }, { fields: ["place_id"] },
+      },
+      { fields: ["place_id"] },
     );
 
     // originAutocomplete.addListener("place_changed", () => {
@@ -213,22 +222,27 @@ export default {
     // });
 
     let destinationAutocomplete = new google.maps.places.Autocomplete(
-      document.getElementById("addressto"),
+      destinationInput,
       {
         bounds: new google.maps.LatLngBounds(
           new google.maps.LatLng(40.748817, -73.985428)
         )
-      }, { fields: ["place_id"] },
+      },
+      { fields: ["place_id"] },
     );
+    this.setupPlaceChangedListener(originAutocomplete, "ORIG");
+    this.setupPlaceChangedListener(destinationAutocomplete, "DEST");
+    this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
+    this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
 
-    destinationAutocomplete.addListener("place_changed", () => {
-      let place = destinationAutocomplete.getPlace();
-      console.log(place)
-      this.showUserLocationOnTheMap(
-        place.geometry.location.lat(), place.geometry.location.lng());
-      
-    });
-    
+    // destinationAutocomplete.addListener("place_changed", () => {
+    //   let place = destinationAutocomplete.getPlace();
+    //   console.log(place)
+    //   this.showUserLocationOnTheMap(
+    //     place.geometry.location.lat(), place.geometry.location.lng());
+
+    // });
+
     //callback restaurant map
     let myLatlng = new window.google.maps.LatLng(13.7563, 100.5018);
 
