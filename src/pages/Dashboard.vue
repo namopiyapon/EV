@@ -40,6 +40,8 @@ export default {
       myselect: "",
       originPlaceId: "",
       destinationPlaceId: "",
+      service: "",
+      infowindow: "",
     };
   },
   components: {
@@ -53,8 +55,6 @@ export default {
     map() {
       this.directionsService = new google.maps.DirectionsService();
       this.directionsRenderer = new google.maps.DirectionsRenderer();
-
-
       let myLatlng = new window.google.maps.LatLng(13.7563, 100.5018);
       let mapOptions = {
         mapTypeControl: false,
@@ -71,6 +71,7 @@ export default {
   },
   methods: {
     //-------------------------------SHOW ROUTE--------------------------------//
+
     setupPlaceChangedListener(originAutocomplete, mode) {
       originAutocomplete.bindTo("bounds", this.map);
       originAutocomplete.addListener("place_changed", () => {
@@ -83,7 +84,7 @@ export default {
 
         if (mode === "ORIG") {
           this.originPlaceId = place.place_id;
-          // window.alert("Please select an option from the dropdown list.  "+ place.place_id);
+          window.alert("Please select an option from the dropdown list.  " + place.place_id);
         } else {
           this.destinationPlaceId = place.place_id;
           // window.alert("Please select an option from the dropdown list.  "+ place.place_id);
@@ -113,15 +114,14 @@ export default {
           }
         },
       );
-      return route
     },
     //-------------------------------Button CurrentPosition--------------------------------//
 
-    locatorButtonPressed() { //options.placeId
+    locatorButtonPressed() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
           this.getAddressFrom(position.coords.latitude, position.coords.longitude);
-          this.showUserLocationOnTheMap(position.coords.latitude, position.coords.longitude);
+          // this.showUserLocationOnTheMap(position.coords.latitude, position.coords.longitude);
         },
           error => {
             console.log(error.message);
@@ -130,8 +130,6 @@ export default {
       } else {
         console.log("Your browser does not support geolocation API ");
       }
-
-
     },
 
     //-------------------------------KEY--------------------------------//
@@ -140,17 +138,36 @@ export default {
         + lat +
         ","
         + long
-        // + "&destination=place_id:"
-        // + placeId
         + "&key=AIzaSyCEwuKRd9Fqz_RCZoonrVZAbNuVzvrA8JU")
         .then(response => {
           if (response.data.error_message) {
             console.log(response.data.error_message);
           } else {
-            this.address = response.data.results[0].formatted_address,
-              console.log(response.data.results[0].formatted_address);
+            this.address = response.data.results[0].formatted_address;
+            // console.log(this.address);
           }
+          //-----------------------
+          const request = {
+            query: this.address,
+            fields: ["place_id", "name", "geometry"],
+
+          };
+          const service = new google.maps.places.PlacesService(this.map);
+          service.findPlaceFromQuery(request, (results, status) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+              // for (let i = 0; i < results.length; i++) {
+              //   console.log("----> ", results[i]);
+              //   this.createMarker(results[i]);
+              // }
+              // this.map.setCenter(results[0].geometry.location);
+              this.originPlaceId = results[0].place_id;
+              // window.alert("Please select an option from the dropdown list.  " + results[0].place_id);
+            }
+          });
+
+          //------------------------
         })
+
     },
     //-------------------------------SHOW MARKER--------------------------------//
 
@@ -206,11 +223,6 @@ export default {
 
     let originAutocomplete = new google.maps.places.Autocomplete(
       originInput,
-      {
-        bounds: new google.maps.LatLngBounds(
-          new google.maps.LatLng(40.748817, -73.985428)
-        )
-      },
       { fields: ["place_id"] },
     );
 
@@ -223,11 +235,6 @@ export default {
 
     let destinationAutocomplete = new google.maps.places.Autocomplete(
       destinationInput,
-      {
-        bounds: new google.maps.LatLngBounds(
-          new google.maps.LatLng(40.748817, -73.985428)
-        )
-      },
       { fields: ["place_id"] },
     );
     this.setupPlaceChangedListener(originAutocomplete, "ORIG");
@@ -260,7 +267,7 @@ export default {
 };
 </script>
 <style>
-#infowindow-content .title {
+/* #infowindow-content .title {
   font-weight: bold;
 }
 
@@ -270,9 +277,9 @@ export default {
 
 #map #infowindow-content {
   display: inline;
-}
+} */
 
-.pac-icon {
+/* .pac-icon {
   display: none;
 }
 
@@ -284,7 +291,7 @@ export default {
 
 .pac-item:hover {
   background-color: #ececec;
-}
+} */
 
 #map {
   position: absolute;
