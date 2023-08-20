@@ -42,6 +42,8 @@ export default {
       destinationPlaceId: "",
       service: "",
       infowindow: "",
+      waypoints: [],
+      // polyline: require( 'google-polyline' ),
     };
   },
   components: {
@@ -55,6 +57,7 @@ export default {
     map() {
       this.directionsService = new google.maps.DirectionsService();
       this.directionsRenderer = new google.maps.DirectionsRenderer();
+
       let myLatlng = new window.google.maps.LatLng(13.7563, 100.5018);
       let mapOptions = {
         mapTypeControl: false,
@@ -70,6 +73,7 @@ export default {
     }
   },
   methods: {
+
     //-------------------------------SHOW ROUTE--------------------------------//
 
     setupPlaceChangedListener(originAutocomplete, mode) {
@@ -84,7 +88,7 @@ export default {
 
         if (mode === "ORIG") {
           this.originPlaceId = place.place_id;
-          window.alert("Please select an option from the dropdown list.  " + place.place_id);
+          // window.alert("Please select an option from the dropdown list.  " + place.place_id);
         } else {
           this.destinationPlaceId = place.place_id;
           // window.alert("Please select an option from the dropdown list.  "+ place.place_id);
@@ -97,9 +101,7 @@ export default {
       if (!this.originPlaceId || !this.destinationPlaceId) {
         return;
       }
-
       const me = this;
-
       this.directionsService.route(
         {
           origin: { placeId: this.originPlaceId },
@@ -109,11 +111,66 @@ export default {
         (response, status) => {
           if (status === "OK") {
             me.directionsRenderer.setDirections(response);
+            const polyline = require('google-polyline')//----polyline
+            this.waypoints = polyline.decode(response.routes[0].overview_polyline);//----polyline
+            // console.log("1).----" + this.waypoints)
           } else {
             window.alert("Directions request failed due to " + status);
           }
+          //--------------------------------polyline----------------------------------//
+          const PolygonCoords = this.PolygonPoints();
+          const PolygonBound = new google.maps.Polygon({
+            paths: PolygonCoords,
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#FF0000",
+            fillOpacity: 0.35,
+          });
+          // to hide polygon set strokeOpacity and fillColor = 0
+          PolygonBound.setMap(this.map);
+
+          const service = new google.maps.places.PlacesService(this.map);
+          for (let j = 0; j < this.waypoints.length; j += 40) {
+            service.nearbySearch({
+              location: { lat: this.waypoints[j][0], lng: this.waypoints[j][1] },
+              radius: '1',
+              type: ['Charging Station']
+            }, this.callback);
+          }
         },
       );
+
+    },
+    //-------------------------------PolygonArray--------------------------------//
+    PolygonArray(latitude) {
+      const R = 6378137;
+      const pi = 3.14;
+      //distance in meters
+      const upper_offset = 500;
+      const lower_offset = -500;
+      const Lat_up = upper_offset / R;
+      const Lat_down = lower_offset / R;
+      //OffsetPosition, decimal degrees
+      const lat_upper = latitude + (Lat_up * 180) / pi;
+      const lat_lower = latitude + (Lat_down * 180) / pi;
+      return [lat_upper, lat_lower];
+    },
+    //-------------------------------PolygonPoints--------------------------------//
+    PolygonPoints() {
+      let polypoints = this.waypoints
+      let PolyLength = polypoints.length;
+      let UpperBound = [];
+      let LowerBound = [];
+      for (let j = 0; j <= PolyLength - 1; j++) {
+        // console.log("2).---" + NewPoints[0])//--
+        let NewPoints = this.PolygonArray(polypoints[j][0]);
+        UpperBound.push({ lat: NewPoints[0], lng: polypoints[j][1] });
+        LowerBound.push({ lat: NewPoints[1], lng: polypoints[j][1] });
+      }
+      let reversebound = LowerBound.reverse();
+      let FullPoly = UpperBound.concat(reversebound);
+      return FullPoly;
     },
     //-------------------------------Button CurrentPosition--------------------------------//
 
@@ -155,16 +212,10 @@ export default {
           const service = new google.maps.places.PlacesService(this.map);
           service.findPlaceFromQuery(request, (results, status) => {
             if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-              // for (let i = 0; i < results.length; i++) {
-              //   console.log("----> ", results[i]);
-              //   this.createMarker(results[i]);
-              // }
-              // this.map.setCenter(results[0].geometry.location);
               this.originPlaceId = results[0].place_id;
               // window.alert("Please select an option from the dropdown list.  " + results[0].place_id);
             }
           });
-
           //------------------------
         })
 
@@ -251,16 +302,16 @@ export default {
     // });
 
     //callback restaurant map
-    let myLatlng = new window.google.maps.LatLng(13.7563, 100.5018);
+    // let myLatlng = new window.google.maps.LatLng(13.7563, 100.5018);
 
-    var request = {
-      location: myLatlng,
-      radius: 500,
-      type: 'restaurant'
-    };
-
-    const service = new google.maps.places.PlacesService(this.map);
+    // var request = {
+    //   location: myLatlng,
+    //   radius: 20000,
+    //   type: 'restaurant'
+    // };
+    // const service = new google.maps.places.PlacesService(this.map);
     // service.nearbySearch(request, this.callback);
+
 
   },
 
