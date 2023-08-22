@@ -142,7 +142,7 @@ export default {
               type: ['Charging Station']
             }, this.callback);
           }
-          
+
         },
       );
     },
@@ -247,7 +247,7 @@ export default {
     },
     //-----------------------------------
     async getStation() {
-
+      this.Stationtest.push('0')
       //-----------------
       let polypoints = this.waypoints
       let PolyLength = polypoints.length;
@@ -257,25 +257,35 @@ export default {
         let NewPoints = this.PolygonArray(polypoints[j][0]);
         UpperBound.push({ lat: NewPoints[0], lng: polypoints[j][1] });
         LowerBound.push({ lat: NewPoints[1], lng: polypoints[j][1] });
-        
+
         // filter to get users with 'dob' after 1990
-        const q = query(collection(firebase.db, 'ChargingStation'), where('lat', '<=', NewPoints[0]),where('lat', '>=', NewPoints[1]));// 
+        const q = query(collection(firebase.db, 'ChargingStation'), where('lat', '<=', NewPoints[0]), where('lat', '>=', NewPoints[1]));// 
         const querySnap = await getDocs(q);
 
         querySnap.forEach((doc) => {
-        //   for(let i = 0; i < this.Stationtest.length;i++){
-        //     if(this.Stationtest[i] != doc.data().name){
+          for (let i = 0; i < this.Stationtest.length; i++) {
+            // console.log(this.Stationtest[i]+"!="+ doc.data().name);
+            if (this.Stationtest[0] == '0') {
+              this.Stationtest.pop();
+              // console.log("this.Stationtest[0] => "+this.Stationtest[0]);
+            }
+            if (this.Stationtest[i] != doc.data().name) {
               this.Station.push(doc.data())
-        //       this.Stationtest.push(doc.data().name)
-        //       console.log("doc.data().name/"+doc.data().name);
-        //     }
-        //   }
-        //   // console.log(doc.data());
+              this.Stationtest.push(doc.data().name)
+              this.showUserLocationOnTheMap(doc.data().lat, doc.data().long);
+              // console.log("doc.data().name => "+doc.data().name);
+            }
+
+          }
         })
         // console.log("0:>"+NewPoints[0] + "," + polypoints[j][1]);
         // console.log("1:>"+NewPoints[1] + "," + polypoints[j][1]);
       }
-      console.log(this.Station);
+
+      const infowindow = new google.maps.InfoWindow({
+        content: '................',
+        ariaLabel: "Uluru",
+      });
     },
 
 
@@ -283,7 +293,7 @@ export default {
     callback(results, status) {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
         for (var i = 0; i < results.length; i++) {
-          // console.log("----> ", results[i]);
+          console.log("----> ", results[i]);
           this.createMarker(results[i]);
         }
       }
