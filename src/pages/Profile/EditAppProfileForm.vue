@@ -49,7 +49,6 @@ import { Card, BaseInput } from "@/components/index";
 import { collection, addDoc } from "firebase/firestore"
 import firebase from './Firebase.js'
 import BaseButton from "@/components/BaseButton";
-import { ref } from 'vue'
 
 export default {
   data() {
