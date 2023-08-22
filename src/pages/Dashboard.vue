@@ -36,6 +36,8 @@ export default {
       address: "",
       addressto: "",
       Usercar: [],
+      Stationtest: [],
+      Station: [],
       id: [],
       myselect: "",
       originPlaceId: "",
@@ -43,6 +45,7 @@ export default {
       service: "",
       infowindow: "",
       waypoints: [],
+      geopoint: [],
       // polyline: require( 'google-polyline' ),
     };
   },
@@ -50,7 +53,8 @@ export default {
     Card,
   },
   created() {
-    this.getUsers()
+    this.getUsers();
+    // this.getStation();
   },
   computed: {
     //-------------------------------SHOW MAP--------------------------------//
@@ -129,26 +133,26 @@ export default {
           });
           // to hide polygon set strokeOpacity and fillColor = 0
           PolygonBound.setMap(this.map);
-
+          this.getStation();
           const service = new google.maps.places.PlacesService(this.map);
           for (let j = 0; j < this.waypoints.length; j += 40) {
             service.nearbySearch({
               location: { lat: this.waypoints[j][0], lng: this.waypoints[j][1] },
-              radius: '1',
+              radius: '50',
               type: ['Charging Station']
             }, this.callback);
           }
+          
         },
       );
-
     },
     //-------------------------------PolygonArray--------------------------------//
     PolygonArray(latitude) {
       const R = 6378137;
       const pi = 3.14;
       //distance in meters
-      const upper_offset = 500;
-      const lower_offset = -500;
+      const upper_offset = 100;
+      const lower_offset = -100;
       const Lat_up = upper_offset / R;
       const Lat_down = lower_offset / R;
       //OffsetPosition, decimal degrees
@@ -163,15 +167,16 @@ export default {
       let UpperBound = [];
       let LowerBound = [];
       for (let j = 0; j <= PolyLength - 1; j++) {
-        // console.log("2).---" + NewPoints[0])//--
         let NewPoints = this.PolygonArray(polypoints[j][0]);
         UpperBound.push({ lat: NewPoints[0], lng: polypoints[j][1] });
         LowerBound.push({ lat: NewPoints[1], lng: polypoints[j][1] });
+
       }
       let reversebound = LowerBound.reverse();
       let FullPoly = UpperBound.concat(reversebound);
       return FullPoly;
     },
+
     //-------------------------------Button CurrentPosition--------------------------------//
 
     locatorButtonPressed() {
@@ -231,23 +236,54 @@ export default {
 
     },
 
-    //-------------------------------SHOW firebase Usercar--------------------------------//
+    //-------------------------------SHOW FIREBASE--------------------------------//
     async getUsers() {
-
       const q = query(collection(firebase.db, 'Usercar'), where('email', '==', "mo@gmail.com")) //this.$store.state.email
       const querySnap = await getDocs(q);
-
       querySnap.forEach((doc) => {
         this.Usercar.push({ ID: doc.id, ...doc.data() })
-        console.log(doc.data());
+        // console.log(doc.data());
       })
     },
+    //-----------------------------------
+    async getStation() {
+
+      //-----------------
+      let polypoints = this.waypoints
+      let PolyLength = polypoints.length;
+      let UpperBound = [];
+      let LowerBound = [];
+      for (let j = 0; j <= PolyLength - 1; j++) {
+        let NewPoints = this.PolygonArray(polypoints[j][0]);
+        UpperBound.push({ lat: NewPoints[0], lng: polypoints[j][1] });
+        LowerBound.push({ lat: NewPoints[1], lng: polypoints[j][1] });
+        
+        // filter to get users with 'dob' after 1990
+        const q = query(collection(firebase.db, 'ChargingStation'), where('lat', '<=', NewPoints[0]),where('lat', '>=', NewPoints[1]));// 
+        const querySnap = await getDocs(q);
+
+        querySnap.forEach((doc) => {
+        //   for(let i = 0; i < this.Stationtest.length;i++){
+        //     if(this.Stationtest[i] != doc.data().name){
+              this.Station.push(doc.data())
+        //       this.Stationtest.push(doc.data().name)
+        //       console.log("doc.data().name/"+doc.data().name);
+        //     }
+        //   }
+        //   // console.log(doc.data());
+        })
+        // console.log("0:>"+NewPoints[0] + "," + polypoints[j][1]);
+        // console.log("1:>"+NewPoints[1] + "," + polypoints[j][1]);
+      }
+      console.log(this.Station);
+    },
+
 
     //-------------------------------CALLBACK--------------------------------//
     callback(results, status) {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
         for (var i = 0; i < results.length; i++) {
-          console.log("----> ", results[i]);
+          // console.log("----> ", results[i]);
           this.createMarker(results[i]);
         }
       }
@@ -292,26 +328,6 @@ export default {
     this.setupPlaceChangedListener(destinationAutocomplete, "DEST");
     this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
     this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
-
-    // destinationAutocomplete.addListener("place_changed", () => {
-    //   let place = destinationAutocomplete.getPlace();
-    //   console.log(place)
-    //   this.showUserLocationOnTheMap(
-    //     place.geometry.location.lat(), place.geometry.location.lng());
-
-    // });
-
-    //callback restaurant map
-    // let myLatlng = new window.google.maps.LatLng(13.7563, 100.5018);
-
-    // var request = {
-    //   location: myLatlng,
-    //   radius: 20000,
-    //   type: 'restaurant'
-    // };
-    // const service = new google.maps.places.PlacesService(this.map);
-    // service.nearbySearch(request, this.callback);
-
 
   },
 
