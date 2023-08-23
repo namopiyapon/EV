@@ -1,8 +1,9 @@
 <template>
-  <form @submit="onSuccess">
+  <form @submit="onSuccess" @reset="ondelete">
+    <!-- @submit="onSuccess" @reset="ondelete" -->
     <card>
       <template slot="header">
-        <h5 class="title">App EV Charger</h5>
+        <h5 class="title">Edit EV Charger</h5>
       </template>
       <div class="row">
         <div class="col-md-8 text-left">
@@ -49,14 +50,16 @@
         </div>
       </div>
       <template slot="footer">
-        <button type="success" fill>Save</button>
+        <!-- <base-button type="success" fill>Save</base-button> -->
+        <button type="submit" fill>Save</button>
+        <button type="reset" fill>delete</button>
       </template>
     </card>
   </form>
 </template>
 <script>
 import { Card, BaseInput } from "@/components/index";
-import { collection, addDoc } from "firebase/firestore"
+import { collection, addDoc , doc, getDoc ,updateDoc, deleteDoc } from "firebase/firestore"
 import firebase from './Firebase.js'
 import BaseButton from "@/components/BaseButton";
 
@@ -68,7 +71,7 @@ export default {
       longitude: '',
       place_id: '',
       type: '',
-      amount: '',
+      pcs: '',
       about: '',
     }
   },
@@ -86,6 +89,7 @@ export default {
     },
   },
   mounted() {
+    this.getCountry()
     //-------------------------------Autocomplete--------------------------------//
     const originInput = document.getElementById("location")
 
@@ -106,16 +110,26 @@ export default {
     });
   },
   methods: {
-    //-----------------------------------APP------------------------------------//
-    onSuccess(event) {
-      this.createUser()
-      event.preventDefault();
-      alert("App")
-      this.$router.push("/editevcharger")
+    //-------------------------------------getCountry------------------------------------------//
+    async getCountry() {
+      const docSnap = await getDoc(doc(firebase.db, 'ChargingStation',  this.$store.state.idStation ));
+      if (docSnap.exists()) {
+        this.namepump = docSnap.data().name
+        this.latitude = docSnap.data().lat
+        this.longitude = docSnap.data().long
+        this.model.pcs = docSnap.data().pcs
+        this.type = docSnap.data().type
+        this.about = docSnap.data().about
+        this.place_id = docSnap.data().place_id
+      } else {
+        console.log('Document does not exist')
+      }
+      
     },
-    async createUser() {
-      const colRef = collection(firebase.db, 'ChargingStation')
-      const dataObj = {
+    //-----------------------------------APP------------------------------------//
+    async onSuccess(event) {
+      event.preventDefault();
+      await updateDoc(doc(firebase.db, 'ChargingStation', this.$store.state.idStation), {
         name: this.namepump,
         lat: this.latitude,
         long: this.longitude,
@@ -123,10 +137,16 @@ export default {
         type: this.type,
         pcs: this.model.pcs,
         about: this.about,
-      }
-      const docRef = await addDoc(colRef, dataObj)
-      console.log('Document was created with ID:', docRef.id)
-    }
+      })
+      this.$router.push('/editevcharger')
+    },
+    async ondelete(event) {
+      console.log('delete =>',this.$store.state.idStation )
+      event.preventDefault();
+      await deleteDoc(doc(firebase.db, 'ChargingStation', this.$store.state.idStation));
+      this.$router.push('/editevcharger')
+    },
+
   }
 };
 </script>

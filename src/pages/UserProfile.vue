@@ -5,7 +5,6 @@
         <!-- {{ this.$store.state.idtest }} -->
         <edit-profile-form :model="model"> </edit-profile-form>
       </div>
-      
     </div>
   </div>
 </template>

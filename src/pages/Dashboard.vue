@@ -7,7 +7,7 @@
       <div>
         <section>
           <div style="position: relative; z-index: 1;" class="col-md-12 text-left">
-            <input type="text" id="address" name="address" v-model="address"><i class="icon-refresh-02"
+            <input type="text" id="address" name="address" v-model="address"><i class="tim-icons icon-compass-05"
               @click="locatorButtonPressed"> </i><br>
             <input type="text" id="addressto" name="addressto" v-model="addressto"><br>
             <select v-model="myselect">
@@ -135,13 +135,13 @@ export default {
           PolygonBound.setMap(this.map);
           this.getStation();
           const service = new google.maps.places.PlacesService(this.map);
-          for (let j = 0; j < this.waypoints.length; j += 40) {
-            service.nearbySearch({
-              location: { lat: this.waypoints[j][0], lng: this.waypoints[j][1] },
-              radius: '50',
-              type: ['Charging Station']
-            }, this.callback);
-          }
+          // for (let j = 0; j < this.waypoints.length; j += 40) {
+          //   service.nearbySearch({
+          //     location: { lat: this.waypoints[j][0], lng: this.waypoints[j][1] },
+          //     radius: '50',
+          //     type: ['Charging Station']
+          //   }, this.callback);
+          // }
 
         },
       );
@@ -229,10 +229,42 @@ export default {
 
     showUserLocationOnTheMap(latitude, longitude) {
 
-      new google.maps.Marker({
+      const infowindow = new google.maps.InfoWindow({
+        content: latitude+ ", " +longitude,
+        ariaLabel: "Uluru",
+      });
+      const marker = new google.maps.Marker({
         position: new google.maps.LatLng(latitude, longitude),
         map: this.map
       });
+      marker.addListener("click", () => {
+        infowindow.open({
+          anchor: marker,
+          map,
+        });
+      });
+
+      const contentString =
+        '<div id="content">' +
+        '<div id="siteNotice">' +
+        "</div>" +
+        '<h1 id="firstHeading" class="firstHeading">Uluru</h1>' +
+        '<div id="bodyContent">' +
+        "<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large " +
+        "sandstone rock formation in the southern part of the " +
+        "Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) " +
+        "south west of the nearest large town, Alice Springs; 450&#160;km " +
+        "(280&#160;mi) by road. Kata Tjuta and Uluru are the two major " +
+        "features of the Uluru - Kata Tjuta National Park. Uluru is " +
+        "sacred to the Pitjantjatjara and Yankunytjatjara, the " +
+        "Aboriginal people of the area. It has many springs, waterholes, " +
+        "rock caves and ancient paintings. Uluru is listed as a World " +
+        "Heritage Site.</p>" +
+        '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">' +
+        "https://en.wikipedia.org/w/index.php?title=Uluru</a> " +
+        "(last visited June 22, 2009).</p>" +
+        "</div>" +
+        "</div>";
 
     },
 
@@ -273,13 +305,13 @@ export default {
               this.Station.push(doc.data())
               this.Stationtest.push(doc.data().name)
               this.showUserLocationOnTheMap(doc.data().lat, doc.data().long);
-              // console.log("doc.data().name => "+doc.data().name);
+              console.log("doc.data().name => "+doc.data().name);
             }
 
           }
         })
-        // console.log("0:>"+NewPoints[0] + "," + polypoints[j][1]);
-        // console.log("1:>"+NewPoints[1] + "," + polypoints[j][1]);
+        console.log("0:>"+NewPoints[0] + "," + polypoints[j][1]);
+        console.log("1:>"+NewPoints[1] + "," + polypoints[j][1]);
       }
 
       const infowindow = new google.maps.InfoWindow({

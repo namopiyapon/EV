@@ -7,6 +7,8 @@ import UserProfile from "@/pages/UserProfile.vue";
 import AppUserProfile from "@/pages/AppUserProfile.vue";
 import AppEVCharger from "@/pages/AppEVCharger.vue";
 import GiveEVCharger from "@/pages/GiveEVCharger.vue";
+import EVCharger from "@/pages/EVCharger.vue";
+import EVChargerFrom from "@/pages/EVChargerFrom.vue";
 import GiveFeedback from "@/pages/GiveFeedback.vue";
 import Register from "@/pages/Register.vue";
 
@@ -21,27 +23,27 @@ const routes = [
     name: "Map",
     children: [
       {
-        path: "dashboard",
+        path: "/dashboard",
         name: "Map",
         component: Dashboard,
       },
       {
-        path: "evcharger",
+        path: "/evcharger",
         name: "Give EV Charger",
         component: GiveEVCharger,
       },
       {
-        path: "feedback",
+        path: "/feedback",
         name: "Give Feedback",
         component: GiveFeedback,
       },
       {
-        path: "register",
+        path: "/register",
         name: "Register",
         component: Register,
       },
       {
-        path: "login",
+        path: "/login",
         name: "Login",
         component: Login,
       },
@@ -63,7 +65,7 @@ const routes = [
         component: AppUserProfile,
       },
       {
-        path: "profile",
+        path: "/profile",
         name: "Profile",
         component: Profile,
       },
@@ -75,9 +77,19 @@ const routes = [
     redirect: "DashboardCharger",
     children: [
       {
-        path: "/appEVCharger",
+        path: "/Appevcharger",
         name: "AppEVCharger",
         component: AppEVCharger,
+      },
+      {
+        path: "/editevcharger",
+        name: "EVCharger",
+        component: EVCharger,
+      },
+      {
+        path: "/evchargerFrom",
+        name: "EVChargerFrom",
+        component: EVChargerFrom,
       },
     ],
   },

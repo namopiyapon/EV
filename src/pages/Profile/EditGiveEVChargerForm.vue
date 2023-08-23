@@ -111,7 +111,7 @@ export default {
       this.createUser()
       event.preventDefault();
       alert("App")
-      this.$router.push("/profile")
+      this.$router.push("/editevcharger")
     },
     async createUser() {
       const colRef = collection(firebase.db, 'GiveChargingStation')

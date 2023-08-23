@@ -71,10 +71,7 @@ export default {
   methods: {
     async getCountry() {
       const docSnap = await getDoc(doc(firebase.db, 'Usercar',  this.$store.state.idtest ))
-      
       if (docSnap.exists()) {
-        // assign document fields
-        // to data properties
         this.namecar = docSnap.data().namecar
         this.Type = docSnap.data().Type
         this.Brand = docSnap.data().Brand

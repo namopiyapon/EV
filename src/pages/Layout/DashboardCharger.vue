@@ -5,9 +5,9 @@
     <side-bar :background-color="backgroundColor">
       <!-- <mobile-menu slot="content"></mobile-menu> -->
       
-      <div v-for="Station in ChargingStation" :key="Station.namecar"  @click="setidStation(Station.ID)" >
-        <sidebar-link to="/appEVCharger"  >
-          <i class="tim-icons icon-single-02" ></i>
+      <div v-for="Station in ChargingStation" :key="Station.name"  @click="setidStation(Station.ID)" >
+        <sidebar-link to="/EVChargerFrom"  >
+          <i class="tim-icons icon-square-pin" ></i>
           <template >
             <div class="row"  >
               <p>{{ Station.name }} </p>
@@ -16,7 +16,7 @@
         </sidebar-link>
       </div>
 
-      <sidebar-link to="/appEVCharger">
+      <sidebar-link to="/Appevcharger">
         <i class="tim-icons icon-simple-add"></i>
         <template v-if="!isRTL">
           <p>APP</p>
@@ -25,7 +25,7 @@
 
     </side-bar>
 
-    <sidebar-share :background-color.sync="backgroundColor"></sidebar-share>
+    <!-- <sidebar-share :background-color.sync="backgroundColor"></sidebar-share> -->
 
     <div class="main-panel" :data="backgroundColor">
       <top-navbar></top-navbar>
@@ -95,13 +95,13 @@ export default {
 
       querySnap.forEach((doc) => {
         this.ChargingStation.push({ID: doc.id, ...doc.data()})
-        console.log(doc.data());
+        // console.log(doc.id);
       })
     },
     setidStation(idStation) {
 
-      this.$store.commit('SET_IDTEST', idStation)
-      this.$router.push('/appEVCharger')
+      this.$store.commit('SET_Station', idStation)
+      this.$router.push('/editevcharger')
     }
 
   },

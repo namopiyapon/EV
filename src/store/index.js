@@ -9,9 +9,6 @@ const store = new Vuex.Store({
   getters: {
   },
   actions: {
-    setid (context,idname) {
-      context.commit('idd', idname)
-    }
   },
   modules: {
   },
@@ -20,6 +17,7 @@ const store = new Vuex.Store({
       email: '',
       idname: '',
       idtest: '',
+      idStation: '',
     //   count: 0
     }
   },
@@ -31,6 +29,9 @@ const store = new Vuex.Store({
     },
     SET_IDTEST(state, idtest) {
       state.idtest = idtest
+    },
+    SET_Station(state, idStation) {
+      state.idStation = idStation;
     }
 
   },
