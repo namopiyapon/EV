@@ -46,7 +46,6 @@ export default {
       infowindow: "",
       waypoints: [],
       geopoint: [],
-      // polyline: require( 'google-polyline' ),
     };
   },
   components: {
@@ -122,27 +121,26 @@ export default {
             window.alert("Directions request failed due to " + status);
           }
           //--------------------------------polyline----------------------------------//
-          const PolygonCoords = this.PolygonPoints();
-          const PolygonBound = new google.maps.Polygon({
-            paths: PolygonCoords,
-            strokeColor: "#FF0000",
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: "#FF0000",
-            fillOpacity: 0.35,
-          });
-          // to hide polygon set strokeOpacity and fillColor = 0
-          PolygonBound.setMap(this.map);
-          this.getStation();
+          // const PolygonCoords = this.PolygonPoints();
+          // const PolygonBound = new google.maps.Polygon({
+          //   paths: PolygonCoords,
+          //   strokeColor: "#FF0000",
+          //   strokeOpacity: 0.8,
+          //   strokeWeight: 2,
+          //   fillColor: "#FF0000",
+          //   fillOpacity: 0.35,
+          // });
+          // // to hide polygon set strokeOpacity and fillColor = 0
+          // PolygonBound.setMap(this.map);
           const service = new google.maps.places.PlacesService(this.map);
-          // for (let j = 0; j < this.waypoints.length; j += 40) {
-          //   service.nearbySearch({
-          //     location: { lat: this.waypoints[j][0], lng: this.waypoints[j][1] },
-          //     radius: '50',
-          //     type: ['Charging Station']
-          //   }, this.callback);
-          // }
+          for (let j = 0; j < this.waypoints.length; j += 40) {
 
+            service.nearbySearch({
+              location: { lat: this.waypoints[j][0], lng: this.waypoints[j][1] },
+              radius: '500',
+              name: ['EA anywhere', 'Charging Station', 'PTT Charging Station', 'MG Super Charge Charging Station', 'EleXA Charging Station', 'EGAT Charging Station'],
+            }, this.callback);
+          }
         },
       );
     },
@@ -230,7 +228,7 @@ export default {
     showUserLocationOnTheMap(latitude, longitude) {
 
       const infowindow = new google.maps.InfoWindow({
-        content: latitude+ ", " +longitude,
+        content: latitude + ", " + longitude,
         ariaLabel: "Uluru",
       });
       const marker = new google.maps.Marker({
@@ -244,28 +242,6 @@ export default {
         });
       });
 
-      const contentString =
-        '<div id="content">' +
-        '<div id="siteNotice">' +
-        "</div>" +
-        '<h1 id="firstHeading" class="firstHeading">Uluru</h1>' +
-        '<div id="bodyContent">' +
-        "<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large " +
-        "sandstone rock formation in the southern part of the " +
-        "Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) " +
-        "south west of the nearest large town, Alice Springs; 450&#160;km " +
-        "(280&#160;mi) by road. Kata Tjuta and Uluru are the two major " +
-        "features of the Uluru - Kata Tjuta National Park. Uluru is " +
-        "sacred to the Pitjantjatjara and Yankunytjatjara, the " +
-        "Aboriginal people of the area. It has many springs, waterholes, " +
-        "rock caves and ancient paintings. Uluru is listed as a World " +
-        "Heritage Site.</p>" +
-        '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">' +
-        "https://en.wikipedia.org/w/index.php?title=Uluru</a> " +
-        "(last visited June 22, 2009).</p>" +
-        "</div>" +
-        "</div>";
-
     },
 
     //-------------------------------SHOW FIREBASE--------------------------------//
@@ -278,47 +254,44 @@ export default {
       })
     },
     //-----------------------------------
-    async getStation() {
-      this.Stationtest.push('0')
-      //-----------------
-      let polypoints = this.waypoints
-      let PolyLength = polypoints.length;
-      let UpperBound = [];
-      let LowerBound = [];
-      for (let j = 0; j <= PolyLength - 1; j++) {
-        let NewPoints = this.PolygonArray(polypoints[j][0]);
-        UpperBound.push({ lat: NewPoints[0], lng: polypoints[j][1] });
-        LowerBound.push({ lat: NewPoints[1], lng: polypoints[j][1] });
+    // async getStation() {
+    //   this.Stationtest.push('0')
+    //   //-----------------
+    //   let polypoints = this.waypoints
+    //   let PolyLength = polypoints.length;
+    //   let UpperBound = [];
+    //   let LowerBound = [];
+    //   for (let j = 0; j <= PolyLength - 1; j++) {
+    //     let NewPoints = this.PolygonArray(polypoints[j][0]);
+    //     UpperBound.push({ lat: NewPoints[0], lng: polypoints[j][1] });
+    //     LowerBound.push({ lat: NewPoints[1], lng: polypoints[j][1] });
 
-        // filter to get users with 'dob' after 1990
-        const q = query(collection(firebase.db, 'ChargingStation'), where('lat', '<=', NewPoints[0]), where('lat', '>=', NewPoints[1]));// 
-        const querySnap = await getDocs(q);
+    //     // filter to get users with 'dob' after 1990
+    //     const q = query(collection(firebase.db, 'ChargingStation'), where('lat', '<=', NewPoints[0]), where('lat', '>=', NewPoints[1]));// 
+    //     const querySnap = await getDocs(q);
 
-        querySnap.forEach((doc) => {
-          for (let i = 0; i < this.Stationtest.length; i++) {
-            // console.log(this.Stationtest[i]+"!="+ doc.data().name);
-            if (this.Stationtest[0] == '0') {
-              this.Stationtest.pop();
-              // console.log("this.Stationtest[0] => "+this.Stationtest[0]);
-            }
-            if (this.Stationtest[i] != doc.data().name) {
-              this.Station.push(doc.data())
-              this.Stationtest.push(doc.data().name)
-              this.showUserLocationOnTheMap(doc.data().lat, doc.data().long);
-              console.log("doc.data().name => "+doc.data().name);
-            }
+    // querySnap.forEach((doc) => {
+    //   for (let i = 0; i < this.Stationtest.length; i++) {
+    //     // console.log(this.Stationtest[i]+"!="+ doc.data().name);
+    //     if (this.Stationtest[0] == '0') {
+    //       this.Stationtest.pop();
+    //       // console.log("this.Stationtest[0] => "+this.Stationtest[0]);
+    //     }
+    //     if (this.Stationtest[i] != doc.data().name) {
+    //       this.Station.push(doc.data())
+    //       this.Stationtest.push(doc.data().name)
+    //       this.showUserLocationOnTheMap(doc.data().lat, doc.data().long);
+    //       console.log("doc.data().name => "+doc.data().name);
+    //     }
 
-          }
-        })
-        console.log("0:>"+NewPoints[0] + "," + polypoints[j][1]);
-        console.log("1:>"+NewPoints[1] + "," + polypoints[j][1]);
-      }
+    //   }
+    // })
+    // console.log("0:>"+NewPoints[0] + "," + polypoints[j][1]);
+    // console.log("1:>"+NewPoints[1] + "," + polypoints[j][1]);
+    // }
 
-      const infowindow = new google.maps.InfoWindow({
-        content: '................',
-        ariaLabel: "Uluru",
-      });
-    },
+
+    // },
 
 
     //-------------------------------CALLBACK--------------------------------//
@@ -333,16 +306,70 @@ export default {
     createMarker(place) {
       if (!place.geometry || !place.geometry.location) return;
 
+      // const pinBackground = new PinElement({
+      //   background: "#FBBC04",
+      // });
+
       const marker = new google.maps.Marker({
         map: this.map,
         position: place.geometry.location,
+        // content: pinBackground.element,
       });
 
       google.maps.event.addListener(marker, "click", () => {
-        infowindow.setContent(place.name || "");
+        infowindow.setContent(contentString || "");
         infowindow.open(this.map);
       });
-    }
+
+      const infowindow = new google.maps.InfoWindow({
+        content: contentString,
+        ariaLabel: "Uluru",
+      });
+      marker.addListener("click", () => {
+        infowindow.open({
+          anchor: marker,
+          map,
+        });
+      });
+      const contentString =
+        '<div id="content">' +
+        '<div id="siteNotice">' +
+        "</div>" +
+        '<h5 id="firstHeading" class="firstHeading">' + place.name + '</h5>' +
+        '<div id="bodyContent">' +
+        '<p><b>' + place.name + '</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
+        'sandstone rock formation in the southern part of the ' +
+        'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) ' +
+        'south west of the nearest large town, Alice Springs; 450&#160;km ' +
+        '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major ' +
+        'features of the Uluru - Kata Tjuta National Park. Uluru is ' +
+        'sacred to the Pitjantjatjara and Yankunytjatjara, the ' +
+        'Aboriginal people of the area. It has many springs, waterholes, ' +
+        'rock caves and ancient paintings. Uluru is listed as a World ' +
+        'Heritage Site.</p>' +
+        '<p>Attribution: Uluru, <a href="https://www.google.com/maps/search/?api=1&query=' + place.geometry.location + '&query_place_id=' + place.place_id + '">' +
+        'https://www.google.com/maps/search/?api=1&query=' + place.geometry.location + '&query_place_id=' + place.place_id + '</a>' +
+        '<br>' + place.adr_address + '</p>' +
+        '</div>' +
+        '</div>';
+
+      var request = {
+        query: place.name,
+        fields: ['name', 'geometry','photos','business_status','formatted_address'],
+        locationBias: place.geometry.location,
+      };
+
+      var service = new google.maps.places.PlacesService(this.map);
+      service.findPlaceFromQuery(request, function (results, status) {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          //----------------------------editformataddress----------------------------------//
+            formataddress = results[0].formatted_address;
+            // console.log(results[0].formatted_address)
+            console.log(formataddress)
+        }
+      });
+      
+    },
   },
 
   mounted() {
@@ -376,7 +403,7 @@ export default {
 };
 </script>
 <style>
-/* #infowindow-content .title {
+#infowindow-content .title {
   font-weight: bold;
 }
 
@@ -386,9 +413,9 @@ export default {
 
 #map #infowindow-content {
   display: inline;
-} */
+}
 
-/* .pac-icon {
+*/ .pac-icon {
   display: none;
 }
 
@@ -400,7 +427,7 @@ export default {
 
 .pac-item:hover {
   background-color: #ececec;
-} */
+}
 
 #map {
   position: absolute;
