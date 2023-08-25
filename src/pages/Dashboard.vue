@@ -302,16 +302,13 @@ export default {
     callback(results, status) {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
         for (var i = 0; i < results.length; i++) {
-          console.log("----> ", results[i]);
+          // console.log("----> ", results[i]);//---------------------------------------*****
           this.createMarker(results[i], i);
         }
       }
     },
     //---------------------------------------Matrix------------------------------------------//
     matrix(place) {
-      // initialize services
-      // const geocoder = new google.maps.Geocoder();
-      // const service = new google.maps.DistanceMatrixService();
       // build request
       const origin1 = place.geometry.location;
       const origin2 = place.name;
@@ -336,11 +333,12 @@ export default {
             var results = response.rows[i].elements;
             for (var j = 0; j < results.length; j++) {
               var element = results[j];
-              var distance = element.distance.text;
+              var distance = element.distance.value;
               var duration = element.duration.text;
               var from = origins[i];
               var to = destinations[j];
-              console.log("distance=> "+distance+"/duration=>"+duration+"/from=>"+from+"/to=>"+to)
+              console.log("distance=> " + distance + "/ duration=>" + duration + "/ from=>" + from + "/ to=>" + to)
+              return distance / 1000;
             }
           }
         }
@@ -351,8 +349,12 @@ export default {
     async createMarker(place, i) {
       if (!place.geometry || !place.geometry.location) return;
       const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
-      
-      this.matrix(place);
+      try {
+        var colloer = await this.matrix(place);
+      } catch (error) {
+        console.log("error :: var colloer = await this.matrix(place);")
+      }
+      console.log("//colloer//" + colloer);
       //-----------------collerMarker--------------------//
       const pinBackground = new PinElement({
         background: "#FBBC04",
@@ -384,24 +386,26 @@ export default {
         locationBias: place.geometry.location,
       };
 
-
-      var service = new google.maps.places.PlacesService(this.map);
-      service.findPlaceFromQuery(request, function (results, status) {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-          for (var i = 0; i < results.length; i++) {
-            this.formataddress.push(results[i].formatted_address);
-            //  createMarker(results[i]);
-          }
-          //----------------------------editformataddress----------------------------------//
-        }
-      }).then(() => { console.log(this.formataddress); });
-      const contentString =
+      //----------------------------editformataddress----------------------------------//
+      // var service = new google.maps.places.PlacesService(this.map);
+      // service.findPlaceFromQuery(request, function (results, status) {
+      //   if (status === google.maps.places.PlacesServiceStatus.OK) {
+      //     for (var i = 0; i < results.length; i++) {
+      //       this.formataddress.push(results[i].formatted_address);
+      //       //  createMarker(results[i]);
+      //     }
+      //     //----------------------------editformataddress----------------------------------//
+      //   }
+      // }).then(() => {
+      //   console.log(this.formataddress);
+      // });
+      var contentString =
         '<div id="content">' +
         '<div id="siteNotice">' +
         "</div>" +
         '<h5 id="firstHeading" class="firstHeading">' + place.name + '</h5>' +
         '<div id="bodyContent">' +
-        '<p><b>' + formataddress[i] + '</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
+        '<p><b>' + place.name + '</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
         'sandstone rock formation in the southern part of the ' +
         'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) ' +
         'south west of the nearest large town, Alice Springs; 450&#160;km ' +
