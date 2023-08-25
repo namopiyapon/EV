@@ -315,47 +315,45 @@ export default {
       const destinationA = this.address;
       const destinationB = this.originlocstion;
       var service = new google.maps.DistanceMatrixService();
-      service.getDistanceMatrix(
-        {
-          origins: [origin1, origin2],
-          destinations: [destinationA, destinationB],
-          travelMode: google.maps.TravelMode.DRIVING,
-          unitSystem: google.maps.UnitSystem.METRIC,
-          avoidHighways: false,
-          avoidTolls: false,
-        }, callback);
-      function callback(response, status) {
-        if (status == 'OK') {
-          var origins = response.originAddresses;
-          var destinations = response.destinationAddresses;
+      return new Promise((resolve, reject) => {
+        service.getDistanceMatrix(
+          {
+            origins: [origin1, origin2],
+            destinations: [destinationA, destinationB],
+            travelMode: google.maps.TravelMode.DRIVING,
+            unitSystem: google.maps.UnitSystem.METRIC,
+            avoidHighways: false,
+            avoidTolls: false,
+          }, callback);
+        function callback(response, status) {
+          if (status == 'OK') {
+            var origins = response.originAddresses;
+            var destinations = response.destinationAddresses;
 
-          for (var i = 0; i < origins.length; i++) {
-            var results = response.rows[i].elements;
-            for (var j = 0; j < results.length; j++) {
-              var element = results[j];
-              var distance = element.distance.value;
-              var duration = element.duration.text;
-              var from = origins[i];
-              var to = destinations[j];
-              console.log("distance=> " + distance + "/ duration=>" + duration + "/ from=>" + from + "/ to=>" + to)
-              return distance / 1000;
+            for (var i = 0; i < origins.length; i++) {
+              var results = response.rows[i].elements;
+              for (var j = 0; j < results.length; j++) {
+                var element = results[j];
+                var distance = element.distance.value;
+                // var duration = element.duration.text;
+                // var from = origins[i];
+                // var to = destinations[j];
+                // console.log("distance=> " + distance + "/ duration=>" + duration + "/ from=>" + from + "/ to=>" + to)
+                resolve(distance / 1000);
+              }
             }
           }
         }
-      }
+      });
     },
 
     //-------------------------------createMarker--------------------------------//
     async createMarker(place, i) {
       if (!place.geometry || !place.geometry.location) return;
       const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
-      try {
-        var colloer = await this.matrix(place);
-      } catch (error) {
-        console.log("error :: var colloer = await this.matrix(place);")
-      }
-      console.log("//colloer//" + colloer);
-      //-----------------collerMarker--------------------//
+      var color = await this.matrix(place);
+      Usercar.ID.Energy
+      //-----------------colorMarker--------------------//
       const pinBackground = new PinElement({
         background: "#FBBC04",
       });
@@ -385,20 +383,24 @@ export default {
         fields: ['name', 'geometry', 'photos', 'business_status', 'formatted_address'],
         locationBias: place.geometry.location,
       };
+      
+      
 
+      // ----------------------------editformataddress----------------------------------//
+      var service = new google.maps.places.PlacesService(this.map);
+      const myPromise = new Promise((resolve, reject) => {
+        service.findPlaceFromQuery(request, function (results, status) {
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            for (var i = 0; i < results.length; i++) {
+              const formataddress = results[i].formatted_address
+              resolve(formataddress);
+              //  createMarker(results[i]);
+            }
+          }
+        })
+      });
       //----------------------------editformataddress----------------------------------//
-      // var service = new google.maps.places.PlacesService(this.map);
-      // service.findPlaceFromQuery(request, function (results, status) {
-      //   if (status === google.maps.places.PlacesServiceStatus.OK) {
-      //     for (var i = 0; i < results.length; i++) {
-      //       this.formataddress.push(results[i].formatted_address);
-      //       //  createMarker(results[i]);
-      //     }
-      //     //----------------------------editformataddress----------------------------------//
-      //   }
-      // }).then(() => {
-      //   console.log(this.formataddress);
-      // });
+      console.log(myPromise);
       var contentString =
         '<div id="content">' +
         '<div id="siteNotice">' +
@@ -486,5 +488,4 @@ export default {
   right: 0;
   bottom: 0;
   left: 0;
-}
-</style>
+}</style>
