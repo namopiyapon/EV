@@ -41,11 +41,13 @@ export default {
       id: [],
       myselect: "",
       originPlaceId: "",
+      originlocstion: "",
       destinationPlaceId: "",
       service: "",
       infowindow: "",
       waypoints: [],
       geopoint: [],
+      formataddress: [],
     };
   },
   components: {
@@ -65,6 +67,7 @@ export default {
       let mapOptions = {
         mapTypeControl: false,
         zoom: 9,
+        mapId: '6fa16203b0a4dcbf',
         center: myLatlng,
         scrollwheel: false,
       }
@@ -216,6 +219,7 @@ export default {
           service.findPlaceFromQuery(request, (results, status) => {
             if (status === google.maps.places.PlacesServiceStatus.OK && results) {
               this.originPlaceId = results[0].place_id;
+              this.originlocstion = results[0].geometry.location;
               // window.alert("Please select an option from the dropdown list.  " + results[0].place_id);
             }
           });
@@ -299,23 +303,65 @@ export default {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
         for (var i = 0; i < results.length; i++) {
           console.log("----> ", results[i]);
-          this.createMarker(results[i]);
+          this.createMarker(results[i], i);
         }
       }
     },
-    createMarker(place) {
+    //---------------------------------------Matrix------------------------------------------//
+    matrix(place) {
+      // initialize services
+      // const geocoder = new google.maps.Geocoder();
+      // const service = new google.maps.DistanceMatrixService();
+      // build request
+      const origin1 = place.geometry.location;
+      const origin2 = place.name;
+      const destinationA = this.address;
+      const destinationB = this.originlocstion;
+      var service = new google.maps.DistanceMatrixService();
+      service.getDistanceMatrix(
+        {
+          origins: [origin1, origin2],
+          destinations: [destinationA, destinationB],
+          travelMode: google.maps.TravelMode.DRIVING,
+          unitSystem: google.maps.UnitSystem.METRIC,
+          avoidHighways: false,
+          avoidTolls: false,
+        }, callback);
+      function callback(response, status) {
+        if (status == 'OK') {
+          var origins = response.originAddresses;
+          var destinations = response.destinationAddresses;
+
+          for (var i = 0; i < origins.length; i++) {
+            var results = response.rows[i].elements;
+            for (var j = 0; j < results.length; j++) {
+              var element = results[j];
+              var distance = element.distance.text;
+              var duration = element.duration.text;
+              var from = origins[i];
+              var to = destinations[j];
+              console.log("distance=> "+distance+"/duration=>"+duration+"/from=>"+from+"/to=>"+to)
+            }
+          }
+        }
+      }
+    },
+
+    //-------------------------------createMarker--------------------------------//
+    async createMarker(place, i) {
       if (!place.geometry || !place.geometry.location) return;
-
-      // const pinBackground = new PinElement({
-      //   background: "#FBBC04",
-      // });
-
-      const marker = new google.maps.Marker({
+      const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
+      
+      this.matrix(place);
+      //-----------------collerMarker--------------------//
+      const pinBackground = new PinElement({
+        background: "#FBBC04",
+      });
+      const marker = new AdvancedMarkerElement({
         map: this.map,
         position: place.geometry.location,
-        // content: pinBackground.element,
+        content: pinBackground.element,
       });
-
       google.maps.event.addListener(marker, "click", () => {
         infowindow.setContent(contentString || "");
         infowindow.open(this.map);
@@ -331,13 +377,31 @@ export default {
           map,
         });
       });
+
+      var request = {
+        query: place.name,
+        fields: ['name', 'geometry', 'photos', 'business_status', 'formatted_address'],
+        locationBias: place.geometry.location,
+      };
+
+
+      var service = new google.maps.places.PlacesService(this.map);
+      service.findPlaceFromQuery(request, function (results, status) {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          for (var i = 0; i < results.length; i++) {
+            this.formataddress.push(results[i].formatted_address);
+            //  createMarker(results[i]);
+          }
+          //----------------------------editformataddress----------------------------------//
+        }
+      }).then(() => { console.log(this.formataddress); });
       const contentString =
         '<div id="content">' +
         '<div id="siteNotice">' +
         "</div>" +
         '<h5 id="firstHeading" class="firstHeading">' + place.name + '</h5>' +
         '<div id="bodyContent">' +
-        '<p><b>' + place.name + '</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
+        '<p><b>' + formataddress[i] + '</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
         'sandstone rock formation in the southern part of the ' +
         'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) ' +
         'south west of the nearest large town, Alice Springs; 450&#160;km ' +
@@ -352,23 +416,6 @@ export default {
         '<br>' + place.adr_address + '</p>' +
         '</div>' +
         '</div>';
-
-      var request = {
-        query: place.name,
-        fields: ['name', 'geometry','photos','business_status','formatted_address'],
-        locationBias: place.geometry.location,
-      };
-
-      var service = new google.maps.places.PlacesService(this.map);
-      service.findPlaceFromQuery(request, function (results, status) {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-          //----------------------------editformataddress----------------------------------//
-            formataddress = results[0].formatted_address;
-            // console.log(results[0].formatted_address)
-            console.log(formataddress)
-        }
-      });
-      
     },
   },
 
