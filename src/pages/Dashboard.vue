@@ -334,12 +334,12 @@ export default {
               var results = response.rows[i].elements;
               for (var j = 0; j < results.length; j++) {
                 var element = results[j];
-                var distance = element.distance.value;
-                // var duration = element.duration.text;
-                // var from = origins[i];
-                // var to = destinations[j];
+                var distance = element.distance;
+                var duration = element.duration;
+                var from = origins[i];
+                var to = destinations[j];
                 // console.log("distance=> " + distance + "/ duration=>" + duration + "/ from=>" + from + "/ to=>" + to)
-                resolve(distance / 1000);
+                resolve(distance);
               }
             }
           }
@@ -352,7 +352,7 @@ export default {
       if (!place.geometry || !place.geometry.location) return;
       const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
       var color = await this.matrix(place);
-      Usercar.ID.Energy
+      console.log(color)
       //-----------------colorMarker--------------------//
       const pinBackground = new PinElement({
         background: "#FBBC04",
@@ -362,67 +362,77 @@ export default {
         position: place.geometry.location,
         content: pinBackground.element,
       });
-      google.maps.event.addListener(marker, "click", () => {
-        infowindow.setContent(contentString || "");
-        infowindow.open(this.map);
-      });
 
-      const infowindow = new google.maps.InfoWindow({
-        content: contentString,
+      const infoWindow = new google.maps.InfoWindow({
+        maxWidth: 300,
         ariaLabel: "Uluru",
       });
       marker.addListener("click", () => {
-        infowindow.open({
+      infoWindow.close();
+      infoWindow.setContent(contentString);
+      infoWindow.open({
           anchor: marker,
           map,
         });
-      });
+    });
 
+      // google.maps.event.addListener(marker, "click", () => {
+      //   infowindow.setContent(contentString || "");
+      //   infowindow.open(this.map);
+      // });
+
+      // const infowindow = new google.maps.InfoWindow({
+      //   content: contentString,
+      //   maxWidth: 300,
+      //   ariaLabel: "Uluru",
+      // });
+      // marker.addListener("click", () => {
+      //   infoWindow.close();
+      //   infowindow.open({
+      //     anchor: marker,
+      //     map,
+      //   });
+      // });
+      
+      // ----------------------------infowindow----------------------------------//
       var request = {
         query: place.name,
         fields: ['name', 'geometry', 'photos', 'business_status', 'formatted_address'],
         locationBias: place.geometry.location,
       };
-      
-      
 
-      // ----------------------------editformataddress----------------------------------//
+
       var service = new google.maps.places.PlacesService(this.map);
-      const myPromise = new Promise((resolve, reject) => {
+      const info = await new Promise((resolve, reject) => {
         service.findPlaceFromQuery(request, function (results, status) {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             for (var i = 0; i < results.length; i++) {
-              const formataddress = results[i].formatted_address
+              const formataddress = results[i]
               resolve(formataddress);
-              //  createMarker(results[i]);
             }
           }
         })
       });
-      //----------------------------editformataddress----------------------------------//
-      console.log(myPromise);
+      //----------------------------infowindow----------------------------------//
       var contentString =
         '<div id="content">' +
         '<div id="siteNotice">' +
         "</div>" +
         '<h5 id="firstHeading" class="firstHeading">' + place.name + '</h5>' +
         '<div id="bodyContent">' +
-        '<p><b>' + place.name + '</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
-        'sandstone rock formation in the southern part of the ' +
-        'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) ' +
-        'south west of the nearest large town, Alice Springs; 450&#160;km ' +
-        '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major ' +
-        'features of the Uluru - Kata Tjuta National Park. Uluru is ' +
-        'sacred to the Pitjantjatjara and Yankunytjatjara, the ' +
-        'Aboriginal people of the area. It has many springs, waterholes, ' +
-        'rock caves and ancient paintings. Uluru is listed as a World ' +
-        'Heritage Site.</p>' +
-        '<p>Attribution: Uluru, <a href="https://www.google.com/maps/search/?api=1&query=' + place.geometry.location + '&query_place_id=' + place.place_id + '">' +
-        'https://www.google.com/maps/search/?api=1&query=' + place.geometry.location + '&query_place_id=' + place.place_id + '</a>' +
-        '<br>' + place.adr_address + '</p>' +
+        '<p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br>' +
+        '<b>ประเภท :</b> 1 => จำนวน 1 <br>' +
+        '<b>ระยะทาง :</b> ' + color.text + ' <br>' +
+        // info.photos +
+        '<p><a href="https://www.google.com/maps/search/?api=1&query=' + place.geometry.location + '&query_place_id=' + place.place_id + '">' +
+        'ดูใน Google Maps</a>' +
         '</div>' +
         '</div>';
+      const photo = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=200&photo_reference=' + info.photo_reference
+      '&key=AIzaSyCEwuKRd9Fqz_RCZoonrVZAbNuVzvrA8JU'
     },
+
+
   },
 
   mounted() {
@@ -488,4 +498,5 @@ export default {
   right: 0;
   bottom: 0;
   left: 0;
-}</style>
+}
+</style>
