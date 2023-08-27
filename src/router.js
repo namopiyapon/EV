@@ -19,7 +19,7 @@ const routes = [
   {
     path: "/",
     component: DashboardLayoutmap,
-    redirect: "DashboardLayoutmap",
+    redirect: "Dashboard",
     name: "Map",
     children: [
       {

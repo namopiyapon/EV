@@ -6,15 +6,34 @@
       </template>
       <div>
         <section>
-          <div style="position: relative; z-index: 1;" class="col-md-12 text-left">
-            <input type="text" id="address" name="address" v-model="address"><i class="tim-icons icon-compass-05"
-              @click="locatorButtonPressed"> </i><br>
-            <input type="text" id="addressto" name="addressto" v-model="addressto"><br>
-            <select v-model="myselect">
-              <option v-for="user in Usercar" :key="user.namecar" :value="user.namecar">
-                {{ user.namecar }}
-              </option>
-            </select>
+          <div style="position: absolute; z-index: 1;">
+            <div class="row">
+              <div>
+                <input type="text" id="address" name="address" v-model="address">
+                <i class="tim-icons icon-compass-05" @click="locatorButtonPressed"></i>
+              </div>
+            </div>
+
+            <div class="row">
+              <input type="text" id="addressto" name="addressto" v-model="addressto">
+            </div>
+
+            <div class="row">
+              <div class="hide" id="div1">
+                <select v-model="myselect" id="myselect">
+                  <option v-for="user in Usercar" :key="user.namecar" :value="user.ID">
+                    {{ user.namecar }}
+                  </option>
+                </select>
+              </div>
+              <div>
+                <form>
+                  <input type="radio" name="typevalue" id="battery" @click="show2" />battery<br>
+                  <input type="radio" name="typevalue" id="distance" @click="show1" checked />distance<br>
+                  <input type="text" id="value" name="value" v-model="value">
+                </form>
+              </div>
+            </div>
           </div>
         </section>
         <section>
@@ -27,7 +46,7 @@
 <script>
 import { Card } from "@/components/index";
 import axios from 'axios';
-import { collection, where, query, getDocs } from "firebase/firestore"
+import { collection, where, query, getDocs, getDoc, doc } from "firebase/firestore"
 import firebase from '@/Firebase.js'
 
 export default {
@@ -48,6 +67,9 @@ export default {
       waypoints: [],
       geopoint: [],
       formataddress: [],
+      value: '',
+      Model: [],
+      DrivingRange: '',
     };
   },
   components: {
@@ -55,7 +77,7 @@ export default {
   },
   created() {
     this.getUsers();
-    // this.getStation();
+
   },
   computed: {
     //-------------------------------SHOW MAP--------------------------------//
@@ -70,6 +92,7 @@ export default {
         mapId: '6fa16203b0a4dcbf',
         center: myLatlng,
         scrollwheel: false,
+        streetViewControl: false,
       }
       let map = new window.google.maps.Map(
         document.getElementById("map"),
@@ -79,6 +102,12 @@ export default {
     }
   },
   methods: {
+    show1() {
+      document.getElementById('div1').style.display = 'none';
+    },
+    show2() {
+      document.getElementById('div1').style.display = 'block';
+    },
 
     //-------------------------------SHOW ROUTE--------------------------------//
 
@@ -103,10 +132,45 @@ export default {
         this.route();
       });
     },
-    route() {
-      if (!this.originPlaceId || !this.destinationPlaceId) {
+    async route() {
+      if (!this.originPlaceId || !this.destinationPlaceId || !this.value) {
         return;
       }
+
+      // this.directionsService = new google.maps.DirectionsService();
+      // this.directionsRenderer = new google.maps.DirectionsRenderer();
+
+      // let myLatlng = new window.google.maps.LatLng(13.7563, 100.5018);
+      // let mapOptions = {
+      //   mapTypeControl: false,
+      //   zoom: 9,
+      //   mapId: '6fa16203b0a4dcbf',
+      //   center: myLatlng,
+      //   scrollwheel: false,
+      //   streetViewControl: false,
+      // }
+      // let map = new window.google.maps.Map(
+      //   document.getElementById("map"),
+      //   mapOptions);
+      // this.directionsRenderer.setMap(map);
+      //----------------------------------firebase-----------------------------//
+      if (document.querySelector('input[name=typevalue]:checked').value = "battery") {
+        // const q = query(collection(firebase.db, 'Usercar'), where('namecar', '==', document.getElementById("myselect").value), where('email', '==', 'mo@gmail.com'))
+        // const querySnap = await getDocs(q);
+        // querySnap.forEach((doc) => {
+
+        //   this.Model.push({ ID: doc.id, ...doc.data() })
+        //   console.log(doc.data());
+        // })
+        // this.Model
+        const docSnap = await getDoc(doc(firebase.db, 'Usercar' ,document.getElementById("myselect").value))
+        if (docSnap.exists()) {
+          this.DrivingRange = docSnap.data().DrivingRange
+        } else {
+          console.log('Document does not exist')
+        }
+      }
+
       const me = this;
       this.directionsService.route(
         {
@@ -135,6 +199,7 @@ export default {
           // });
           // // to hide polygon set strokeOpacity and fillColor = 0
           // PolygonBound.setMap(this.map);
+
           const service = new google.maps.places.PlacesService(this.map);
           for (let j = 0; j < this.waypoints.length; j += 40) {
 
@@ -257,53 +322,12 @@ export default {
         // console.log(doc.data());
       })
     },
-    //-----------------------------------
-    // async getStation() {
-    //   this.Stationtest.push('0')
-    //   //-----------------
-    //   let polypoints = this.waypoints
-    //   let PolyLength = polypoints.length;
-    //   let UpperBound = [];
-    //   let LowerBound = [];
-    //   for (let j = 0; j <= PolyLength - 1; j++) {
-    //     let NewPoints = this.PolygonArray(polypoints[j][0]);
-    //     UpperBound.push({ lat: NewPoints[0], lng: polypoints[j][1] });
-    //     LowerBound.push({ lat: NewPoints[1], lng: polypoints[j][1] });
-
-    //     // filter to get users with 'dob' after 1990
-    //     const q = query(collection(firebase.db, 'ChargingStation'), where('lat', '<=', NewPoints[0]), where('lat', '>=', NewPoints[1]));// 
-    //     const querySnap = await getDocs(q);
-
-    // querySnap.forEach((doc) => {
-    //   for (let i = 0; i < this.Stationtest.length; i++) {
-    //     // console.log(this.Stationtest[i]+"!="+ doc.data().name);
-    //     if (this.Stationtest[0] == '0') {
-    //       this.Stationtest.pop();
-    //       // console.log("this.Stationtest[0] => "+this.Stationtest[0]);
-    //     }
-    //     if (this.Stationtest[i] != doc.data().name) {
-    //       this.Station.push(doc.data())
-    //       this.Stationtest.push(doc.data().name)
-    //       this.showUserLocationOnTheMap(doc.data().lat, doc.data().long);
-    //       console.log("doc.data().name => "+doc.data().name);
-    //     }
-
-    //   }
-    // })
-    // console.log("0:>"+NewPoints[0] + "," + polypoints[j][1]);
-    // console.log("1:>"+NewPoints[1] + "," + polypoints[j][1]);
-    // }
-
-
-    // },
-
-
     //-------------------------------CALLBACK--------------------------------//
-    callback(results, status) {
+    async callback(results, status) {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
         for (var i = 0; i < results.length; i++) {
           // console.log("----> ", results[i]);//---------------------------------------*****
-          this.createMarker(results[i], i);
+          this.createMarker(results[i]);
         }
       }
     },
@@ -348,15 +372,63 @@ export default {
     },
 
     //-------------------------------createMarker--------------------------------//
-    async createMarker(place, i) {
+    async createMarker(place) {
+
       if (!place.geometry || !place.geometry.location) return;
+
       const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
+
       var color = await this.matrix(place);
-      console.log(color)
+      //--------------------------------this.value => battery-----------------------------------//
+      if (document.querySelector('input[name=typevalue]:checked').value = "battery") {
+        var Driving = this.DrivingRange * (this.value / 100)
+        if (Driving * 0.7 > color.value / 1000) {
+          // console.log("value*0.7 > color " + color.value)
+          var pinBackground = new PinElement({
+            background: "#0cfb04",
+            borderColor: "#089c03",
+            glyphColor: "#089c03",
+          });
+        } else if (Driving > color.value / 1000) {
+          // console.log("value > color " + color.value)
+          var pinBackground = new PinElement({
+            background: "#fb6f04",
+            borderColor: "#b04d02",
+            glyphColor: "#b04d02",
+          });
+        } else {
+          // console.log("value*0.7 < color " + color.value)
+          var pinBackground = new PinElement({
+            background: "#fb0404",
+          });
+        }
+      }
+      //--------------------------------this.value => distance-----------------------------------//
+      else if (document.querySelector('input[name=typevalue]:checked').value = "distance") {
+        if (this.value * 0.7 > color.value / 1000) {
+          // console.log("value*0.7 > color " + color.value)
+          var pinBackground = new PinElement({
+            background: "#0cfb04",
+            borderColor: "#089c03",
+            glyphColor: "#089c03",
+          });
+        } else if (this.value > color.value / 1000) {
+          console.log("value > color " + color.value)
+          var pinBackground = new PinElement({
+            background: "#fb6f04",
+            borderColor: "#b04d02",
+            glyphColor: "#b04d02",
+          });
+        } else {
+          console.log("value*0.7 < color " + color.value)
+          var pinBackground = new PinElement({
+            background: "#fb0404",
+          });
+        }
+      }
+
       //-----------------colorMarker--------------------//
-      const pinBackground = new PinElement({
-        background: "#FBBC04",
-      });
+
       const marker = new AdvancedMarkerElement({
         map: this.map,
         position: place.geometry.location,
@@ -368,13 +440,13 @@ export default {
         ariaLabel: "Uluru",
       });
       marker.addListener("click", () => {
-      infoWindow.close();
-      infoWindow.setContent(contentString);
-      infoWindow.open({
+        infoWindow.close();
+        infoWindow.setContent(contentString);
+        infoWindow.open({
           anchor: marker,
           map,
         });
-    });
+      });
 
       // google.maps.event.addListener(marker, "click", () => {
       //   infowindow.setContent(contentString || "");
@@ -393,7 +465,7 @@ export default {
       //     map,
       //   });
       // });
-      
+
       // ----------------------------infowindow----------------------------------//
       var request = {
         query: place.name,
@@ -478,7 +550,7 @@ export default {
   display: inline;
 }
 
-*/ .pac-icon {
+.pac-icon {
   display: none;
 }
 
@@ -498,5 +570,9 @@ export default {
   right: 0;
   bottom: 0;
   left: 0;
+}
+
+.hide {
+  display: none;
 }
 </style>
