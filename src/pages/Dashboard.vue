@@ -479,21 +479,18 @@ export default {
 
       // ----------------------------infowindow----------------------------------//
       var request = {
-        query: place.name,
-        fields: ['name', 'geometry', 'photos', 'formatted_address', 'types','info_messages'],
-        locationBias: place.geometry.location,
+        placeId: place.place_id,
+        fields: ['photos', 'formatted_address','url'],
       };
 
 
       var service = new google.maps.places.PlacesService(this.map);
       const info = await new Promise((resolve, reject) => {
-        service.findPlaceFromQuery(request, function (results, status) {
+        service.getDetails(request, (place, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
-            for (var i = 0; i < results.length; i++) {
-              const formataddress = results[i]
-              console.log(results[i])
+            console.log(place)
+              const formataddress = place
               resolve(formataddress);
-            }
           }
         })
       });
@@ -507,13 +504,11 @@ export default {
         '<p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br>' +
         '<b>ประเภท :</b> 1 => จำนวน 1 <br>' +
         '<b>ระยะทาง :</b> ' + color.text + ' <br>' +
-        // info.photos +
-        '<p><a href="https://www.google.com/maps/search/?api=1&query=' + place.geometry.location + '&query_place_id=' + place.place_id + '">' +
+        info.photos +
+        '<p><a href="' + info.url + '">' +
         'ดูใน Google Maps</a>' +
         '</div>' +
         '</div>';
-      const photo = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=200&photo_reference=' + info.photo_reference
-      '&key=AIzaSyCEwuKRd9Fqz_RCZoonrVZAbNuVzvrA8JU'
     },
 
 
