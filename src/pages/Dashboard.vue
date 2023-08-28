@@ -1,45 +1,51 @@
-<template>
+<template >
   <div class="content">
     <card type="plain">
+
       <template slot="header">
         <h4 class="card-title">Google Maps</h4>
       </template>
       <div>
-        <section>
-          <div style="position: absolute; z-index: 1;">
-            <div class="row">
-              <div>
-                <input type="text" id="address" name="address" v-model="address">
-                <i class="tim-icons icon-compass-05" @click="locatorButtonPressed"></i>
+        <form @submit="onSuccess">
+          <section>
+            <div style="position: absolute; z-index: 1; margin-right: 5px">
+              <div class="row">
+                <div>
+                  <input type="text" id="address" name="address" v-model="address">
+                  <i class="tim-icons icon-compass-05" @click="locatorButtonPressed"></i>
+                </div>
               </div>
-            </div>
 
-            <div class="row">
-              <input type="text" id="addressto" name="addressto" v-model="addressto">
-            </div>
+              <div class="row" style="margin-right: 5px">
+                <input type="text" id="addressto" name="addressto" v-model="addressto">
+              </div>
 
-            <div class="row">
-              <div class="hide" id="div1">
-                <select v-model="myselect" id="myselect">
-                  <option v-for="user in Usercar" :key="user.namecar" :value="user.ID">
-                    {{ user.namecar }}
-                  </option>
-                </select>
-              </div>
-              <div>
-                <form>
-                  <input type="radio" name="typevalue" id="battery" @click="show2" />battery<br>
-                  <input type="radio" name="typevalue" id="distance" @click="show1" checked />distance<br>
-                  <input type="text" id="value" name="value" v-model="value">
-                </form>
+              <div class="row">
+                <div class="hide" id="div1">
+                  <select v-model="myselect" id="myselect">
+                    <option v-for="user in Usercar" :key="user.namecar" :value="user.ID">
+                      {{ user.namecar }}
+                    </option>
+                  </select>
+                </div>
+                <div>
+                  <form>
+                    <input type="radio" name="typevalue" id="battery" value="battery" @click="show2" />battery<br>
+                    <input type="radio" name="typevalue" id="distance" value="distance" @click="show1"
+                      checked />distance<br>
+                    <input type="text" id="value" name="value" v-model="value">
+                  </form>
+                </div>
+                <div><button type="submit">Go</button></div>
               </div>
             </div>
-          </div>
-        </section>
-        <section>
-          <div id="map" class="map"></div>
-        </section>
+          </section>
+          <section>
+            <div id="map" class="map"></div>
+          </section>
+        </form>
       </div>
+
     </card>
   </div>
 </template>
@@ -70,6 +76,8 @@ export default {
       value: '',
       Model: [],
       DrivingRange: '',
+      radio1: false,
+      radio2: false,
     };
   },
   components: {
@@ -102,6 +110,11 @@ export default {
     }
   },
   methods: {
+    onSuccess(event) {
+      this.route();
+      event.preventDefault();
+
+    },
     show1() {
       document.getElementById('div1').style.display = 'none';
     },
@@ -134,6 +147,7 @@ export default {
     },
     async route() {
       if (!this.originPlaceId || !this.destinationPlaceId || !this.value) {
+        console.log("---")
         return;
       }
 
@@ -154,22 +168,18 @@ export default {
       //   mapOptions);
       // this.directionsRenderer.setMap(map);
       //----------------------------------firebase-----------------------------//
-      if (document.querySelector('input[name=typevalue]:checked').value = "battery") {
-        // const q = query(collection(firebase.db, 'Usercar'), where('namecar', '==', document.getElementById("myselect").value), where('email', '==', 'mo@gmail.com'))
-        // const querySnap = await getDocs(q);
-        // querySnap.forEach((doc) => {
-
-        //   this.Model.push({ ID: doc.id, ...doc.data() })
-        //   console.log(doc.data());
-        // })
-        // this.Model
-        const docSnap = await getDoc(doc(firebase.db, 'Usercar' ,document.getElementById("myselect").value))
+      this.radio1 = document.getElementById('battery');
+      this.radio2 = document.getElementById('distance');
+      if (this.radio1.checked) {
+        console.log(this.radio1)
+        const docSnap = await getDoc(doc(firebase.db, 'Usercar', document.getElementById("myselect").value))
         if (docSnap.exists()) {
           this.DrivingRange = docSnap.data().DrivingRange
         } else {
           console.log('Document does not exist')
         }
       }
+
 
       const me = this;
       this.directionsService.route(
@@ -205,8 +215,8 @@ export default {
 
             service.nearbySearch({
               location: { lat: this.waypoints[j][0], lng: this.waypoints[j][1] },
-              radius: '500',
-              name: ['EA anywhere', 'Charging Station', 'PTT Charging Station', 'MG Super Charge Charging Station', 'EleXA Charging Station', 'EGAT Charging Station'],
+              radius: '1000',
+              name: ['electric vehicle charging station', 'EA anywhere', 'Charging Station', 'PTT Charging Station', 'MG Super Charge Charging Station', 'EleXA Charging Station', 'EGAT Charging Station'],
             }, this.callback);
           }
         },
@@ -261,6 +271,7 @@ export default {
     },
 
     //-------------------------------KEY--------------------------------//
+
     getAddressFrom(lat, long) {
       axios.get("https://maps.googleapis.com/maps/api/geocode/json?latlng="
         + lat +
@@ -380,7 +391,7 @@ export default {
 
       var color = await this.matrix(place);
       //--------------------------------this.value => battery-----------------------------------//
-      if (document.querySelector('input[name=typevalue]:checked').value = "battery") {
+      if (this.radio1.checked) {
         var Driving = this.DrivingRange * (this.value / 100)
         if (Driving * 0.7 > color.value / 1000) {
           // console.log("value*0.7 > color " + color.value)
@@ -404,7 +415,7 @@ export default {
         }
       }
       //--------------------------------this.value => distance-----------------------------------//
-      else if (document.querySelector('input[name=typevalue]:checked').value = "distance") {
+      else if (this.radio2.checked) {
         if (this.value * 0.7 > color.value / 1000) {
           // console.log("value*0.7 > color " + color.value)
           var pinBackground = new PinElement({
@@ -469,7 +480,7 @@ export default {
       // ----------------------------infowindow----------------------------------//
       var request = {
         query: place.name,
-        fields: ['name', 'geometry', 'photos', 'business_status', 'formatted_address'],
+        fields: ['name', 'geometry', 'photos', 'formatted_address', 'types','info_messages'],
         locationBias: place.geometry.location,
       };
 
@@ -480,6 +491,7 @@ export default {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             for (var i = 0; i < results.length; i++) {
               const formataddress = results[i]
+              console.log(results[i])
               resolve(formataddress);
             }
           }
@@ -530,6 +542,7 @@ export default {
     );
     this.setupPlaceChangedListener(originAutocomplete, "ORIG");
     this.setupPlaceChangedListener(destinationAutocomplete, "DEST");
+
     this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
     this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
 
