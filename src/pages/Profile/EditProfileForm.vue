@@ -5,7 +5,7 @@
         <h5 class="title">Edit Profile</h5>
       </template>
       <div class="row">
-        <div class="col-md-12 text-left">
+        <div class="col-md-8 text-left">
           <!-- <p>name car : {{ Energy }}</p>  -->
           <base-input label="namecar" placeholder= "namecar" v-model="namecar">
           </base-input>
@@ -13,28 +13,30 @@
       </div>
 
       <div class="row">
-        <div class="col-md-12 text-left">
+        <div class="col-md-8 text-left">
           <base-input label="Brand" v-model="Brand" placeholder="Brand">
           </base-input>
         </div>
       </div>
 
       <div class="row">
-        <div class="col-md-12 text-left">
+        <div class="col-md-8 text-left">
           <base-input label="Model" v-model="Model" placeholder="Model">
           </base-input>
         </div>
       </div>
 
       <div class="row">
-        <div class="col-md-4 pr-md-1 text-left">
-          <base-input label="Type" v-model="Type" placeholder="Type">
+        <div class="col-md-4  text-left">
+          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km">
           </base-input>
         </div>
-        <div class="col-md-4 px-md-1 text-left">
-          <base-input label="Electric Energy Consumption" v-model="Energy"
-            placeholder="Wh/km">
-          </base-input>
+        <div class="col-md-4  text-left">
+          Type<br>
+          <select v-model="Type" id="Type">
+            <option value="CCS">CCS-type2</option>
+            <option value="type2">type2</option>
+          </select>
         </div>
       </div>
 
@@ -60,7 +62,7 @@ export default {
       Type: '',
       Brand: '',
       Model: '',
-      Energy: '',
+      DrivingRange: '',
       email: '',
     }
   },
@@ -76,7 +78,7 @@ export default {
         this.Type = docSnap.data().Type
         this.Brand = docSnap.data().Brand
         this.Model = docSnap.data().Model
-        this.Energy = docSnap.data().Energy
+        this.DrivingRange = docSnap.data().DrivingRange
       } else {
         console.log('Document does not exist')
       }
@@ -89,7 +91,7 @@ export default {
         Type: this.Type,
         Brand: this.Brand,
         Model: this.Model,
-        Energy: this.Energy,
+        DrivingRange: this.DrivingRange,
       })
       this.$router.push('/profile')
     },

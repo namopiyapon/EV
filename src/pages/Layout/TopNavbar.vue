@@ -58,12 +58,6 @@
                   </a>
                 </li>
 
-                <li class="nav-link">
-                  <a href="/#/Appevcharger" class="nav-item dropdown-item">
-                    Give EV Charger
-                  </a>
-                </li>
-
                 <li class="dropdown-divider"></li>
 
                 <li class="nav-link">

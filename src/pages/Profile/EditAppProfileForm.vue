@@ -5,34 +5,37 @@
         <h5 class="title">App Profile</h5>
       </template>
       <div class="row">
-        <div class="col-md-12 text-left">
+        <div class="col-md-8 text-left">
           <base-input label="namecar" placeholder="namecar" v-model="namecar">
           </base-input>
         </div>
       </div>
 
       <div class="row">
-        <div class="col-md-12 text-left">
+        <div class="col-md-8 text-left">
           <base-input label="Brand" v-model="Brand" placeholder="Brand">
           </base-input>
         </div>
       </div>
 
       <div class="row">
-        <div class="col-md-12 text-left">
+        <div class="col-md-8 text-left">
           <base-input label="Model" v-model="Model" placeholder="Model">
           </base-input>
         </div>
       </div>
 
       <div class="row">
-        <div class="col-md-4 pr-md-1 text-left">
-          <base-input label="Type" v-model="Type" placeholder="Type">
+        <div class="col-md-4  text-left">
+          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km">
           </base-input>
         </div>
-        <div class="col-md-4 px-md-1 text-left">
-          <base-input label="Electric Energy Consumption" v-model="Energy" placeholder="Wh/km">
-          </base-input>
+        <div class="col-md-4  text-left">
+          Type<br>
+          <select v-model="Type" id="Type">
+            <option value="CCS">CCS-type2</option>
+            <option value="type2">type2</option>
+          </select>
         </div>
       </div>
 
@@ -57,16 +60,19 @@ export default {
       Type: '',
       Brand: '',
       Model: '',
-      Energy: '',
+      DrivingRange: '',
       email: '',
+      myselect:'',
     }
   },
   created() {
     //this.createUser()
+    
   },
 
   methods: {
     onSuccess(event) {
+      console.log(this.Type)
       this.createUser()
       event.preventDefault();
       alert("App")
@@ -77,7 +83,7 @@ export default {
         .catch((error) => {
           alert(error.message);
         });
-        
+
     },
     async createUser() {
       // 'users' collection reference
@@ -88,7 +94,7 @@ export default {
         Type: this.Type,
         Brand: this.Brand,
         Model: this.Model,
-        Energy: this.Energy,
+        DrivingRange: this.DrivingRange,
         email: this.$store.state.email,
       }
       // create document and return reference to it
