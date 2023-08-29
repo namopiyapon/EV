@@ -78,6 +78,7 @@ export default {
       DrivingRange: '',
       radio1: false,
       radio2: false,
+      currentInfoWindow: null,
     };
   },
   components: {
@@ -424,14 +425,12 @@ export default {
             glyphColor: "#089c03",
           });
         } else if (this.value > color.value / 1000) {
-          console.log("value > color " + color.value)
           var pinBackground = new PinElement({
             background: "#fb6f04",
             borderColor: "#b04d02",
             glyphColor: "#b04d02",
           });
         } else {
-          console.log("value*0.7 < color " + color.value)
           var pinBackground = new PinElement({
             background: "#fb0404",
           });
@@ -446,41 +445,26 @@ export default {
         content: pinBackground.element,
       });
 
-      const infoWindow = new google.maps.InfoWindow({
-        maxWidth: 300,
-        ariaLabel: "Uluru",
-      });
-      marker.addListener("click", () => {
-        infoWindow.close();
-        infoWindow.setContent(contentString);
-        infoWindow.open({
-          anchor: marker,
-          map,
-        });
-      });
-
-      // google.maps.event.addListener(marker, "click", () => {
-      //   infowindow.setContent(contentString || "");
-      //   infowindow.open(this.map);
-      // });
-
-      // const infowindow = new google.maps.InfoWindow({
-      //   content: contentString,
-      //   maxWidth: 300,
-      //   ariaLabel: "Uluru",
-      // });
-      // marker.addListener("click", () => {
-      //   infoWindow.close();
-      //   infowindow.open({
-      //     anchor: marker,
-      //     map,
-      //   });
-      // });
-
       // ----------------------------infowindow----------------------------------//
+
+      marker.addListener("click", () => {
+        console.log("currentInfoWindow " + this.currentInfoWindow)
+        if (this.currentInfoWindow) {
+          this.currentInfoWindow.close();
+        }
+        const infoWindow = new google.maps.InfoWindow({
+          maxWidth: 300,
+          ariaLabel: "Uluru",
+        });
+        infoWindow.setContent(contentString);
+        infoWindow.open({ anchor: marker, map, });
+        this.currentInfoWindow = infoWindow;
+      });
+
+
       var request = {
         placeId: place.place_id,
-        fields: ['photos', 'formatted_address','url'],
+        fields: ['photos', 'formatted_address', 'url'],
       };
 
 
@@ -488,9 +472,9 @@ export default {
       const info = await new Promise((resolve, reject) => {
         service.getDetails(request, (place, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
-            console.log(place)
-              const formataddress = place
-              resolve(formataddress);
+            // console.log(place)
+            const formataddress = place
+            resolve(formataddress);
           }
         })
       });
@@ -510,8 +494,6 @@ export default {
         '</div>' +
         '</div>';
     },
-
-
   },
 
   mounted() {
