@@ -6,14 +6,14 @@
       </template>
       <div class="row">
         <div class="col-md-5 text-left">
-          <base-input label="E-mail" type="email" placeholder="E-mail" v-model="form.email">
+          <base-input label="E-mail" type="email" placeholder="E-mail" v-model="form.email" required>
           </base-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-5 text-left">
-          <base-input label="password" type="password" v-model="form.password" placeholder="password">
+          <base-input label="password" type="password" v-model="form.password" placeholder="password" required>
           </base-input>
         </div>
       </div>

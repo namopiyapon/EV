@@ -9,7 +9,7 @@
           label="Topic"
           placeholder="topic"
           v-model="model.topic"
-        >
+          required >
         </base-input>
       </div>
     </div>
@@ -24,7 +24,7 @@
             class="form-control"
             placeholder="Here can be your description"
             v-model="model.about"
-          >
+            required >
           </textarea>
         </base-input>
       </div>

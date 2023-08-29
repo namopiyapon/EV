@@ -6,13 +6,13 @@
       </template>
       <div class="row">
         <div class="col-md-6 text-left">
-          <base-input id="email" type="email" label="E-mail" placeholder="E-mail" v-model="model.email">
+          <base-input id="email" type="email" label="E-mail" placeholder="E-mail" v-model="model.email" required>
           </base-input>
         </div>
       </div>
       <div class="row"> 
         <div class="col-md-6 text-left">
-          <base-input id="password" type="password" label="password" placeholder="password" v-model="model.password">
+          <base-input id="password" type="password" label="password" placeholder="password" v-model="model.password" required>
           </base-input>
         </div>
       </div>

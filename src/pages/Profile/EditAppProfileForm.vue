@@ -6,28 +6,28 @@
       </template>
       <div class="row">
         <div class="col-md-8 text-left">
-          <base-input label="namecar" placeholder="namecar" v-model="namecar">
+          <base-input label="namecar" placeholder="namecar" v-model="namecar" required>
           </base-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-8 text-left">
-          <base-input label="Brand" v-model="Brand" placeholder="Brand">
+          <base-input label="Brand" v-model="Brand" placeholder="Brand" required>
           </base-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-8 text-left">
-          <base-input label="Model" v-model="Model" placeholder="Model">
+          <base-input label="Model" v-model="Model" placeholder="Model" required>
           </base-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-4  text-left">
-          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km">
+          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km(only number)" pattern="[0-9]" required >
           </base-input>
         </div>
         <div class="col-md-4  text-left">
@@ -62,12 +62,12 @@ export default {
       Model: '',
       DrivingRange: '',
       email: '',
-      myselect:'',
+      myselect: '',
     }
   },
   created() {
     //this.createUser()
-    
+
   },
 
   methods: {
