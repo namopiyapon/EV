@@ -79,6 +79,7 @@ export default {
       radio1: false,
       radio2: false,
       currentInfoWindow: null,
+      copymarks: [],
     };
   },
   components: {
@@ -86,7 +87,6 @@ export default {
   },
   created() {
     this.getUsers();
-
   },
   computed: {
     //-------------------------------SHOW MAP--------------------------------//
@@ -111,6 +111,7 @@ export default {
     }
   },
   methods: {
+
     onSuccess(event) {
       this.route();
       event.preventDefault();
@@ -148,27 +149,10 @@ export default {
     },
     async route() {
       if (!this.originPlaceId || !this.destinationPlaceId || !this.value) {
-        console.log("---")
         return;
       }
-
-      // this.directionsService = new google.maps.DirectionsService();
-      // this.directionsRenderer = new google.maps.DirectionsRenderer();
-
-      // let myLatlng = new window.google.maps.LatLng(13.7563, 100.5018);
-      // let mapOptions = {
-      //   mapTypeControl: false,
-      //   zoom: 9,
-      //   mapId: '6fa16203b0a4dcbf',
-      //   center: myLatlng,
-      //   scrollwheel: false,
-      //   streetViewControl: false,
-      // }
-      // let map = new window.google.maps.Map(
-      //   document.getElementById("map"),
-      //   mapOptions);
-      // this.directionsRenderer.setMap(map);
       //----------------------------------firebase-----------------------------//
+      this.resetmarkes();
       this.radio1 = document.getElementById('battery');
       this.radio2 = document.getElementById('distance');
       if (this.radio1.checked) {
@@ -444,6 +428,7 @@ export default {
         position: place.geometry.location,
         content: pinBackground.element,
       });
+      this.copymarks.push(marker);
 
       // ----------------------------infowindow----------------------------------//
 
@@ -493,6 +478,13 @@ export default {
         'ดูใน Google Maps</a>' +
         '</div>' +
         '</div>';
+    },
+    //--------------------------------------resetmarkes------------------------------------//
+    resetmarkes() {
+      for (var i = 0; i < this.copymarks.length; i++) {
+        this.copymarks[i].setMap(null);
+      }
+      this.copymarks = []; // เคลียร์อาร์เรย์ markers
     },
   },
 
