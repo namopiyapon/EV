@@ -126,7 +126,7 @@ export default {
       }
       
     },
-    //-----------------------------------APP------------------------------------//
+    //-----------------------------------ADD------------------------------------//
     async onSuccess(event) {
       event.preventDefault();
       await updateDoc(doc(firebase.db, 'ChargingStation', this.$store.state.idStation), {

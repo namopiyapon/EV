@@ -2,18 +2,18 @@
   <div class="content">
     <div class="row">
       <div class="col-md-12">
-        <edit-profile-form :model="model"> </edit-profile-form>
+        <edit-Addprofile-form :model="model"> </edit-Addprofile-form>
       </div>
       
     </div>
   </div>
 </template>
 <script>
-import EditProfileForm from "./Profile/EditAppProfileForm.vue";
+import EditAddProfileForm from "./Profile/EditAddProfileForm.vue";
 
 export default {
   components: {
-    EditProfileForm,
+    EditAddProfileForm,
     
   },
   data() {

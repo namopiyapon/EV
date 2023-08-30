@@ -2,7 +2,7 @@
   <form @submit="onSuccess"> <!-- //@submit="addUsercar" -->
     <card>
       <template slot="header">
-        <h5 class="title">App Profile</h5>
+        <h5 class="title">ADD Profile</h5>
       </template>
       <div class="row">
         <div class="col-md-8 text-left">
@@ -75,7 +75,7 @@ export default {
       console.log(this.Type)
       this.createUser()
       event.preventDefault();
-      alert("App")
+      alert("ADD")
       // this.$store.commit('settext', this.namecar)
       // console.log('->', this.$store.state.namecar)
       this.$router.push("/profile").catch(() => { })

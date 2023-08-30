@@ -2,7 +2,7 @@
   <form @submit="onSuccess">
     <card>
       <template slot="header">
-        <h5 class="title">App EV Charger</h5>
+        <h5 class="title">ADD EV Charger</h5>
       </template>
       <div class="row">
         <div class="col-md-8 text-left">
@@ -106,11 +106,11 @@ export default {
     });
   },
   methods: {
-    //-----------------------------------APP------------------------------------//
+    //-----------------------------------ADD------------------------------------//
     onSuccess(event) {
       this.createUser()
       event.preventDefault();
-      alert("App")
+      alert("ADD")
       this.$router.push("/editevcharger")
     },
     async createUser() {

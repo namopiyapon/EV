@@ -16,10 +16,10 @@
         </sidebar-link>
       </div>
 
-      <sidebar-link to="/appuser">
+      <sidebar-link to="/adduser">
         <i class="tim-icons icon-simple-add"></i>
         <template v-if="!isRTL">
-          <p>APP</p>
+          <p>ADD</p>
         </template>
       </sidebar-link>
 

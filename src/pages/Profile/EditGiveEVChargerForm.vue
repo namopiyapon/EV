@@ -106,11 +106,11 @@ export default {
     });
   },
   methods: {
-    //-----------------------------------APP------------------------------------//
+    //-----------------------------------ADD------------------------------------//
     onSuccess(event) {
       this.createUser()
       event.preventDefault();
-      alert("App")
+      alert("ADD")
       this.$router.push("/editevcharger")
     },
     async createUser() {
