@@ -452,6 +452,34 @@ export default {
         fields: ['photos', 'formatted_address', 'url'],
       };
 
+      //-------------------------------------------getDetails-----------------------------------------------//
+      // console.log(place.place_id)
+      // const clientId = 'DVB0U0KC2KQOS2GT4FGLLCCUTNAOME4QQUSKIH4LURNMQ4ZS';
+      // const clientSecret = 'UA5NCNNZ4Y4OT3HSYOMDWXYXJTCDE3NBDMLNJFGJJ3ECDCEQ';
+      // const placeId = place.place_id; // รหัสสถานที่ที่คุณต้องการเรียกข้อมูล
+
+      // const options = {
+      //   method: 'GET',
+      //   headers: {
+      //     Accept: 'application/json',
+      //     Authorization: `Bearer ${clientId}:${clientSecret}`
+      //   }
+      // };
+
+      // const url = `https://api.foursquare.com/v3/places/${placeId}?fields=description`;
+
+      // fetch(url, options)
+      //   .then(response => response.json())
+      //   .then(data => {
+      //     console.log(data); // ดำเนินการกับข้อมูลที่ได้รับ
+      //   })
+      //   .catch(error => {
+      //     console.error('Error fetching data:', error);
+      //   });
+
+
+      //--------------------------------------------------------------------
+      
 
       var service = new google.maps.places.PlacesService(this.map);
       const info = await new Promise((resolve, reject) => {
