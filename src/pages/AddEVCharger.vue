@@ -2,18 +2,18 @@
   <div class="content">
     <div class="row">
       <div class="col-md-12">
-        <edit-AppEVCharger-form > </edit-AppEVCharger-form>
+        <edit-AddEVCharger-form > </edit-AddEVCharger-form>
       </div>
       
     </div>
   </div>
 </template>
 <script>
-import EditAppEVChargerForm from "./Profile/EditAppEVChargerForm.vue";
+import EditAddEVChargerForm from "./Profile/EditAddEVChargerForm.vue";
 
 export default {
   components: {
-    EditAppEVChargerForm,
+    EditAddEVChargerForm,
     
   },
   data() {

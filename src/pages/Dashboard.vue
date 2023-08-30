@@ -461,7 +461,7 @@ export default {
       // const options = {
       //   method: 'GET',
       //   headers: {
-      //     Accept: 'application/json',
+      //     Accept: 'addlication/json',
       //     Authorization: `Bearer ${clientId}:${clientSecret}`
       //   }
       // };
@@ -479,7 +479,7 @@ export default {
 
 
       //--------------------------------------------------------------------
-      
+
 
       var service = new google.maps.places.PlacesService(this.map);
       const info = await new Promise((resolve, reject) => {

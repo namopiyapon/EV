@@ -4,8 +4,8 @@ import DashboardCharger from "@/pages/Layout/DashboardCharger.vue";
 import Dashboard from "@/pages/Dashboard.vue";
 import Profile from "@/pages/Profile.vue";
 import UserProfile from "@/pages/UserProfile.vue";
-import AppUserProfile from "@/pages/AppUserProfile.vue";
-import AppEVCharger from "@/pages/AppEVCharger.vue";
+import AddUserProfile from "@/pages/AddUserProfile.vue";
+import AddEVCharger from "@/pages/AddEVCharger.vue";
 import GiveEVCharger from "@/pages/GiveEVCharger.vue";
 import EVCharger from "@/pages/EVCharger.vue";
 import EVChargerFrom from "@/pages/EVChargerFrom.vue";
@@ -60,9 +60,9 @@ const routes = [
         component: UserProfile,
       },
       {
-        path: "/appuser",
-        name: "App User Profile",
-        component: AppUserProfile,
+        path: "/adduser",
+        name: "Add User Profile",
+        component: AddUserProfile,
       },
       {
         path: "/profile",
@@ -77,9 +77,9 @@ const routes = [
     redirect: "DashboardCharger",
     children: [
       {
-        path: "/Appevcharger",
-        name: "AppEVCharger",
-        component: AppEVCharger,
+        path: "/Addevcharger",
+        name: "AddEVCharger",
+        component: AddEVCharger,
       },
       {
         path: "/editevcharger",
