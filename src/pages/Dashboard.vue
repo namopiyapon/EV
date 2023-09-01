@@ -8,7 +8,9 @@
       <div>
         <form @submit="onSuccess">
           <section>
-            <div style="position: absolute; z-index: 1; margin-right: 5px">
+            <div style="position: absolute; z-index: 1; margin-right: 5px" class="pac-controls">
+
+
               <div class="row">
                 <div>
                   <input type="text" id="address" name="address" v-model="address">
@@ -452,32 +454,16 @@ export default {
         fields: ['photos', 'formatted_address', 'url'],
       };
 
-      //-------------------------------------------getDetails-----------------------------------------------//
-      // console.log(place.place_id)
-      // const clientId = 'DVB0U0KC2KQOS2GT4FGLLCCUTNAOME4QQUSKIH4LURNMQ4ZS';
-      // const clientSecret = 'UA5NCNNZ4Y4OT3HSYOMDWXYXJTCDE3NBDMLNJFGJJ3ECDCEQ';
-      // const placeId = place.place_id; // รหัสสถานที่ที่คุณต้องการเรียกข้อมูล
+      //-------------------------------------------getphotos-----------------------------------------------//
+      console.log(place)
 
-      // const options = {
-      //   method: 'GET',
-      //   headers: {
-      //     Accept: 'addlication/json',
-      //     Authorization: `Bearer ${clientId}:${clientSecret}`
-      //   }
-      // };
-
-      // const url = `https://api.foursquare.com/v3/places/${placeId}?fields=description`;
-
-      // fetch(url, options)
-      //   .then(response => response.json())
-      //   .then(data => {
-      //     console.log(data); // ดำเนินการกับข้อมูลที่ได้รับ
-      //   })
-      //   .catch(error => {
-      //     console.error('Error fetching data:', error);
-      //   });
-
-
+      const apiKey = 'AIzaSyCEwuKRd9Fqz_RCZoonrVZAbNuVzvrA8JU';
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+      const location = lat + ',' + lng; // เปลี่ยน LATITUDE และ LONGITUDE เป็นพิกัดที่ต้องการ
+      const heading = 0; // เปลี่ยนค่า heading ตามต้องการ
+      const pitch = 0; // เปลี่ยนค่า pitch ตามต้องการ
+      var imageUrl = '';
       //--------------------------------------------------------------------
 
 
@@ -491,20 +477,19 @@ export default {
           }
         })
       });
+
       //----------------------------infowindow----------------------------------//
       var contentString =
         '<div id="content">' +
-        '<div id="siteNotice">' +
-        "</div>" +
         '<h5 id="firstHeading" class="firstHeading">' + place.name + '</h5>' +
         '<div id="bodyContent">' +
-        '<p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br>' +
-        '<b>ประเภท :</b> 1 => จำนวน 1 <br>' +
-        '<b>ระยะทาง :</b> ' + color.text + ' <br>' +
-        info.photos +
-        '<p><a href="' + info.url + '">' +
-        'ดูใน Google Maps</a>' +
-        '</div>' +
+        '<div ><p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br></div>' +
+        '<div class="left"><img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location=' + location + '&heading=' + heading + '&pitch=' + pitch + '&key=' + apiKey + '" alt="Street View Image" ></div>' +
+        '<div class="left"><b>ประเภท :</b> 1 => จำนวน 1 <br>' +
+        '<b>ระยะทาง :</b> ' + color.text + ' <br><div>' +
+        '<div ><p><a  target ="_blank" href="' + info.url + '">' +
+        'ดูใน Google Maps</a></div >' +
+        '</ฝdiv>' +
         '</div>';
     },
     //--------------------------------------resetmarkes------------------------------------//
@@ -584,5 +569,46 @@ export default {
 
 .hide {
   display: none;
+}
+
+.pac-controls {
+  display: inline-block;
+  padding: 5px 11px;
+}
+
+.pac-controls label {
+  font-family: Roboto;
+  font-size: 13px;
+  font-weight: 300;
+}
+
+#address {
+  background-color: #fff;
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+  margin-left: 12px;
+  margin-top: 12px;
+  padding: 0 11px 0 13px;
+  text-overflow: ellipsis;
+  width: 200px;
+
+}
+
+#addressto {
+  background-color: #fff;
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+  margin-left: 12px;
+  padding: 0 11px 0 13px;
+  text-overflow: ellipsis;
+  width: 200px;
+}
+
+.left {
+  text-align: left;
+  float:left;
+  margin-left: 12px;
 }
 </style>
