@@ -1,6 +1,10 @@
 <template>
  <form @submit="onSuccess" @reset="ondelete" >  <!-- //@submit="addUsercar" -->
     <card>
+
+      <div style="display: none">
+        {{ getCountry() }}
+      </div>
       <template slot="header">
         <h5 class="title">Edit Profile</h5>
       </template>
@@ -28,7 +32,7 @@
 
       <div class="row">
         <div class="col-md-4  text-left">
-          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km(only number)" pattern="[0-9]" required>
+          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km(only number)" required>
           </base-input>
         </div>
         <div class="col-md-4  text-left">
@@ -56,6 +60,10 @@ import firebase from './Firebase.js'
 import BaseButton from "@/components/BaseButton";
 
 export default {
+  props: [
+    'model'
+
+  ],
   data() {
     return {
       namecar: '',
@@ -66,9 +74,9 @@ export default {
       email: '',
     }
   },
-  mounted() {
-    this.getCountry()
-  },
+  // updated() {
+  //   this.getCountry()
+  // },
   
   methods: {
     async getCountry() {

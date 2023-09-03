@@ -110,7 +110,7 @@ export default {
 
       this.$store.commit('SET_IDTEST', id)
       this.$router.push('/profile')
-    }
+    },
 
   },
 

@@ -20,7 +20,14 @@ export default {
   },
   data() {
     return {
-      model: {}
+      model: {
+        namecar: 'AAA',
+        Type: '',
+        Brand: '',
+        Model: '',
+        DrivingRange: '',
+        email: '',
+      }
       //Usercar: []
     };
   },

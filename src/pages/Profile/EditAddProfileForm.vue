@@ -27,7 +27,7 @@
 
       <div class="row">
         <div class="col-md-4  text-left">
-          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km(only number)" pattern="[0-9]" required >
+          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km(only number)" required >
           </base-input>
         </div>
         <div class="col-md-4  text-left">

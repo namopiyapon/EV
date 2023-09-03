@@ -6,40 +6,34 @@
         <h4 class="card-title">Google Maps</h4>
       </template>
       <div>
-        <form @submit="onSuccess">
+        <form>
           <section>
-            <div style="position: absolute; z-index: 1; margin-right: 5px" class="pac-controls">
+            <div style="position: absolute; z-index: 1; margin-right: 5px" class="pac-card" id="pac-card">
 
-
-              <div class="row">
-                <div>
-                  <input type="text" id="address" name="address" v-model="address">
-                  <i class="tim-icons icon-compass-05" @click="locatorButtonPressed"></i>
-                </div>
+              <div class="pac-controls">
+                <label for="value">choose battery or distance</label><br>
+                <input type="radio" name="typevalue" id="battery" value="battery" @click="show2" />battery
+                <input type="radio" name="typevalue" id="distance" value="distance" @click="show1" checked />distance<br>
+                <input type="text" id="value" name="value" v-model="value" placeholder="value">
+                <button type="submit" @click="onSuccess">Go</button>
               </div>
 
-              <div class="row" style="margin-right: 5px">
+              <div class="row hide " id="div1">
+                <label for="myselect">choose my car</label><br>
+                <select v-model="myselect" id="myselect">
+                  <option v-for="user in Usercar" :key="user.namecar" :value="user.ID">
+                    {{ user.namecar }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="row input-container" id="pac-container">
+                <label for="address">address</label><br>
+                <input type="text" id="address" name="address" v-model="address">
+                <i class="tim-icons icon-compass-05" @click="locatorButtonPressed"></i>
                 <input type="text" id="addressto" name="addressto" v-model="addressto">
               </div>
 
-              <div class="row">
-                <div class="hide" id="div1">
-                  <select v-model="myselect" id="myselect">
-                    <option v-for="user in Usercar" :key="user.namecar" :value="user.ID">
-                      {{ user.namecar }}
-                    </option>
-                  </select>
-                </div>
-                <div>
-                  <form>
-                    <input type="radio" name="typevalue" id="battery" value="battery" @click="show2" />battery<br>
-                    <input type="radio" name="typevalue" id="distance" value="distance" @click="show1"
-                      checked />distance<br>
-                    <input type="text" id="value" name="value" v-model="value">
-                  </form>
-                </div>
-                <div><button type="submit">Go</button></div>
-              </div>
             </div>
           </section>
           <section>
@@ -54,7 +48,7 @@
 <script>
 import { Card } from "@/components/index";
 import axios from 'axios';
-import { collection, where, query, getDocs, getDoc, doc } from "firebase/firestore"
+import { collection, where, query, getDocs, getDoc, doc, addDoc } from "firebase/firestore"
 import firebase from '@/Firebase.js'
 
 export default {
@@ -320,6 +314,9 @@ export default {
         // console.log(doc.data());
       })
     },
+
+
+
     //-------------------------------CALLBACK--------------------------------//
     async callback(results, status) {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
@@ -434,7 +431,7 @@ export default {
 
       // ----------------------------infowindow----------------------------------//
 
-      marker.addListener("click", () => {
+      marker.addListener("click", async () => {
         console.log("currentInfoWindow " + this.currentInfoWindow)
         if (this.currentInfoWindow) {
           this.currentInfoWindow.close();
@@ -444,8 +441,46 @@ export default {
           ariaLabel: "Uluru",
         });
         infoWindow.setContent(contentString);
-        infoWindow.open({ anchor: marker, map, });
-        this.currentInfoWindow = infoWindow;
+        infoWindow.open({ anchor: marker, map, })
+        this.currentInfoWindow = await infoWindow;
+
+        console.log('-----> ', this.currentInfoWindow, this.currentInfoWindow.shouldFocus)
+
+        // let i = 0
+        // while (!this.currentInfoWindow.shouldFocus) {
+        //   console.log("gg", this.currentInfoWindow.shouldFocus)
+
+        //   var g = document.getElementById('add-data')
+        //   console.log("g is ", g)
+        //   i++
+
+        //   if (i === 5000) {
+        //     break
+        //   }
+        // }
+
+ //---------------------------ADD firebase-----------------------------------------
+
+        var g = document.getElementById('add-data')
+        console.log("g 2 is ", g)
+        g.onclick = async function() {
+          console.log("----> CLICK")
+          // 'users' collection reference
+          const colRef = collection(firebase.db, 'station')
+          // data to send
+          const dataObj = {
+            name: place.name,
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng(),
+            url: info.url,
+            place_id: place.place_id,
+          }
+          // create document and return reference to it
+          const docRef = await addDoc(colRef, dataObj)
+          console.log('Document was created with ID:', docRef.id)
+          alert("ADD")
+        }
+
       });
 
 
@@ -455,7 +490,7 @@ export default {
       };
 
       //-------------------------------------------getphotos-----------------------------------------------//
-      console.log(place)
+      console.log("-----------------")
 
       const apiKey = 'AIzaSyCEwuKRd9Fqz_RCZoonrVZAbNuVzvrA8JU';
       const lat = place.geometry.location.lat();
@@ -479,6 +514,7 @@ export default {
       });
 
       //----------------------------infowindow----------------------------------//
+      var url = "'" + info.url + "'"
       var contentString =
         '<div id="content">' +
         '<h5 id="firstHeading" class="firstHeading">' + place.name + '</h5>' +
@@ -489,8 +525,11 @@ export default {
         '<b>ระยะทาง :</b> ' + color.text + ' <br><div>' +
         '<div ><p><a  target ="_blank" href="' + info.url + '">' +
         'ดูใน Google Maps</a></div >' +
-        '</ฝdiv>' +
+        '</div>' +
+        `<div><button  type="button" id="add-data" >ADD DATA</button></div>` +
+        '</div>' +
         '</div>';
+
     },
     //--------------------------------------resetmarkes------------------------------------//
     resetmarkes() {
@@ -525,8 +564,8 @@ export default {
     this.setupPlaceChangedListener(originAutocomplete, "ORIG");
     this.setupPlaceChangedListener(destinationAutocomplete, "DEST");
 
-    this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
-    this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
+    // this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
+    // this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
 
   },
 
@@ -582,7 +621,7 @@ export default {
   font-weight: 300;
 }
 
-#address {
+.box {
   background-color: #fff;
   font-family: Roboto;
   font-size: 15px;
@@ -595,7 +634,49 @@ export default {
 
 }
 
-#addressto {
+.left {
+  text-align: left;
+  float: left;
+  margin-left: 12px;
+}
+
+select {
+  /* padding: 16px 20px; */
+  border: none;
+  border-radius: 4px;
+  background-color: #f1f1f1;
+}
+
+.pac-card {
+  background-color: #fff;
+  border: 0;
+  border-radius: 2px;
+  box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+  margin: 10px;
+  padding: 0 0.5em;
+  font: 400 18px Roboto, Arial, sans-serif;
+  overflow: hidden;
+  font-family: Roboto;
+  padding: 0;
+}
+
+#pac-container {
+  padding-bottom: 12px;
+  margin-right: 12px;
+}
+
+.pac-controls {
+  display: inline-block;
+  padding: 5px 11px;
+}
+
+.pac-controls label {
+  font-family: Roboto;
+  font-size: 13px;
+  font-weight: 300;
+}
+
+#pac-input {
   background-color: #fff;
   font-family: Roboto;
   font-size: 15px;
@@ -603,12 +684,10 @@ export default {
   margin-left: 12px;
   padding: 0 11px 0 13px;
   text-overflow: ellipsis;
-  width: 200px;
+  width: 400px;
 }
 
-.left {
-  text-align: left;
-  float:left;
-  margin-left: 12px;
+#pac-input:focus {
+  border-color: #4d90fe;
 }
 </style>
