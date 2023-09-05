@@ -8,29 +8,30 @@
       <div>
         <form>
           <section>
-            <div style="position: absolute; z-index: 1; margin-right: 5px" class="pac-card" id="pac-card">
+            <div style="position: absolute; z-index: 1; " class="pac-card" id="pac-card">
 
               <div class="pac-controls">
-                <label for="value">choose battery or distance</label><br>
+                choose:
                 <input type="radio" name="typevalue" id="battery" value="battery" @click="show2" />battery
                 <input type="radio" name="typevalue" id="distance" value="distance" @click="show1" checked />distance<br>
                 <input type="text" id="value" name="value" v-model="value" placeholder="value">
                 <button type="submit" @click="onSuccess">Go</button>
-              </div>
+              </div><br>
 
-              <div class="row hide " id="div1">
-                <label for="myselect">choose my car</label><br>
+              <div class="row hide" id="div1">
+                my car:
                 <select v-model="myselect" id="myselect">
                   <option v-for="user in Usercar" :key="user.namecar" :value="user.ID">
                     {{ user.namecar }}
                   </option>
                 </select>
-              </div>
+              </div><br>
 
-              <div class="row input-container" id="pac-container">
-                <label for="address">address</label><br>
-                <input type="text" id="address" name="address" v-model="address">
-                <i class="tim-icons icon-compass-05" @click="locatorButtonPressed"></i>
+              <div class="row" id="pac-container">
+                <div class="input-group">
+                  <input type="text" id="address" name="address" v-model="address">
+                  <i class="tim-icons icon-compass-05" @click="locatorButtonPressed"></i>
+                </div>
                 <input type="text" id="addressto" name="addressto" v-model="addressto">
               </div>
 
@@ -76,6 +77,7 @@ export default {
       radio2: false,
       currentInfoWindow: null,
       copymarks: [],
+      station: [],
     };
   },
   components: {
@@ -443,27 +445,14 @@ export default {
         infoWindow.setContent(contentString);
         infoWindow.open({ anchor: marker, map, })
         this.currentInfoWindow = await infoWindow;
+        // console.log('-----> ', this.currentInfoWindow, this.currentInfoWindow.shouldFocus)
 
-        console.log('-----> ', this.currentInfoWindow, this.currentInfoWindow.shouldFocus)
 
-        // let i = 0
-        // while (!this.currentInfoWindow.shouldFocus) {
-        //   console.log("gg", this.currentInfoWindow.shouldFocus)
-
-        //   var g = document.getElementById('add-data')
-        //   console.log("g is ", g)
-        //   i++
-
-        //   if (i === 5000) {
-        //     break
-        //   }
-        // }
-
- //---------------------------ADD firebase-----------------------------------------
+        //---------------------------ADD firebase-----------------------------------------//
 
         var g = document.getElementById('add-data')
-        console.log("g 2 is ", g)
-        g.onclick = async function() {
+        // console.log("g 2 is ", g)
+        g.onclick = async function () {
           console.log("----> CLICK")
           // 'users' collection reference
           const colRef = collection(firebase.db, 'station')
@@ -481,9 +470,10 @@ export default {
           alert("ADD")
         }
 
+
       });
 
-
+      this.getstation(place)
       var request = {
         placeId: place.place_id,
         fields: ['photos', 'formatted_address', 'url'],
@@ -521,15 +511,17 @@ export default {
         '<div id="bodyContent">' +
         '<div ><p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br></div>' +
         '<div class="left"><img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location=' + location + '&heading=' + heading + '&pitch=' + pitch + '&key=' + apiKey + '" alt="Street View Image" ></div>' +
+
         '<div class="left"><b>ประเภท :</b> 1 => จำนวน 1 <br>' +
         '<b>ระยะทาง :</b> ' + color.text + ' <br><div>' +
+
         '<div ><p><a  target ="_blank" href="' + info.url + '">' +
         'ดูใน Google Maps</a></div >' +
         '</div>' +
-        `<div><button  type="button" id="add-data" >ADD DATA</button></div>` +
+        `<div ><button  type="button" id="add-data" >ADD DATA</button></div>` +
         '</div>' +
         '</div>';
-
+      //v-if="this.$store.state.email == ''
     },
     //--------------------------------------resetmarkes------------------------------------//
     resetmarkes() {
@@ -537,6 +529,19 @@ export default {
         this.copymarks[i].setMap(null);
       }
       this.copymarks = []; // เคลียร์อาร์เรย์ markers
+    },
+
+    //---------------------------get firebase-----------------------------------------//
+    async getstation(place) {
+
+      const q = query(collection(firebase.db, 'station'), where('place_id', '==', place.place_id))
+      const querySnap = await getDocs(q);
+
+      querySnap.forEach((doc) => {
+        this.station.push({ ID: doc.id, ...doc.data() })
+        console.log(doc.data());
+      })
+
     },
   },
 
@@ -572,122 +577,115 @@ export default {
 };
 </script>
 <style>
-#infowindow-content .title {
-  font-weight: bold;
+/* ปรับแต่งสไตล์ของ .input-group */
+.input-group {
+  position: relative;
+  margin-bottom: 10px;
 }
 
-#infowindow-content {
-  display: none;
+/* ปรับแต่งสไตล์ของ icon ด้านขวาของ input */
+.tim-icons.icon-compass-05 {
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  right: 25px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  /* เพิ่ม pointer cursor เมื่อเอาเมาส์ไปวางที่ icon */
 }
 
-#map #infowindow-content {
-  display: inline;
+/* ปรับแต่งสไตล์ของ input */
+#address {
+  padding-right: 35px;
+  width: 100%;
+  font-size: 14px;
+  padding: 5px 10px;
+  /* ปรับแต่ง padding และ font-size */
+  border: none;
+  border-radius: 4px;
+  background-color: #f1f1f1;
+  margin-right: 20px;
+  margin-left: 20px;
+
 }
 
-.pac-icon {
-  display: none;
+#addressto {
+  padding-right: 35px;
+  width: 100%;
+  font-size: 14px;
+  padding: 5px 10px;
+  /* ปรับแต่ง padding และ font-size */
+  border: none;
+  border-radius: 4px;
+  background-color: #f1f1f1;
+  margin-right: 20px;
+  margin-left: 20px;
 }
 
-.pac-item {
-  padding: 10px;
-  font-size: 16px;
+/* ปรับแต่งสไตล์ของปุ่ม Go */
+.pac-controls button {
+  margin-top: 10px;
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
   cursor: pointer;
 }
 
-.pac-item:hover {
-  background-color: #ececec;
+.pac-controls button:hover {
+  background-color: #0056b3;
 }
 
-#map {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-
-.hide {
+/* ซ่อน .row ที่มีคลาส .hide */
+.row.hide {
   display: none;
 }
 
-.pac-controls {
-  display: inline-block;
-  padding: 5px 11px;
+
+/* ปรับแต่งสไตล์ของ input และ select ใน #pac-container */
+.pac-controls input[type="text"] {
+  padding-right: 35px;
+  width: 50%;
+  font-size: 14px;
+  padding: 5px 10px;
+  /* ปรับแต่ง padding และ font-size */
+  border: none;
+  border-radius: 4px;
+  background-color: #f1f1f1;
+  margin-right: 5px;
+  margin-left: 10px;
 }
 
-.pac-controls label {
+#pac-container select {
+  width: 100%;
+
+}
+
+/* ปรับแต่งสไตล์ของ .pac-card */
+.pac-card {
+  /* background-color: #fff; */
+  border: 0;
+  border-radius: 2px;
+  box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.5);
+  margin: 5px;
+  font: 400 18px Roboto, Arial, sans-serif;
   font-family: Roboto;
+  padding: 2px 5px;
   font-size: 13px;
-  font-weight: 300;
-}
-
-.box {
-  background-color: #fff;
-  font-family: Roboto;
-  font-size: 15px;
-  font-weight: 300;
-  margin-left: 12px;
-  margin-top: 12px;
-  padding: 0 11px 0 13px;
-  text-overflow: ellipsis;
-  width: 200px;
+  width: 180px;
+  /* ปรับความกว้างตามที่คุณต้องการ */
 
 }
 
-.left {
-  text-align: left;
-  float: left;
-  margin-left: 12px;
-}
-
+/* ปรับแต่งสไตล์ของ select */
 select {
-  /* padding: 16px 20px; */
   border: none;
   border-radius: 4px;
   background-color: #f1f1f1;
 }
-
-.pac-card {
-  background-color: #fff;
-  border: 0;
-  border-radius: 2px;
-  box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
-  margin: 10px;
-  padding: 0 0.5em;
-  font: 400 18px Roboto, Arial, sans-serif;
-  overflow: hidden;
-  font-family: Roboto;
-  padding: 0;
-}
-
-#pac-container {
-  padding-bottom: 12px;
-  margin-right: 12px;
-}
-
-.pac-controls {
-  display: inline-block;
-  padding: 5px 11px;
-}
-
-.pac-controls label {
-  font-family: Roboto;
-  font-size: 13px;
-  font-weight: 300;
-}
-
-#pac-input {
-  background-color: #fff;
-  font-family: Roboto;
-  font-size: 15px;
-  font-weight: 300;
+.left {
+  text-align: left;
+  float:left;
   margin-left: 12px;
-  padding: 0 11px 0 13px;
-  text-overflow: ellipsis;
-  width: 400px;
-}
-
-#pac-input:focus {
-  border-color: #4d90fe;
 }
 </style>
