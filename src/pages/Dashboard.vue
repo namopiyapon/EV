@@ -11,15 +11,15 @@
             <div style="position: absolute; z-index: 1; " class="pac-card" id="pac-card">
 
               <div class="pac-controls">
-                choose:
-                <input type="radio" name="typevalue" id="battery" value="battery" @click="show2" />battery
-                <input type="radio" name="typevalue" id="distance" value="distance" @click="show1" checked />distance<br>
-                <input type="text" id="value" name="value" v-model="value" placeholder="value">
+                <b>choose:</b>
+                <input type="radio" name="typevalue" id="battery" value="battery" @click="show2"  @change="updatePlaceholder"/><b>battery</b>
+                <input type="radio" name="typevalue" id="distance" value="distance" @click="show1" checked @change="updatePlaceholder"/><b>distance</b><br>
+                <input type="text" id="value" name="value" v-model="value" :placeholder="placeholder">
                 <button type="submit" @click="onSuccess">Go</button>
               </div><br>
 
               <div class="row hide" id="div1">
-                my car:
+                <b>my car:</b>
                 <select v-model="myselect" id="myselect">
                   <option v-for="user in Usercar" :key="user.namecar" :value="user.ID">
                     {{ user.namecar }}
@@ -49,7 +49,7 @@
 <script>
 import { Card } from "@/components/index";
 import axios from 'axios';
-import { collection, where, query, getDocs, getDoc, doc, addDoc } from "firebase/firestore"
+import { collection, where, query, getDocs, getDoc, doc, setDoc } from "firebase/firestore"
 import firebase from '@/Firebase.js'
 
 export default {
@@ -78,6 +78,8 @@ export default {
       currentInfoWindow: null,
       copymarks: [],
       station: [],
+      Type: [],
+      placeholder: '',
     };
   },
   components: {
@@ -87,6 +89,18 @@ export default {
     this.getUsers();
   },
   computed: {
+    getPlaceholder() {
+      // คำนวณค่า placeholder โดยอ้างอิงถึง radio1 และ radio2
+      if (this.radio1 && this.radio1.checked) {
+        console.log(this.radio1 + "this.radio1")
+        return 'Km ที่วิ่งได้';
+      } else if (this.radio2 && this.radio2.checked) {
+        console.log(this.radio2 + "this.radio2")
+        return '% แบตที่เหลือ';
+      } else {
+        return ''; // หรือค่าอื่น ๆ ที่คุณต้องการให้มีในกรณีอื่น ๆ
+      }
+    },
     //-------------------------------SHOW MAP--------------------------------//
     map() {
       this.directionsService = new google.maps.DirectionsService();
@@ -151,8 +165,7 @@ export default {
       }
       //----------------------------------firebase-----------------------------//
       this.resetmarkes();
-      this.radio1 = document.getElementById('battery');
-      this.radio2 = document.getElementById('distance');
+
       if (this.radio1.checked) {
         console.log(this.radio1)
         const docSnap = await getDoc(doc(firebase.db, 'Usercar', document.getElementById("myselect").value))
@@ -447,40 +460,37 @@ export default {
         this.currentInfoWindow = await infoWindow;
         // console.log('-----> ', this.currentInfoWindow, this.currentInfoWindow.shouldFocus)
 
-
+        this.getstation(place)
         //---------------------------ADD firebase-----------------------------------------//
 
         var g = document.getElementById('add-data')
         // console.log("g 2 is ", g)
         g.onclick = async function () {
-          console.log("----> CLICK")
           // 'users' collection reference
-          const colRef = collection(firebase.db, 'station')
+          const colRef = doc(firebase.db, 'station', place.place_id)
           // data to send
           const dataObj = {
             name: place.name,
             lat: place.geometry.location.lat(),
             lng: place.geometry.location.lng(),
             url: info.url,
-            place_id: place.place_id,
           }
           // create document and return reference to it
-          const docRef = await addDoc(colRef, dataObj)
-          console.log('Document was created with ID:', docRef.id)
+          const docRef = await setDoc(colRef, dataObj)
+          // console.log('Document was created with ID:', docRef.id)
           alert("ADD")
         }
 
 
       });
 
-      this.getstation(place)
+
       var request = {
         placeId: place.place_id,
         fields: ['photos', 'formatted_address', 'url'],
       };
 
       //-------------------------------------------getphotos-----------------------------------------------//
-      console.log("-----------------")
 
       const apiKey = 'AIzaSyCEwuKRd9Fqz_RCZoonrVZAbNuVzvrA8JU';
       const lat = place.geometry.location.lat();
@@ -518,10 +528,10 @@ export default {
         '<div ><p><a  target ="_blank" href="' + info.url + '">' +
         'ดูใน Google Maps</a></div >' +
         '</div>' +
-        `<div ><button  type="button" id="add-data" >ADD DATA</button></div>` +
+        '<div><button  type="button" id="add-data" >UPDATE</button></div>' +
         '</div>' +
         '</div>';
-      //v-if="this.$store.state.email == ''
+      //v-if="'+this.Type[0]+' != """
     },
     //--------------------------------------resetmarkes------------------------------------//
     resetmarkes() {
@@ -533,19 +543,31 @@ export default {
 
     //---------------------------get firebase-----------------------------------------//
     async getstation(place) {
-
-      const q = query(collection(firebase.db, 'station'), where('place_id', '==', place.place_id))
-      const querySnap = await getDocs(q);
-
-      querySnap.forEach((doc) => {
-        this.station.push({ ID: doc.id, ...doc.data() })
-        console.log(doc.data());
-      })
-
+      const docSnap = await getDoc(doc(firebase.db, 'station', place.place_id))
+      if (docSnap.exists()) {
+        this.Type = docSnap.data().Type
+        console.log('this.Type' + this.Type)
+      } else {
+        console.log('Document does not exist')
+        this.Type = [];
+      }
+    },
+    updatePlaceholder() {
+      // คำนวณค่า `placeholder` จากค่าของ radio1 และ radio2
+      if (this.radio2 && this.radio2.checked) {
+        this.placeholder = 'Km ที่วิ่งได้';
+      } else if (this.radio1 && this.radio1.checked) {
+        this.placeholder = '% แบตที่เหลือ';
+      } else {
+        this.placeholder = ''; // หรือค่าอื่น ๆ ที่คุณต้องการให้มีในกรณีอื่น ๆ
+      }
     },
   },
 
   mounted() {
+    this.radio1 = document.getElementById('battery');
+    this.radio2 = document.getElementById('distance');
+    this.updatePlaceholder();
     //-------------------------------Autocomplete--------------------------------//
     const originInput = document.getElementById("address")
     const destinationInput = document.getElementById("addressto")
@@ -568,9 +590,6 @@ export default {
     );
     this.setupPlaceChangedListener(originAutocomplete, "ORIG");
     this.setupPlaceChangedListener(destinationAutocomplete, "DEST");
-
-    // this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
-    // this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
 
   },
 
@@ -639,13 +658,14 @@ export default {
 /* ซ่อน .row ที่มีคลาส .hide */
 .row.hide {
   display: none;
+
 }
 
 
 /* ปรับแต่งสไตล์ของ input และ select ใน #pac-container */
 .pac-controls input[type="text"] {
   padding-right: 35px;
-  width: 50%;
+  width: 70%;
   font-size: 14px;
   padding: 5px 10px;
   /* ปรับแต่ง padding และ font-size */
@@ -653,7 +673,6 @@ export default {
   border-radius: 4px;
   background-color: #f1f1f1;
   margin-right: 5px;
-  margin-left: 10px;
 }
 
 #pac-container select {
@@ -682,10 +701,12 @@ select {
   border: none;
   border-radius: 4px;
   background-color: #f1f1f1;
+  width: 100px;
 }
+
 .left {
   text-align: left;
-  float:left;
+  float: left;
   margin-left: 12px;
 }
 </style>
