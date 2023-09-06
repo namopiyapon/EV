@@ -19,7 +19,7 @@
       </div>
       <template slot="footer">
         <button type="submit">Login</button> <br>
-        <a href="/#/Register" >   Register</a>
+        <a href="/#/Register"> Register</a>
       </template>
     </card>
   </form>
@@ -27,15 +27,15 @@
 <script>
 import { Card, BaseInput } from "@/components/index";
 import BaseButton from "@/components/BaseButton";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import {cookies} from "@/components/index";
+import { getAuth, signInWithEmailAndPassword  } from "firebase/auth";
+import { cookies } from "@/components/index";
 
 
-export default  {
+export default {
 
-  
+
   mounted() {
-    
+
   },
   data() {
     return {
@@ -53,14 +53,6 @@ export default  {
       alert("Login")
       signInWithEmailAndPassword(auth, this.form.email, this.form.password)
         .then(() => {
-          //session
-          // this.$session.start()
-          // this.$session.set('email', this.form.email)
-          // console.log('keyemail => ',this.$session.get('email'),'ID => ', this.$session.id())
-          //cookies
-          // this.cookies.set("email", this.form.email, 60*60);
-          // console.log(this.cookies.get("email"));
-
           //store
           this.$store.commit('login', this.form.email)
           // this.$cookies.set("email", this.form.email, 60*60);

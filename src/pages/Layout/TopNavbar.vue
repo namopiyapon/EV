@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-absolute" :class="{ 'bg-white': showMenu, 'navbar-transparent': !showMenu }">
     <div class="container-fluid">
       <div class="navbar-wrapper">
-        <div class="navbar-toggle d-inline" :class="{ toggled: $sidebar.showSidebar }" v-if="$route.name != 'Map'" >
+        <div class="navbar-toggle d-inline" :class="{ toggled: $sidebar.showSidebar }" v-if="$route.name != 'Map'">
           <button type="button" class="navbar-toggler" @click="toggleSidebar">
             <span class="navbar-toggler-bar bar1"></span>
 
@@ -44,37 +44,42 @@
               <p class="d-lg-none">Profile</p>
             </a>
 
-              <ul class="dropdown-menu dropdown-navbar" v-if="this.$store.state.email != ''">
-                <li class="nav-link">
-                  <a href="/#/profile" class="nav-item dropdown-item">
-                    {{ this.$store.state.email }}
-                  </a>
-                </li>
-                <li class="dropdown-divider"></li>
+            <ul class="dropdown-menu dropdown-navbar" v-if="user">
+              <li class="nav-link">
+                <a href="/#/password" class="nav-item dropdown-item">
+                  {{ user.email }}
+                </a>
+              </li>
+              <li class="dropdown-divider"></li>
 
-                <li class="nav-link">
-                  <a href="/#/Feedback" class="nav-item dropdown-item">
-                    Give Feedback
-                  </a>
-                </li>
+              <li class="nav-link">
+                <a href="/#/profile" class="nav-item dropdown-item">
+                  My Car
+                </a>
+              </li>
+              <li class="nav-link">
+                <a href="/#/Feedback" class="nav-item dropdown-item">
+                  Give Feedback
+                </a>
+              </li>
 
-                <li class="dropdown-divider"></li>
+              <li class="dropdown-divider"></li>
 
-                <li class="nav-link">
-                  <a href="/#/login" class="nav-item dropdown-item">
-                    Log out
-                  </a>
-                </li>
-              </ul>
+              <li class="nav-link">
+                <a href="/#/login" class="nav-item dropdown-item" @click="signOut">
+                  Log out
+                </a>
+              </li>
+            </ul>
 
-              <ul class="dropdown-menu dropdown-navbar" v-if="this.$store.state.email == ''">
+            <ul class="dropdown-menu dropdown-navbar" v-else>
 
-                <li class="nav-link">
-                  <a href="/#/login" class="nav-item dropdown-item">
-                    Login
-                  </a>
-                </li>
-              </ul>
+              <li class="nav-link">
+                <a href="/#/login" class="nav-item dropdown-item">
+                  Login
+                </a>
+              </li>
+            </ul>
 
           </drop-down>
 
@@ -87,6 +92,7 @@
 <script>
 import DropDown from "@/components/Dropdown.vue";
 import Modal from "@/components/Modal.vue";
+import { getAuth, signOut ,onAuthStateChanged} from 'firebase/auth';
 
 export default {
   components: {
@@ -95,12 +101,17 @@ export default {
   },
   mounted() {
     // console.log(Vue.$cookies.get('email'))
+    const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+            this.user = user;
+        });
   },
   data() {
     return {
       searchModalVisible: false,
       searchQuery: "",
       showMenu: false,
+      user: null,
     };
   },
   methods: {
@@ -110,7 +121,16 @@ export default {
     toggleMenu() {
       this.showMenu = !this.showMenu;
     },
-
+    signOut() {
+      const auth = getAuth();
+      signOut(auth)
+        .then(() => {
+          this.user = null;
+        })
+        .catch((error) => {
+          console.error('Error signing out:', error);
+        });
+    },
 
   },
   computed: {

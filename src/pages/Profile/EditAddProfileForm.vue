@@ -27,7 +27,7 @@
 
       <div class="row">
         <div class="col-md-4  text-left">
-          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km(only number)" required >
+          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km(only number)" required>
           </base-input>
         </div>
         <div class="col-md-4  text-left">
@@ -52,6 +52,7 @@ import { Card, BaseInput } from "@/components/index";
 import { collection, addDoc } from "firebase/firestore"
 import firebase from './Firebase.js'
 import BaseButton from "@/components/BaseButton";
+import { getAuth ,onAuthStateChanged } from "firebase/auth";
 
 export default {
   data() {
@@ -63,11 +64,18 @@ export default {
       DrivingRange: '',
       email: '',
       myselect: '',
+      user: null,
     }
   },
   created() {
     //this.createUser()
 
+  },
+  mounted() {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      this.user = user;
+    });
   },
 
   methods: {
@@ -95,7 +103,7 @@ export default {
         Brand: this.Brand,
         Model: this.Model,
         DrivingRange: this.DrivingRange,
-        email: this.$store.state.email,
+        email: this.user.email,
       }
       // create document and return reference to it
       const docRef = await addDoc(colRef, dataObj)

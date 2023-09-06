@@ -11,6 +11,7 @@ import EVCharger from "@/pages/EVCharger.vue";
 import EVChargerFrom from "@/pages/EVChargerFrom.vue";
 import GiveFeedback from "@/pages/GiveFeedback.vue";
 import Register from "@/pages/Register.vue";
+import password from "@/pages/resetpassword.vue";
 
 
 import Login from "@/pages/Login.vue";
@@ -46,6 +47,11 @@ const routes = [
         path: "/login",
         name: "Login",
         component: Login,
+      },
+      {
+        path: "/password",
+        name: "password",
+        component: password,
       },
     ],
   },

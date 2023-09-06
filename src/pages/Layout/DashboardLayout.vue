@@ -4,13 +4,13 @@
 
     <side-bar :background-color="backgroundColor">
       <!-- <mobile-menu slot="content"></mobile-menu> -->
-      
-      <div v-for="user in Usercar" :key="user.namecar"  @click="setId(user.ID)" >
-        <sidebar-link to="/user"  >
-          <i class="tim-icons icon-single-02" ></i>
-          <template >
-            <div class="row"  >
-              <p>{{ user.namecar }} </p>
+
+      <div v-for="users in Usercar" :key="users.namecar" @click="setId(users.ID)">
+        <sidebar-link to="/user">
+          <i class="tim-icons icon-single-02"></i>
+          <template>
+            <div class="row">
+              <p>{{ users.namecar }} </p>
             </div>
           </template>
         </sidebar-link>
@@ -49,6 +49,7 @@ import MobileMenu from "./MobileMenu.vue";
 import SideBar from "@/components/SidebarPlugin/SideBar.vue";
 import SidebarLink from "@/components/SidebarPlugin/SidebarLink.vue";
 import { collection, where, query, getDocs } from "firebase/firestore"
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebase from '@/Firebase.js'
 
 
@@ -63,14 +64,21 @@ export default {
     MobileMenu,
     SideBar,
     SidebarLink,
-    
+
   },
   data() {
     return {
       backgroundColor: "green",
       Usercar: [],
       id: [],
+      user: null,
     };
+  },
+  mounted() {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      this.user = user;
+    });
   },
 
   computed: {
@@ -88,26 +96,20 @@ export default {
       }
     },
     async getUsers() {
+      const auth = getAuth();
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          // สร้างคิวรี Firestore เมื่อผู้ใช้ล็อกอินอยู่
+          const q = query(collection(firebase.db, 'Usercar'), where('email', '==', user.email))
+          const querySnap = await getDocs(q);
 
-      const q = query(collection(firebase.db, 'Usercar'), where('email', '==', this.$store.state.email))
-      const querySnap = await getDocs(q);
-
-      querySnap.forEach((doc) => {
-        this.Usercar.push({ID: doc.id, ...doc.data()})
-        // console.log(doc.data());
-      })
-      // use 'collection()' instead of 'doc()'
-      // onSnapshot(collection(firebase.db, 'Usercar'), (snap) => {
-
-      //   snap.forEach((doc) => {
-      //     this.Usercar.push({ID: doc.id, ...doc.data()})
-      //   })
-      // })
-      
-
+          querySnap.forEach((doc) => {
+            this.Usercar.push({ ID: doc.id, ...doc.data() })
+          })
+        }
+      });
     },
     setId(id) {
-
       this.$store.commit('SET_IDTEST', id)
       this.$router.push('/profile')
     },

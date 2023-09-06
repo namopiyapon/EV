@@ -78,7 +78,6 @@ export default {
       currentInfoWindow: null,
       copymarks: [],
       station: [],
-      Type: [],
       placeholder: '',
     };
   },
@@ -522,9 +521,8 @@ export default {
         '<div ><p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br></div>' +
         '<div class="left"><img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location=' + location + '&heading=' + heading + '&pitch=' + pitch + '&key=' + apiKey + '" alt="Street View Image" ></div>' +
 
-        '<div class="left"><b>ประเภท :</b> 1 => จำนวน 1 <br>' +
+        '<div class="left"><b>CCS => </b> '+ this.CCS+' <br>' +
         '<b>ระยะทาง :</b> ' + color.text + ' <br><div>' +
-
         '<div ><p><a  target ="_blank" href="' + info.url + '">' +
         'ดูใน Google Maps</a></div >' +
         '</div>' +
@@ -545,11 +543,11 @@ export default {
     async getstation(place) {
       const docSnap = await getDoc(doc(firebase.db, 'station', place.place_id))
       if (docSnap.exists()) {
-        this.Type = docSnap.data().Type
-        console.log('this.Type' + this.Type)
+        this.CCS = docSnap.data().CCS
+        console.log('this.CCS' + this.CCS)
       } else {
         console.log('Document does not exist')
-        this.Type = [];
+        this.CCS = '';
       }
     },
     updatePlaceholder() {
@@ -707,6 +705,6 @@ select {
 .left {
   text-align: left;
   float: left;
-  margin-left: 12px;
+  margin-left: 10px;
 }
 </style>

@@ -1,9 +1,9 @@
 <template>
- <form @submit="onSuccess" @reset="ondelete" >  <!-- //@submit="addUsercar" -->
+  <form @submit="onSuccess" @reset="ondelete"> <!-- //@submit="addUsercar" -->
     <card>
 
       <div style="display: none">
-        {{ getCountry() }}
+        <!-- {{ getCountry() }} -->
       </div>
       <template slot="header">
         <h5 class="title">Edit Profile</h5>
@@ -11,7 +11,7 @@
       <div class="row">
         <div class="col-md-8 text-left">
           <!-- <p>name car : {{ Energy }}</p>  -->
-          <base-input label="namecar" placeholder= "namecar" v-model="namecar" required>
+          <base-input label="namecar" placeholder="namecar" v-model="namecar" required>
           </base-input>
         </div>
       </div>
@@ -55,9 +55,10 @@
 <script>
 
 import { Card, BaseInput } from "@/components/index";
-import { doc, getDoc ,updateDoc, deleteDoc} from "firebase/firestore"
+import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore"
 import firebase from './Firebase.js'
 import BaseButton from "@/components/BaseButton";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
   props: [
@@ -72,15 +73,25 @@ export default {
       Model: '',
       DrivingRange: '',
       email: '',
+      user: null,
     }
   },
   // updated() {
   //   this.getCountry()
   // },
-  
+
+  mounted() {
+    this.getCountry()
+    const auth = getAuth();
+
+    onAuthStateChanged(auth, (user) => {
+      this.user = user;
+    });
+  },
+
   methods: {
     async getCountry() {
-      const docSnap = await getDoc(doc(firebase.db, 'Usercar',  this.$store.state.idtest ))
+      const docSnap = await getDoc(doc(firebase.db, 'Usercar', this.$store.state.idtest))
       if (docSnap.exists()) {
         this.namecar = docSnap.data().namecar
         this.Type = docSnap.data().Type
@@ -90,7 +101,7 @@ export default {
       } else {
         console.log('Document does not exist')
       }
-      
+
     },
     async onSuccess(event) {
       event.preventDefault();
@@ -104,12 +115,12 @@ export default {
       this.$router.push('/profile')
     },
     async ondelete(event) {
-      console.log('delete =>',this.$store.state.idtest )
+      console.log('delete =>', this.$store.state.idtest)
       event.preventDefault();
       await deleteDoc(doc(firebase.db, 'Usercar', this.$store.state.idtest));
       this.$router.push('/profile')
     },
-    
+
   },
 
 
@@ -117,7 +128,7 @@ export default {
     Card,
     BaseInput,
     BaseButton,
-    
+
   },
   props: {
     model: {
