@@ -532,7 +532,7 @@ export default {
         '<div id="bodyContent">' +
         '<div ><p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br></div>' +
         '<div class="left"><img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location=' + location + '&heading=' + heading + '&pitch=' + pitch + '&key=' + apiKey + '" alt="Street View Image" >' +
-        '<b>ระยะทาง :</b> ' + color.text + ' </div><br>' +
+        '<b>ระยะทาง :</b> ' + color.text + ' </div><br><br>' +
 
         '<div class="left" ><b>CCS => </b> ' + this.CCS + ' <br>' +
         '<b>Type-2 => </b> ' + this.Type_2 + ' <br><br></div>' +
@@ -550,7 +550,7 @@ export default {
         '<div id="bodyContent">' +
         '<div ><p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br></div>' +
         '<div class="left"><img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location=' + location + '&heading=' + heading + '&pitch=' + pitch + '&key=' + apiKey + '" alt="Street View Image" >' +
-        '<b>ระยะทาง :</b> ' + color.text + ' </div><br>' +
+        '<b>ระยะทาง :</b> ' + color.text + ' </div><br><br>' +
         '<div class="left" > ยังได้อัปเดทข้อมูลกรุณาคลิก UPDATE เพื่อแจ้งแอดมิน <br><br></div>' +
         '<div class="left"><button  type="button" id="add-data" >UPDATE</button></div>' +
 
@@ -734,7 +734,7 @@ select {
 .left {
   text-align: left;
   float: left;
-  margin-left: 10px;
+  margin-left: 5px;
   width: 120px;
 }
 </style>
