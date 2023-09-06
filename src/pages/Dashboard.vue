@@ -12,8 +12,10 @@
 
               <div class="pac-controls">
                 <b>choose:</b>
-                <input type="radio" name="typevalue" id="battery" value="battery" @click="show2"  @change="updatePlaceholder"/><b>battery</b>
-                <input type="radio" name="typevalue" id="distance" value="distance" @click="show1" checked @change="updatePlaceholder"/><b>distance</b><br>
+                <input type="radio" name="typevalue" id="battery" value="battery" @click="show2"
+                  @change="updatePlaceholder" /><b>battery</b>
+                <input type="radio" name="typevalue" id="distance" value="distance" @click="show1" checked
+                  @change="updatePlaceholder" /><b>distance</b><br>
                 <input type="text" id="value" name="value" v-model="value" :placeholder="placeholder">
                 <button type="submit" @click="onSuccess">Go</button>
               </div><br>
@@ -79,6 +81,9 @@ export default {
       copymarks: [],
       station: [],
       placeholder: '',
+      CCS: '',
+      Type: '',
+      Type_2: '',
     };
   },
   components: {
@@ -446,7 +451,7 @@ export default {
       // ----------------------------infowindow----------------------------------//
 
       marker.addListener("click", async () => {
-        console.log("currentInfoWindow " + this.currentInfoWindow)
+
         if (this.currentInfoWindow) {
           this.currentInfoWindow.close();
         }
@@ -454,32 +459,41 @@ export default {
           maxWidth: 300,
           ariaLabel: "Uluru",
         });
-        infoWindow.setContent(contentString);
+        await this.getstation(place);
+        console.log(this.Type)
+        if (this.Type) {
+          infoWindow.setContent(contentString1);
+        } else if (!this.Type) {
+          infoWindow.setContent(contentString2);
+          //---------------------------ADD firebase-----------------------------------------//
+          document.addEventListener("DOMContentLoaded", function () {
+            var g = document.getElementById('add-data')
+            // console.log("g 2 is ", g)
+            g.onclick = async function () {
+              if (g) {
+                // 'users' collection reference
+                const colRef = doc(firebase.db, 'station', place.place_id)
+                // data to send
+                const dataObj = {
+                  name: place.name,
+                  lat: place.geometry.location.lat(),
+                  lng: place.geometry.location.lng(),
+                  url: info.url,
+                  Type: false,
+                }
+                // create document and return reference to it
+                const docRef = await setDoc(colRef, dataObj)
+                // console.log('Document was created with ID:', docRef.id)
+                alert("ADD")
+              }
+            }
+          });
+
+        }
+
         infoWindow.open({ anchor: marker, map, })
         this.currentInfoWindow = await infoWindow;
         // console.log('-----> ', this.currentInfoWindow, this.currentInfoWindow.shouldFocus)
-
-        this.getstation(place)
-        //---------------------------ADD firebase-----------------------------------------//
-
-        var g = document.getElementById('add-data')
-        // console.log("g 2 is ", g)
-        g.onclick = async function () {
-          // 'users' collection reference
-          const colRef = doc(firebase.db, 'station', place.place_id)
-          // data to send
-          const dataObj = {
-            name: place.name,
-            lat: place.geometry.location.lat(),
-            lng: place.geometry.location.lng(),
-            url: info.url,
-          }
-          // create document and return reference to it
-          const docRef = await setDoc(colRef, dataObj)
-          // console.log('Document was created with ID:', docRef.id)
-          alert("ADD")
-        }
-
 
       });
 
@@ -497,7 +511,6 @@ export default {
       const location = lat + ',' + lng; // เปลี่ยน LATITUDE และ LONGITUDE เป็นพิกัดที่ต้องการ
       const heading = 0; // เปลี่ยนค่า heading ตามต้องการ
       const pitch = 0; // เปลี่ยนค่า pitch ตามต้องการ
-      var imageUrl = '';
       //--------------------------------------------------------------------
 
 
@@ -513,23 +526,38 @@ export default {
       });
 
       //----------------------------infowindow----------------------------------//
-      var url = "'" + info.url + "'"
-      var contentString =
+      var contentString1 =
         '<div id="content">' +
         '<h5 id="firstHeading" class="firstHeading">' + place.name + '</h5>' +
         '<div id="bodyContent">' +
         '<div ><p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br></div>' +
-        '<div class="left"><img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location=' + location + '&heading=' + heading + '&pitch=' + pitch + '&key=' + apiKey + '" alt="Street View Image" ></div>' +
+        '<div class="left"><img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location=' + location + '&heading=' + heading + '&pitch=' + pitch + '&key=' + apiKey + '" alt="Street View Image" >' +
+        '<b>ระยะทาง :</b> ' + color.text + ' </div><br>' +
 
-        '<div class="left"><b>CCS => </b> '+ this.CCS+' <br>' +
-        '<b>ระยะทาง :</b> ' + color.text + ' <br><div>' +
-        '<div ><p><a  target ="_blank" href="' + info.url + '">' +
+        '<div class="left" ><b>CCS => </b> ' + this.CCS + ' <br>' +
+        '<b>Type-2 => </b> ' + this.Type_2 + ' <br><br></div>' +
+
+        '<div class="left"><p><a  target ="_blank" href="' + info.url + '">' +
         'ดูใน Google Maps</a></div >' +
-        '</div>' +
-        '<div><button  type="button" id="add-data" >UPDATE</button></div>' +
+
+        
         '</div>' +
         '</div>';
-      //v-if="'+this.Type[0]+' != """
+      //v-if="'+this.Type+' == """ 
+      var contentString2 =
+        '<div id="content">' +
+        '<h5 id="firstHeading" class="firstHeading">' + place.name + '</h5>' +
+        '<div id="bodyContent">' +
+        '<div ><p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br></div>' +
+        '<div class="left"><img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location=' + location + '&heading=' + heading + '&pitch=' + pitch + '&key=' + apiKey + '" alt="Street View Image" >' +
+        '<b>ระยะทาง :</b> ' + color.text + ' </div><br>' +
+        '<div class="left" > ยังได้อัปเดทข้อมูลกรุณาคลิก UPDATE เพื่อแจ้งแอดมิน <br><br></div>' +
+        '<div class="left"><button  type="button" id="add-data" >UPDATE</button></div>' +
+
+        '<div class="left"><p><a  target ="_blank" href="' + info.url + '">' +
+        'ดูใน Google Maps</a></div >' +
+        '</div>' +
+        '</div>';
     },
     //--------------------------------------resetmarkes------------------------------------//
     resetmarkes() {
@@ -543,11 +571,12 @@ export default {
     async getstation(place) {
       const docSnap = await getDoc(doc(firebase.db, 'station', place.place_id))
       if (docSnap.exists()) {
-        this.CCS = docSnap.data().CCS
-        console.log('this.CCS' + this.CCS)
+        this.Type = docSnap.data().Type;
+        this.Type_2 = docSnap.data().Type_2;
+        this.CCS = docSnap.data().CCS;
+        console.log(' this.CCS ' + this.CCS + ' this.Type ' + this.Type + ' this.Type_2 ' + this.Type_2)
       } else {
         console.log('Document does not exist')
-        this.CCS = '';
       }
     },
     updatePlaceholder() {
@@ -706,5 +735,6 @@ select {
   text-align: left;
   float: left;
   margin-left: 10px;
+  width: 120px;
 }
 </style>
