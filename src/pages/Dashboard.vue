@@ -12,15 +12,15 @@
 
               <div class="pac-controls">
                 <b>choose:</b>
-                <input type="radio" name="typevalue" id="battery" value="battery" @click="show2"
+                <input type="radio" name="typevalue" id="battery" value="battery"
                   @change="updatePlaceholder" /><b>battery</b>
-                <input type="radio" name="typevalue" id="distance" value="distance" @click="show1" checked
+                <input type="radio" name="typevalue" id="distance" value="distance" checked
                   @change="updatePlaceholder" /><b>distance</b><br>
                 <input type="text" id="value" name="value" v-model="value" :placeholder="placeholder">
                 <button type="submit" @click="onSuccess">Go</button>
               </div><br>
 
-              <div class="row hide" id="div1">
+              <div>
                 <b>my car:</b>
                 <select v-model="myselect" id="myselect">
                   <option v-for="user in Usercar" :key="user.namecar" :value="user.ID">
@@ -84,6 +84,8 @@ export default {
       CCS: '',
       Type: '',
       Type_2: '',
+      Typemycar: '',
+      sumType: [],
     };
   },
   components: {
@@ -170,16 +172,13 @@ export default {
       //----------------------------------firebase-----------------------------//
       this.resetmarkes();
 
-      if (this.radio1.checked) {
-        console.log(this.radio1)
-        const docSnap = await getDoc(doc(firebase.db, 'Usercar', document.getElementById("myselect").value))
-        if (docSnap.exists()) {
-          this.DrivingRange = docSnap.data().DrivingRange
-        } else {
-          console.log('Document does not exist')
-        }
+      const docSnap = await getDoc(doc(firebase.db, 'Usercar', document.getElementById("myselect").value))
+      if (docSnap.exists()) {
+        this.DrivingRange = docSnap.data().DrivingRange
+        this.Typemycar = docSnap.data().Type
+      } else {
+        console.log('Document does not exist mycar')
       }
-
 
       const me = this;
       this.directionsService.route(
@@ -299,9 +298,7 @@ export default {
               // window.alert("Please select an option from the dropdown list.  " + results[0].place_id);
             }
           });
-          //------------------------
         })
-
     },
     //-------------------------------SHOW MARKER--------------------------------//
 
@@ -333,8 +330,6 @@ export default {
         // console.log(doc.data());
       })
     },
-
-
 
     //-------------------------------CALLBACK--------------------------------//
     async callback(results, status) {
@@ -393,50 +388,113 @@ export default {
       const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
 
       var color = await this.matrix(place);
+      const sumTypeMarker = await this.getstation(place);
       //--------------------------------this.value => battery-----------------------------------//
+      var Driving;
       if (this.radio1.checked) {
-        var Driving = this.DrivingRange * (this.value / 100)
-        if (Driving * 0.7 > color.value / 1000) {
-          // console.log("value*0.7 > color " + color.value)
-          var pinBackground = new PinElement({
-            background: "#0cfb04",
-            borderColor: "#089c03",
-            glyphColor: "#089c03",
-          });
-        } else if (Driving > color.value / 1000) {
-          // console.log("value > color " + color.value)
-          var pinBackground = new PinElement({
-            background: "#fb6f04",
-            borderColor: "#b04d02",
-            glyphColor: "#b04d02",
-          });
-        } else {
-          // console.log("value*0.7 < color " + color.value)
-          var pinBackground = new PinElement({
-            background: "#fb0404",
-          });
+        Driving = this.DrivingRange * (this.value / 100)
+        if (this.Type == true) { //updeat แล้ว
+          if ((this.Typemycar == "CCS" && (sumTypeMarker[0] > 0 || sumTypeMarker[1] > 0))
+            || (this.Typemycar == 'Type_2' && sumTypeMarker[1] > 0)
+            || (this.Typemycar == 'J1772' && sumTypeMarker[2] > 0)) {
+            console.log("Typemycar " + this.Typemycar)
+            if (Driving * 0.7 > color.value / 1000) {
+              var pinBackground = new PinElement({
+                background: "#0cfb04",
+                borderColor: "#089c03",
+                glyphColor: "#089c03",
+              });
+            } else if (Driving > color.value / 1000) {
+              var pinBackground = new PinElement({
+                background: "#fb6f04",
+                borderColor: "#b04d02",
+                glyphColor: "#b04d02",
+              });
+            } else {
+              var pinBackground = new PinElement({
+                background: "#fb0404",
+              });
+            }
+          } else {
+            var pinBackground = new PinElement({
+              background: "#6b6b6b",
+              borderColor: "#8a8a8a",
+              glyphColor: "#8a8a8a",
+            });
+          }
+        } else { //อื่นๆ 
+          if (Driving * 0.7 > color.value / 1000) {
+            var pinBackground = new PinElement({
+              background: "#0cfb04",
+              borderColor: "#089c03",
+              glyphColor: "#089c03",
+            });
+          } else if (Driving > color.value / 1000) {
+            var pinBackground = new PinElement({
+              background: "#fb6f04",
+              borderColor: "#b04d02",
+              glyphColor: "#b04d02",
+            });
+          } else {
+            var pinBackground = new PinElement({
+              background: "#fb0404",
+            });
+          }
         }
       }
       //--------------------------------this.value => distance-----------------------------------//
       else if (this.radio2.checked) {
-        if (this.value * 0.7 > color.value / 1000) {
-          // console.log("value*0.7 > color " + color.value)
-          var pinBackground = new PinElement({
-            background: "#0cfb04",
-            borderColor: "#089c03",
-            glyphColor: "#089c03",
-          });
-        } else if (this.value > color.value / 1000) {
-          var pinBackground = new PinElement({
-            background: "#fb6f04",
-            borderColor: "#b04d02",
-            glyphColor: "#b04d02",
-          });
+        console.log("Typemycar " + this.Typemycar)
+        if (this.Type == true) {
+          if ((this.Typemycar == "CCS" && (sumTypeMarker[0] > 0 || sumTypeMarker[1] > 0))
+            || (this.Typemycar == 'Type_2' && sumTypeMarker[1] > 0)
+            || (this.Typemycar == 'J1772' && sumTypeMarker[2] > 0)) {
+            if (this.value * 0.7 > color.value / 1000) {
+              // console.log("value*0.7 > color " + color.value)
+              var pinBackground = new PinElement({
+                background: "#0cfb04",
+                borderColor: "#089c03",
+                glyphColor: "#089c03",
+              });
+            } else if (this.value > color.value / 1000) {
+              var pinBackground = new PinElement({
+                background: "#fb6f04",
+                borderColor: "#b04d02",
+                glyphColor: "#b04d02",
+              });
+            } else {
+              var pinBackground = new PinElement({
+                background: "#fb0404",
+              });
+            }
+          } else {
+            var pinBackground = new PinElement({
+              background: "#6b6b6b",
+              borderColor: "#8a8a8a",
+              glyphColor: "#8a8a8a",
+            });
+          }
         } else {
-          var pinBackground = new PinElement({
-            background: "#fb0404",
-          });
+          if (this.value * 0.7 > color.value / 1000) {
+            // console.log("value*0.7 > color " + color.value)
+            var pinBackground = new PinElement({
+              background: "#0cfb04",
+              borderColor: "#089c03",
+              glyphColor: "#089c03",
+            });
+          } else if (this.value > color.value / 1000) {
+            var pinBackground = new PinElement({
+              background: "#fb6f04",
+              borderColor: "#b04d02",
+              glyphColor: "#b04d02",
+            });
+          } else {
+            var pinBackground = new PinElement({
+              background: "#fb0404",
+            });
+          }
         }
+
       }
 
       //-----------------colorMarker--------------------//
@@ -449,9 +507,7 @@ export default {
       this.copymarks.push(marker);
 
       // ----------------------------infowindow----------------------------------//
-
       marker.addListener("click", async () => {
-
         if (this.currentInfoWindow) {
           this.currentInfoWindow.close();
         }
@@ -459,11 +515,42 @@ export default {
           maxWidth: 300,
           ariaLabel: "Uluru",
         });
-        await this.getstation(place);
-        console.log(this.Type)
+        this.sumType = await this.getstation(place);
         if (this.Type) {
+          var contentString1 =
+            '<div id="content">' +
+            '<h5 id="firstHeading" class="firstHeading">' + place.name + '</h5>' +
+            '<div id="bodyContent">' +
+            '<div ><p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br></div>' +
+            '<div class="left"><img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location=' + location + '&heading=' + heading + '&pitch=' + pitch + '&key=' + apiKey + '" alt="Street View Image" >' +
+            '<b>ระยะทาง :</b> ' + color.text + ' </div><br>' +
+
+            '<div class="left" ><b>CCS => </b> ' + this.sumType[0] + ' <br>' +
+            '<b>Type-2 => </b> ' + this.sumType[1] + ' <br>' +
+            '<b>J1772 => </b> ' + this.sumType[2] + ' <br><br></div>' +
+
+            '<div class="left"><p><a  target ="_blank" href="' + info.url + '">' +
+            'ดูใน Google Maps</a></div >' +
+
+            '</div>' +
+            '</div>';
           infoWindow.setContent(contentString1);
-        } else if (!this.Type) {
+        } else {
+          var contentString2 =
+            '<div id="content">' +
+            '<h5 id="firstHeading" class="firstHeading">' + place.name + '</h5>' +
+            '<div id="bodyContent">' +
+            '<div ><p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br></div>' +
+            '<div class="left"><img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location=' + location + '&heading=' + heading + '&pitch=' + pitch + '&key=' + apiKey + '" alt="Street View Image" >' +
+            '<b>ระยะทาง :</b> ' + color.text + ' </div><br>' +
+
+            '<div class="left" > ยังได้อัปเดทข้อมูลกรุณาคลิก UPDATE เพื่อแจ้งแอดมิน <br></div>' +
+            '<div class="left"><button  type="button" id="add-data" >UPDATE</button></div>' +
+
+            '<div class="left"><p><a  target ="_blank" href="' + info.url + '">' +
+            'ดูใน Google Maps</a></div >' +
+            '</div>' +
+            '</div>';
           infoWindow.setContent(contentString2);
           //---------------------------ADD firebase-----------------------------------------//
           document.addEventListener("DOMContentLoaded", function () {
@@ -480,6 +567,9 @@ export default {
                   lng: place.geometry.location.lng(),
                   url: info.url,
                   Type: false,
+                  Type_2: 0,
+                  CCS: 0,
+                  J1772: 0,
                 }
                 // create document and return reference to it
                 const docRef = await setDoc(colRef, dataObj)
@@ -488,21 +578,16 @@ export default {
               }
             }
           });
-
         }
-
         infoWindow.open({ anchor: marker, map, })
         this.currentInfoWindow = await infoWindow;
         // console.log('-----> ', this.currentInfoWindow, this.currentInfoWindow.shouldFocus)
-
       });
-
 
       var request = {
         placeId: place.place_id,
         fields: ['photos', 'formatted_address', 'url'],
       };
-
       //-------------------------------------------getphotos-----------------------------------------------//
 
       const apiKey = 'AIzaSyCEwuKRd9Fqz_RCZoonrVZAbNuVzvrA8JU';
@@ -524,40 +609,6 @@ export default {
           }
         })
       });
-
-      //----------------------------infowindow----------------------------------//
-      var contentString1 =
-        '<div id="content">' +
-        '<h5 id="firstHeading" class="firstHeading">' + place.name + '</h5>' +
-        '<div id="bodyContent">' +
-        '<div ><p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br></div>' +
-        '<div class="left"><img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location=' + location + '&heading=' + heading + '&pitch=' + pitch + '&key=' + apiKey + '" alt="Street View Image" >' +
-        '<b>ระยะทาง :</b> ' + color.text + ' </div><br><br>' +
-
-        '<div class="left" ><b>CCS => </b> ' + this.CCS + ' <br>' +
-        '<b>Type-2 => </b> ' + this.Type_2 + ' <br><br></div>' +
-
-        '<div class="left"><p><a  target ="_blank" href="' + info.url + '">' +
-        'ดูใน Google Maps</a></div >' +
-
-        
-        '</div>' +
-        '</div>';
-      //v-if="'+this.Type+' == """ 
-      var contentString2 =
-        '<div id="content">' +
-        '<h5 id="firstHeading" class="firstHeading">' + place.name + '</h5>' +
-        '<div id="bodyContent">' +
-        '<div ><p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br></div>' +
-        '<div class="left"><img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location=' + location + '&heading=' + heading + '&pitch=' + pitch + '&key=' + apiKey + '" alt="Street View Image" >' +
-        '<b>ระยะทาง :</b> ' + color.text + ' </div><br><br>' +
-        '<div class="left" > ยังได้อัปเดทข้อมูลกรุณาคลิก UPDATE เพื่อแจ้งแอดมิน <br><br></div>' +
-        '<div class="left"><button  type="button" id="add-data" >UPDATE</button></div>' +
-
-        '<div class="left"><p><a  target ="_blank" href="' + info.url + '">' +
-        'ดูใน Google Maps</a></div >' +
-        '</div>' +
-        '</div>';
     },
     //--------------------------------------resetmarkes------------------------------------//
     resetmarkes() {
@@ -569,14 +620,21 @@ export default {
 
     //---------------------------get firebase-----------------------------------------//
     async getstation(place) {
+      const sumType = [];
       const docSnap = await getDoc(doc(firebase.db, 'station', place.place_id))
       if (docSnap.exists()) {
         this.Type = docSnap.data().Type;
-        this.Type_2 = docSnap.data().Type_2;
-        this.CCS = docSnap.data().CCS;
-        console.log(' this.CCS ' + this.CCS + ' this.Type ' + this.Type + ' this.Type_2 ' + this.Type_2)
+        let Type_2 = docSnap.data().Type_2;
+        let CCS = docSnap.data().CCS;
+        let J1772 = docSnap.data().J1772;
+        sumType[0] = Type_2;
+        sumType[1] = CCS;
+        sumType[2] = J1772;
+        // console.log('sumType = ' + sumType)
+        return sumType
       } else {
-        console.log('Document does not exist')
+        // console.log('Document does not exist')
+        this.Type = false;
       }
     },
     updatePlaceholder() {
@@ -595,7 +653,28 @@ export default {
     this.radio1 = document.getElementById('battery');
     this.radio2 = document.getElementById('distance');
     this.updatePlaceholder();
+    //---------------ตรวจสอบและอนุญาตเฉพาะตัวเลขและจุด (.) ในการป้อน-----------------------//
+    const inputField = document.getElementById('value');
+    inputField.addEventListener('keydown', function (event) {
+      const inputValue = inputField.value;
+
+      // ตรวจสอบและอนุญาตเฉพาะตัวเลขและจุด (.) ในการป้อน
+      if (
+        (event.key === '.' && inputValue.indexOf('.') === -1) || // อนุญาตให้ป้อนจุด (.) ได้เพียงครั้งเดียว
+        (event.key >= '0' && event.key <= '9') || // อนุญาตให้ป้อนตัวเลข
+        event.key === 'Backspace' || // อนุญาตให้ใช้ปุ่ม Backspace
+        event.key === 'Delete' || // อนุญาตให้ใช้ปุ่ม Delete
+        event.key === 'ArrowLeft' || // อนุญาตให้ใช้ปุ่มลูกศรซ้าย
+        event.key === 'ArrowRight' // อนุญาตให้ใช้ปุ่มลูกศรขวา
+      ) {
+        return true; // อนุญาตให้ป้อนข้อมูล
+      } else {
+        event.preventDefault(); // ป้องกันการป้อนข้อมูลที่ไม่ถูกต้อง
+        return false; // ไม่อนุญาตให้ป้อนข้อมูลที่ไม่ถูกต้อง
+      }
+    });
     //-------------------------------Autocomplete--------------------------------//
+
     const originInput = document.getElementById("address")
     const destinationInput = document.getElementById("addressto")
 
@@ -682,13 +761,6 @@ export default {
   background-color: #0056b3;
 }
 
-/* ซ่อน .row ที่มีคลาส .hide */
-.row.hide {
-  display: none;
-
-}
-
-
 /* ปรับแต่งสไตล์ของ input และ select ใน #pac-container */
 .pac-controls input[type="text"] {
   padding-right: 35px;
@@ -729,6 +801,7 @@ select {
   border-radius: 4px;
   background-color: #f1f1f1;
   width: 100px;
+  margin-left: 5px;
 }
 
 .left {

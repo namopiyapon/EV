@@ -32,14 +32,15 @@
 
       <div class="row">
         <div class="col-md-4  text-left">
-          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km(only number)" required>
+          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km(only number)" id="DrivingRange" required>
           </base-input>
         </div>
         <div class="col-md-4  text-left">
           Type<br>
           <select v-model="Type" id="Type" required>
-            <option value="CCS">CCS-type2</option>
-            <option value="type2">type2</option>
+            <option value="CCS">CCS</option>
+            <option value="type_2">type2</option>
+            <option value="J1772">J1772</option>
           </select>
         </div>
       </div>
@@ -86,6 +87,27 @@ export default {
 
     onAuthStateChanged(auth, (user) => {
       this.user = user;
+    });
+
+    //---------------ตรวจสอบและอนุญาตเฉพาะตัวเลขและจุด (.) ในการป้อน-----------------------//
+    const inputField = document.getElementById('DrivingRange');
+    inputField.addEventListener('keydown', function (event) {
+      const inputValue = inputField.value;
+
+      // ตรวจสอบและอนุญาตเฉพาะตัวเลขและจุด (.) ในการป้อน
+      if (
+        (event.key === '.' && inputValue.indexOf('.') === -1) || // อนุญาตให้ป้อนจุด (.) ได้เพียงครั้งเดียว
+        (event.key >= '0' && event.key <= '9') || // อนุญาตให้ป้อนตัวเลข
+        event.key === 'Backspace' || // อนุญาตให้ใช้ปุ่ม Backspace
+        event.key === 'Delete' || // อนุญาตให้ใช้ปุ่ม Delete
+        event.key === 'ArrowLeft' || // อนุญาตให้ใช้ปุ่มลูกศรซ้าย
+        event.key === 'ArrowRight' // อนุญาตให้ใช้ปุ่มลูกศรขวา
+      ) {
+        return true; // อนุญาตให้ป้อนข้อมูล
+      } else {
+        event.preventDefault(); // ป้องกันการป้อนข้อมูลที่ไม่ถูกต้อง
+        return false; // ไม่อนุญาตให้ป้อนข้อมูลที่ไม่ถูกต้อง
+      }
     });
   },
 
