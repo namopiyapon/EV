@@ -57,11 +57,10 @@
 <script>
 
 import { Card, BaseInput } from "@/components/index";
-import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore"
+import { doc, getDoc, updateDoc, deleteDoc, query, collection, where, getDocs } from "firebase/firestore"
 import firebase from './Firebase.js'
 import BaseButton from "@/components/BaseButton";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { ref, onMounted } from "vue";
 
 export default {
   props: [
@@ -79,6 +78,7 @@ export default {
       user: null,
       userId: null,
       Usercar: [],
+      num: 0,
     }
   },
   // updated() {
@@ -117,28 +117,32 @@ export default {
   },
 
   methods: {
-    // async getUsers() {
-    //   const auth = getAuth();
-    //   onAuthStateChanged(auth, async (user) => {
-    //     if (user) {
-    //       // สร้างคิวรี Firestore เมื่อผู้ใช้ล็อกอินอยู่
-    //       const q = query(collection(firebase.db, 'Usercar'), where('email', '==', user.email))
-    //       const querySnap = await getDocs(q);
+    async getUsers() {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      this.num = 0;
+      if (!user) {
+        return false; // ไม่มีผู้ใช้ล็อกอินอยู่
+      }
+      const q = query(collection(firebase.db, 'Usercar'), where('email', '==', user.email));
+      const querySnap = await getDocs(q);
 
-    //       querySnap.forEach((doc) => {
-    //         this.Usercar.push({ ID: doc.id, ...doc.data() })
-    //         console.log(this.Usercar)
-    //       })
-    //     }
-    //   });
-    //   // for(var i = 0 ; i< this.Usercar.length;i++){
-    //   //   if(this.Usercar[i] == namecar){
+      this.Usercar = querySnap.docs.map((doc) => ({
+        namecar: doc.data().namecar, // เลือกเฉพาะฟิล 'namecar'
+      }));
 
-    //   //   }
-    //   // }
+      for (var i = 0; i < this.Usercar.length; i++) {
+        if (this.Usercar[i].namecar == this.namecar) {
+          this.num++;
+        }
+      }
+      if (this.num > 0) {
+        return false;
+      } else {
+        return true;
+      }
+    },
 
-    // },
-    
     async getCountry() {
       const docSnap = await getDoc(doc(firebase.db, 'Usercar', this.userId))
       if (docSnap.exists()) {
@@ -154,15 +158,21 @@ export default {
     },
     async onSuccess(event) {
       event.preventDefault();
-      setup();
-      await updateDoc(doc(firebase.db, 'Usercar', this.userId), {
-        namecar: this.namecar,
-        Type: this.Type,
-        Brand: this.Brand,
-        Model: this.Model,
-        DrivingRange: this.DrivingRange,
-      })
-      this.$router.push('/profile')
+      const check = await this.getUsers();
+      if (check) {
+        console.log(check+"check")
+        await updateDoc(doc(firebase.db, 'Usercar', this.userId), {
+          namecar: this.namecar,
+          Type: this.Type,
+          Brand: this.Brand,
+          Model: this.Model,
+          DrivingRange: this.DrivingRange,
+        })
+        this.$router.push('/profile')
+      } else {
+        alert('มีชื่อนี้อยู่แล้ว กรุณาเปลี่ยนชื่อ')
+      }
+
     },
     async ondelete(event) {
       console.log('delete =>', this.userId)

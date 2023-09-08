@@ -51,7 +51,7 @@
 <script>
 
 import { Card, BaseInput } from "@/components/index";
-import { collection, addDoc } from "firebase/firestore"
+import { collection, addDoc, query, where, getDocs  } from "firebase/firestore"
 import firebase from './Firebase.js'
 import BaseButton from "@/components/BaseButton";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -67,6 +67,8 @@ export default {
       email: '',
       myselect: '',
       user: null,
+      Usercar: [],
+      num: 0,
     }
   },
   created() {
@@ -101,12 +103,42 @@ export default {
   },
 
   methods: {
-    onSuccess(event) {
-      console.log(this.Type)
-      this.createUser()
+    async getUsers() {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      this.num = 0;
+      if (!user) {
+        return false; // ไม่มีผู้ใช้ล็อกอินอยู่
+      }
+      const q = query(collection(firebase.db, 'Usercar'), where('email', '==', user.email));
+      const querySnap = await getDocs(q);
+
+      this.Usercar = querySnap.docs.map((doc) => ({
+        namecar: doc.data().namecar, // เลือกเฉพาะฟิล 'namecar'
+      }));
+
+      for (var i = 0; i < this.Usercar.length; i++) {
+        if (this.Usercar[i].namecar == this.namecar) {
+          this.num++;
+        }
+      }
+      if (this.num > 0) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    async onSuccess(event) {
+      const check = await this.getUsers();
+      if (check) {
+        this.createUser()
+        alert("ADD")
+        this.$router.push("/profile")
+      } else {
+        alert('มีชื่อนี้อยู่แล้ว กรุณาเปลี่ยนชื่อ')
+      }
       event.preventDefault();
-      alert("ADD")
-      this.$router.push("/profile")
+
     },
     async createUser() {
       // 'users' collection reference

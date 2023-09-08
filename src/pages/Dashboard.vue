@@ -2,9 +2,9 @@
   <div class="contentmap">
     <card type="plain">
 
-      <template slot="header">
+      <!-- <template slot="header">
         <h4 class="card-title">Google Maps</h4>
-      </template>
+      </template> -->
       <div>
         <form>
           <section>
