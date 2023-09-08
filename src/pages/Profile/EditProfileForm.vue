@@ -61,6 +61,7 @@ import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore"
 import firebase from './Firebase.js'
 import BaseButton from "@/components/BaseButton";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { ref, onMounted } from "vue";
 
 export default {
   props: [
@@ -77,6 +78,7 @@ export default {
       email: '',
       user: null,
       userId: null,
+      Usercar: [],
     }
   },
   // updated() {
@@ -115,6 +117,28 @@ export default {
   },
 
   methods: {
+    // async getUsers() {
+    //   const auth = getAuth();
+    //   onAuthStateChanged(auth, async (user) => {
+    //     if (user) {
+    //       // สร้างคิวรี Firestore เมื่อผู้ใช้ล็อกอินอยู่
+    //       const q = query(collection(firebase.db, 'Usercar'), where('email', '==', user.email))
+    //       const querySnap = await getDocs(q);
+
+    //       querySnap.forEach((doc) => {
+    //         this.Usercar.push({ ID: doc.id, ...doc.data() })
+    //         console.log(this.Usercar)
+    //       })
+    //     }
+    //   });
+    //   // for(var i = 0 ; i< this.Usercar.length;i++){
+    //   //   if(this.Usercar[i] == namecar){
+
+    //   //   }
+    //   // }
+
+    // },
+    
     async getCountry() {
       const docSnap = await getDoc(doc(firebase.db, 'Usercar', this.userId))
       if (docSnap.exists()) {
@@ -130,6 +154,7 @@ export default {
     },
     async onSuccess(event) {
       event.preventDefault();
+      setup();
       await updateDoc(doc(firebase.db, 'Usercar', this.userId), {
         namecar: this.namecar,
         Type: this.Type,
@@ -141,6 +166,7 @@ export default {
     },
     async ondelete(event) {
       console.log('delete =>', this.userId)
+      setup();
       event.preventDefault();
       await deleteDoc(doc(firebase.db, 'Usercar', this.userId));
       this.$router.push('/profile')
@@ -189,4 +215,5 @@ export default {
 .custom-button:hover {
   background-color: #1fa360;
   /* เปลี่ยนสีพื้นหลังเมื่อนำเมาส์ไปชี้ที่ปุ่ม */
-}</style>
+}
+</style>

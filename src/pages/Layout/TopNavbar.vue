@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-absolute" :class="{ 'bg-white': showMenu, 'navbar-transparent': !showMenu }">
     <div class="container-fluid">
       <div class="navbar-wrapper">
-        <div class="navbar-toggle d-inline" :class="{ toggled: $sidebar.showSidebar }" v-if="$route.name != 'Map'">
+        <div class="navbar-toggle d-inline" :class="{ toggled: $sidebar.showSidebar }" v-if="$route.name != 'Map' && $route.name != 'Give Feedback' &&$route.name != 'Register' &&$route.name != 'Login'&&$route.name != 'password'">
           <button type="button" class="navbar-toggler" @click="toggleSidebar">
             <span class="navbar-toggler-bar bar1"></span>
 
@@ -33,9 +33,15 @@
               placeholder="SEARCH" />
           </modal>
 
-          <drop-down>
+          <div v-if="!user">
+            <a href="/#/login" class="nav-item dropdown-item">
+              Login
+            </a>
+          </div>
+
+          <drop-down v-if="user">
             <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
-              <div class="email">
+              <div class="Profile">
                 {{ user.email }}
               </div>
 
@@ -78,15 +84,6 @@
               </li>
             </ul>
 
-            <ul class="dropdown-menu dropdown-navbar" v-else>
-
-              <li class="nav-link">
-                <a href="/#/login" class="nav-item dropdown-item">
-                  Login
-                </a>
-              </li>
-            </ul>
-
           </drop-down>
 
         </ul>
@@ -98,7 +95,7 @@
 <script>
 import DropDown from "@/components/Dropdown.vue";
 import Modal from "@/components/Modal.vue";
-import { getAuth, signOut ,onAuthStateChanged} from 'firebase/auth';
+import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
 
 export default {
   components: {
@@ -106,11 +103,10 @@ export default {
     Modal,
   },
   mounted() {
-    // console.log(Vue.$cookies.get('email'))
     const auth = getAuth();
-        onAuthStateChanged(auth, (user) => {
-            this.user = user;
-        });
+    onAuthStateChanged(auth, (user) => {
+      this.user = user;
+    });
   },
   data() {
     return {
