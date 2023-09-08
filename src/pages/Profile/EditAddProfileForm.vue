@@ -27,7 +27,8 @@
 
       <div class="row">
         <div class="col-md-4  text-left">
-          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km(only number)" id="DrivingRange" required>
+          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km(only number)" id="DrivingRange"
+            required>
           </base-input>
         </div>
         <div class="col-md-4  text-left">
@@ -42,7 +43,7 @@
 
       <template slot="footer">
         <!-- <base-button type="success" fill>Save</base-button> -->
-        <button type="submit" fill>Save</button>
+        <button type="submit" class="custom-button" fill>Save</button>
       </template>
     </card>
   </form>
@@ -53,7 +54,7 @@ import { Card, BaseInput } from "@/components/index";
 import { collection, addDoc } from "firebase/firestore"
 import firebase from './Firebase.js'
 import BaseButton from "@/components/BaseButton";
-import { getAuth ,onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
   data() {
@@ -105,14 +106,7 @@ export default {
       this.createUser()
       event.preventDefault();
       alert("ADD")
-      // this.$store.commit('settext', this.namecar)
-      // console.log('->', this.$store.state.namecar)
-      this.$router.push("/profile").catch(() => { })
-
-        .catch((error) => {
-          alert(error.message);
-        });
-
+      this.$router.push("/profile")
     },
     async createUser() {
       // 'users' collection reference

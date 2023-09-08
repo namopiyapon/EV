@@ -35,22 +35,28 @@
 
           <drop-down>
             <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
-              <div class="photo">
-                <img src="@/assets/img/anime3.png" alt="Profile Photo" />
+              <div class="email">
+                {{ user.email }}
               </div>
 
               <b class="caret d-none d-lg-block d-xl-block"></b>
 
-              <p class="d-lg-none">Profile</p>
+              <!-- <p class="d-lg-none">Profile</p> -->
             </a>
 
             <ul class="dropdown-menu dropdown-navbar" v-if="user">
               <li class="nav-link">
-                <a href="/#/password" class="nav-item dropdown-item">
-                  {{ user.email }}
+                <a href="/#/dashboard" class="nav-item dropdown-item">
+                  MAP
                 </a>
               </li>
               <li class="dropdown-divider"></li>
+
+              <li class="nav-link">
+                <a href="/#/password" class="nav-item dropdown-item">
+                  Edit password
+                </a>
+              </li>
 
               <li class="nav-link">
                 <a href="/#/profile" class="nav-item dropdown-item">

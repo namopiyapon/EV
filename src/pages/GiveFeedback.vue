@@ -1,12 +1,9 @@
 <template>
-  <div class="content">
     <div class="row">
       <div class="col-md-12">
         <edit-GiveFeedback-form :model="model"> </edit-GiveFeedback-form>
       </div>
-      
     </div>
-  </div>
 </template>
 <script>
 import EditGiveFeedbackForm from "./Profile/EditGiveFeedbackForm.vue";

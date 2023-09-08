@@ -32,7 +32,8 @@
 
       <div class="row">
         <div class="col-md-4  text-left">
-          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km(only number)" id="DrivingRange" required>
+          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km(only number)" id="DrivingRange"
+            required>
           </base-input>
         </div>
         <div class="col-md-4  text-left">
@@ -47,8 +48,8 @@
 
       <template slot="footer">
         <!-- <base-button type="success" fill>Save</base-button> -->
-        <button type="submit" fill>Save</button>
-        <button type="reset" fill>delete</button>
+        <button type="submit" class="custom-button" fill>Save</button>
+        <button type="reset" class="custom-button" fill>delete</button>
       </template>
     </card>
   </form>
@@ -75,6 +76,7 @@ export default {
       DrivingRange: '',
       email: '',
       user: null,
+      userId: null,
     }
   },
   // updated() {
@@ -82,6 +84,7 @@ export default {
   // },
 
   mounted() {
+    this.userId = this.$route.params.id;
     this.getCountry()
     const auth = getAuth();
 
@@ -113,7 +116,7 @@ export default {
 
   methods: {
     async getCountry() {
-      const docSnap = await getDoc(doc(firebase.db, 'Usercar', this.$store.state.idtest))
+      const docSnap = await getDoc(doc(firebase.db, 'Usercar', this.userId))
       if (docSnap.exists()) {
         this.namecar = docSnap.data().namecar
         this.Type = docSnap.data().Type
@@ -127,7 +130,7 @@ export default {
     },
     async onSuccess(event) {
       event.preventDefault();
-      await updateDoc(doc(firebase.db, 'Usercar', this.$store.state.idtest), {
+      await updateDoc(doc(firebase.db, 'Usercar', this.userId), {
         namecar: this.namecar,
         Type: this.Type,
         Brand: this.Brand,
@@ -137,9 +140,9 @@ export default {
       this.$router.push('/profile')
     },
     async ondelete(event) {
-      console.log('delete =>', this.$store.state.idtest)
+      console.log('delete =>', this.userId)
       event.preventDefault();
-      await deleteDoc(doc(firebase.db, 'Usercar', this.$store.state.idtest));
+      await deleteDoc(doc(firebase.db, 'Usercar', this.userId));
       this.$router.push('/profile')
     },
 
@@ -162,4 +165,28 @@ export default {
   },
 };
 </script>
-<style></style>
+<style>
+.custom-button {
+  margin-left: 20px;
+  background-color: #2dce89;
+  color: #ffffff;
+  /* สีข้อความ */
+  border: none;
+  /* ลบเส้นขอบ */
+  padding: 10px 20px;
+  /* ขนาดการเว้นระยะของปุ่ม */
+  border-radius: 5px;
+  /* ขอบมนเข้าหากลาง */
+  cursor: pointer;
+  /* เปลี่ยนรูปร่างเมาส์เป็นเส้นตรงเมื่อชี้ที่ปุ่ม */
+  font-size: 16px;
+  /* ขนาดตัวอักษร */
+  transition: background-color 0.3s ease;
+  /* เพิ่มการเปลี่ยนสีเบา ๆ เมื่อนำเมาส์ไปชี้ที่ปุ่ม */
+}
+
+/* สร้างรูปแบบสำหรับปุ่มเมื่อนำเมาส์ไปชี้ที่ปุ่ม */
+.custom-button:hover {
+  background-color: #1fa360;
+  /* เปลี่ยนสีพื้นหลังเมื่อนำเมาส์ไปชี้ที่ปุ่ม */
+}</style>

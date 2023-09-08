@@ -1,6 +1,6 @@
 <template>
   <form @submit="onSuccess">
-    <card>
+    <card class="cardcenter">
       <template slot="header">
         <h5 class="title">Give Feedback</h5>
       </template>
@@ -22,7 +22,7 @@
         </div>
       </div>
       <template slot="footer">
-        <button type="success" fill>Save</button>
+        <button type="success" class="custom-button" fill>Save</button>
       </template>
     </card>
   </form>

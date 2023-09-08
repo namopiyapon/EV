@@ -23,36 +23,36 @@ const routes = [
     redirect: "Dashboard",
     name: "Map",
     children: [
-      {
-        path: "/dashboard",
-        name: "Map",
-        component: Dashboard,
-      },
-      {
-        path: "/evcharger",
-        name: "Give EV Charger",
-        component: GiveEVCharger,
-      },
-      {
-        path: "/feedback",
-        name: "Give Feedback",
-        component: GiveFeedback,
-      },
-      {
-        path: "/register",
-        name: "Register",
-        component: Register,
-      },
-      {
-        path: "/login",
-        name: "Login",
-        component: Login,
-      },
-      {
-        path: "/password",
-        name: "password",
-        component: password,
-      },
+  {
+    path: "/dashboard",
+    name: "Map",
+    component: Dashboard,
+  },
+  {
+    path: "/evcharger",
+    name: "Give EV Charger",
+    component: GiveEVCharger,
+  },
+  {
+    path: "/feedback",
+    name: "Give Feedback",
+    component: GiveFeedback,
+  },
+  {
+    path: "/register",
+    name: "Register",
+    component: Register,
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: Login,
+  },
+  {
+    path: "/password",
+    name: "password",
+    component: password,
+  },
     ],
   },
   {
@@ -61,7 +61,7 @@ const routes = [
     redirect: "DashboardLayout",
     children: [
       {
-        path: "/user",
+        path: "/user/:id",
         name: "User Profile",
         component: UserProfile,
       },
@@ -99,8 +99,8 @@ const routes = [
       },
     ],
   },
-  
-  
+
+
 ];
 
 export default routes;

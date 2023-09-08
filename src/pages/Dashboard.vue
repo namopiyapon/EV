@@ -1,5 +1,5 @@
 <template >
-  <div class="content">
+  <div class="contentmap">
     <card type="plain">
 
       <template slot="header">
@@ -44,7 +44,6 @@
           </section>
         </form>
       </div>
-
     </card>
   </div>
 </template>
@@ -809,5 +808,8 @@ select {
   float: left;
   margin-left: 5px;
   width: 120px;
+}
+.contentmap {
+  margin-top: 66px; /* แก้ไขค่าตามที่คุณต้องการ */
 }
 </style>

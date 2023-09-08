@@ -5,8 +5,8 @@
     <side-bar :background-color="backgroundColor">
       <!-- <mobile-menu slot="content"></mobile-menu> -->
 
-      <div v-for="users in Usercar" :key="users.namecar" @click="setId(users.ID)">
-        <sidebar-link to="/user">
+      <div v-for="users in Usercar" :key="users.namecar" @click="setIdAndNavigate(users.ID)">
+        <sidebar-link :to="'/user/' + users.ID">
           <i class="tim-icons icon-single-02"></i>
           <template>
             <div class="row">
@@ -109,11 +109,10 @@ export default {
         }
       });
     },
-    setId(id) {
-      this.$store.commit('SET_IDTEST', id)
-      this.$router.push('/profile')
+    setIdAndNavigate(id) {
+      this.$store.commit('SET_IDTEST', id);
+      this.$router.push('/user/' + id);
     },
-
   },
 
 };

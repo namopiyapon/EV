@@ -1,12 +1,10 @@
 <template>
-  <div class="content">
     <div class="row">
       <div class="col-md-12">
         <edit-Login-form :model="model"> </edit-Login-form>
       </div>
-      
     </div>
-  </div>
+
 </template>
 <script>
 import EditLoginForm from "./Profile/EditLoginForm.vue";

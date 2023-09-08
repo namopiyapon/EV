@@ -1,12 +1,10 @@
 <template>
-  <div class="content">
     <div class="row">
       <div class="col-md-12">
         <edit-Register-form :model="model"> </edit-Register-form>
       </div>
       
     </div>
-  </div>
 </template>
 <script>
 import EditRegisterForm from "./Profile/EditRegisterForm.vue";
