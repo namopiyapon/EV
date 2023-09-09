@@ -107,7 +107,7 @@
 <script>
 import DropDown from "@/components/Dropdown.vue";
 import Modal from "@/components/Modal.vue";
-import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from 'firebase/auth';
 import firebase from '@/Firebase.js'
 import { query, collection, where, getDocs } from "firebase/firestore"
 
@@ -118,10 +118,10 @@ export default {
   },
   mounted() {
     const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       this.user = user;
+      this.admin = await this.getadmin(user); // รอให้การร้องขอดึงข้อมูลผู้ดูแลระบบเสร็จสิ้นก่อนที่จะตั้งค่าค่า this.admin
     });
-    this.admin = this.getadmin()
   },
   data() {
     return {
@@ -130,30 +130,20 @@ export default {
       showMenu: false,
       user: null,
       adminarr: [],
-      admin: null,
+      admin: false,
     };
   },
   methods: {
     async getadmin(user) {
-      // ตรวจสอบว่ามีผู้ใช้ที่ลงชื่อเข้าใช้แล้ว (user) และไม่ใช่ผู้ดูแลระบบ
-      if (user) {
-        const q = query(collection(firebase.db, 'admin'), where('email', '==', user.email))
+      if (user && user.email) {
+        const q = query(collection(firebase.db, 'admin'), where('email', '==', user.email));
         const querySnap = await getDocs(q);
-
-        querySnap.forEach((doc) => {
-          this.adminarr.push(doc.data())
-        })
-
-        // ตรวจสอบว่าผู้ใช้ปัจจุบันเป็นผู้ดูแลระบบหรือไม่
-        if (this.adminarr.length > 0 && this.adminarr[0].email === user.email) {
-          console.log(this.adminarr[0].email + " == " + user.email)
-          return true;
+        if (!querySnap.empty) {
+          return true; // ถ้ามีข้อมูลในคอลเล็กชัน 'admin' ให้คืนค่า true
         }
       }
-
-      return false; // หรือค่าอื่น ๆ ที่เหมาะสมในกรณีที่ไม่มีผู้ใช้หรือผู้ดูแลระบบ
+      return false; // ถ้าไม่มีข้อมูลให้คืนค่า false
     },
-
     toggleSidebar() {
       this.$sidebar.displaySidebar(!this.$sidebar.showSidebar);
     },
