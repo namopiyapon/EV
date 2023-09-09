@@ -21,8 +21,6 @@ import SideBar from "@/components/SidebarPlugin/SideBar.vue";
 import SidebarLink from "@/components/SidebarPlugin/SidebarLink.vue";
 import BaseInput from "@/components/index";
 
-
-
 export default {
   components: {
     TopNavbar,
