@@ -4,24 +4,24 @@
 
     <side-bar :background-color="backgroundColor">
       <!-- <mobile-menu slot="content"></mobile-menu> -->
-      
-      <div v-for="Station in ChargingStation" :key="Station.name"  @click="setidStation(Station.ID)" >
-        <sidebar-link to="/EVChargerFrom"  >
-          <i class="tim-icons icon-square-pin" ></i>
-          <template >
-            <div class="row"  >
-              <p>{{ Station.name }} </p>
+
+      <div v-for="sta in station" :key="sta.ID" @click="setIdAndNavigate(sta.ID)">
+        <sidebar-link :to="'/addeditstation/' + sta.ID">
+          <i class="tim-icons icon-single-02"></i>
+          <template>
+            <div class="row">
+              <p>{{ sta.ID }} </p>
             </div>
           </template>
         </sidebar-link>
       </div>
 
-      <sidebar-link to="/Addevcharger">
+      <!-- <sidebar-link to="/adduser">
         <i class="tim-icons icon-simple-add"></i>
         <template v-if="!isRTL">
           <p>ADD</p>
         </template>
-      </sidebar-link>
+      </sidebar-link> -->
 
     </side-bar>
 
@@ -49,6 +49,7 @@ import MobileMenu from "./MobileMenu.vue";
 import SideBar from "@/components/SidebarPlugin/SideBar.vue";
 import SidebarLink from "@/components/SidebarPlugin/SidebarLink.vue";
 import { collection, where, query, getDocs } from "firebase/firestore"
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebase from '@/Firebase.js'
 
 
@@ -63,14 +64,21 @@ export default {
     MobileMenu,
     SideBar,
     SidebarLink,
-    
+
   },
   data() {
     return {
       backgroundColor: "green",
-      ChargingStation: [],
-      idStation: [],
+      station: [],
+      id: [],
+      user: null,
     };
+  },
+  mounted() {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      this.user = user;
+    });
   },
 
   computed: {
@@ -80,7 +88,6 @@ export default {
   },
   created() {
     this.getUsers()
-    
   },
   methods: {
     toggleSidebar() {
@@ -89,21 +96,23 @@ export default {
       }
     },
     async getUsers() {
+      const auth = getAuth();
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          // สร้างคิวรี Firestore เมื่อผู้ใช้ล็อกอินอยู่
+          const q = query(collection(firebase.db, 'station') , where('Type', '==', false))
+          const querySnap = await getDocs(q);
 
-      const q = query(collection(firebase.db, 'ChargingStation'))
-      const querySnap = await getDocs(q);
-
-      querySnap.forEach((doc) => {
-        this.ChargingStation.push({ID: doc.id, ...doc.data()})
-        // console.log(doc.id);
-      })
+          querySnap.forEach((doc) => {
+            this.station.push({ ID: doc.id, ...doc.data() })
+          })
+        }
+      });
     },
-    setidStation(idStation) {
-
-      this.$store.commit('SET_Station', idStation)
-      this.$router.push('/editevcharger')
-    }
-
+    setIdAndNavigate(id) {
+      this.$store.commit('SET_Station', id);
+      this.$router.push('/addeditstation/' + id);
+    },
   },
 
 };

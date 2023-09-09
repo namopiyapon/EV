@@ -3,25 +3,33 @@
     <div class="row">
       <div class="col-md-12">
         <!-- {{ this.$store.state.idStation }} -->
-        <Editevchargerfrom :model="model"> </Editevchargerfrom>
+        <edit-Station-form :model="model"> </edit-Station-form>
       </div>
     </div>
   </div>
 </template>
 <script>
-import Editevchargerfrom from "./Profile/EditEVChargerFrom.vue";
+import EditStationForm from "./Profile/EditstationForm.vue";
+
+
 
 export default {
   components: {
-    Editevchargerfrom,
+    EditStationForm,
     
   },
   data() {
     return {
-      model: {}
+      model: {
+
+      }
       //Usercar: []
     };
   },
+
+  created(){
+
+  }
 };
 </script>
 <style></style>

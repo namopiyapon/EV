@@ -5,23 +5,23 @@
     <side-bar :background-color="backgroundColor">
       <!-- <mobile-menu slot="content"></mobile-menu> -->
 
-      <div v-for="users in Usercar" :key="users.namecar" @click="setIdAndNavigate(users.ID)">
-        <sidebar-link :to="'/user/' + users.ID">
+      <div v-for="sta in station" :key="sta.ID" @click="setIdAndNavigate(sta.ID)">
+        <sidebar-link :to="'/editstation/' + sta.ID">
           <i class="tim-icons icon-single-02"></i>
           <template>
             <div class="row">
-              <p>{{ users.namecar }} </p>
+              <p>{{ sta.ID }} </p>
             </div>
           </template>
         </sidebar-link>
       </div>
 
-      <sidebar-link to="/adduser">
+      <!-- <sidebar-link to="/adduser">
         <i class="tim-icons icon-simple-add"></i>
         <template v-if="!isRTL">
           <p>ADD</p>
         </template>
-      </sidebar-link>
+      </sidebar-link> -->
 
     </side-bar>
 
@@ -48,7 +48,7 @@ import DashboardContent from "./DashboardContent.vue";
 import MobileMenu from "./MobileMenu.vue";
 import SideBar from "@/components/SidebarPlugin/SideBar.vue";
 import SidebarLink from "@/components/SidebarPlugin/SidebarLink.vue";
-import { collection, where, query, getDocs ,orderBy } from "firebase/firestore"
+import { collection, where, query, getDocs } from "firebase/firestore"
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebase from '@/Firebase.js'
 
@@ -69,7 +69,7 @@ export default {
   data() {
     return {
       backgroundColor: "green",
-      Usercar: [],
+      station: [],
       id: [],
       user: null,
     };
@@ -100,18 +100,18 @@ export default {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           // สร้างคิวรี Firestore เมื่อผู้ใช้ล็อกอินอยู่
-          const q = query(collection(firebase.db, 'Usercar') , where('email', '==', user.email))
+          const q = query(collection(firebase.db, 'station') , where('Type', '==', true))
           const querySnap = await getDocs(q);
 
           querySnap.forEach((doc) => {
-            this.Usercar.push({ ID: doc.id, ...doc.data() })
+            this.station.push({ ID: doc.id, ...doc.data() })
           })
         }
       });
     },
     setIdAndNavigate(id) {
-      this.$store.commit('SET_IDTEST', id);
-      this.$router.push('/user/' + id);
+      this.$store.commit('SET_Station', id);
+      this.$router.push('/editstation/' + id);
     },
   },
 

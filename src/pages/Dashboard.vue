@@ -50,7 +50,7 @@
 <script>
 import { Card } from "@/components/index";
 import axios from 'axios';
-import { collection, where, query, getDocs, getDoc, doc, setDoc } from "firebase/firestore"
+import { collection, where, query, getDocs, getDoc, doc, addDoc  } from "firebase/firestore"
 import firebase from '@/Firebase.js'
 
 export default {
@@ -535,52 +535,34 @@ export default {
             '</div>';
           infoWindow.setContent(contentString1);
         } else {
-          var contentString2 =
-            '<div id="content">' +
-            '<h5 id="firstHeading" class="firstHeading">' + place.name + '</h5>' +
-            '<div id="bodyContent">' +
-            '<div ><p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br></div>' +
-            '<div class="left"><img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location=' + location + '&heading=' + heading + '&pitch=' + pitch + '&key=' + apiKey + '" alt="Street View Image" >' +
-            '<b>ระยะทาง :</b> ' + color.text + ' </div><br>' +
-
-            '<div class="left" > ยังได้อัปเดทข้อมูลกรุณาคลิก UPDATE เพื่อแจ้งแอดมิน <br></div>' +
-            '<div class="left"><button  type="button" id="add-data" >UPDATE</button></div>' +
-
-            '<div class="left"><p><a  target ="_blank" href="' + info.url + '">' +
-            'ดูใน Google Maps</a></div >' +
-            '</div>' +
-            '</div>';
           infoWindow.setContent(contentString2);
-          //---------------------------ADD firebase-----------------------------------------//
-          document.addEventListener("DOMContentLoaded", function () {
-            var g = document.getElementById('add-data')
-            // console.log("g 2 is ", g)
-            g.onclick = async function () {
-              if (g) {
-                // 'users' collection reference
-                const colRef = doc(firebase.db, 'station', place.place_id)
-                // data to send
-                const dataObj = {
-                  name: place.name,
-                  lat: place.geometry.location.lat(),
-                  lng: place.geometry.location.lng(),
-                  url: info.url,
-                  Type: false,
-                  Type_2: 0,
-                  CCS: 0,
-                  J1772: 0,
-                }
-                // create document and return reference to it
-                const docRef = await setDoc(colRef, dataObj)
-                // console.log('Document was created with ID:', docRef.id)
-                alert("ADD")
-              }
-            }
-          });
         }
         infoWindow.open({ anchor: marker, map, })
         this.currentInfoWindow = await infoWindow;
         // console.log('-----> ', this.currentInfoWindow, this.currentInfoWindow.shouldFocus)
+        //---------------------------ADD firebase-----------------------------------------//
+        var addButton = document.getElementById('add-data');
+        if (addButton) {
+          // เพิ่มอีเวนต์ click listener
+          addButton.addEventListener('click',async function () {
+            // โค้ดที่ควรทำงานเมื่อปุ่มถูกคลิก
+            const colRef = collection(firebase.db, 'station');
+            const dataObj = {
+              name: place.name,
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng(),
+              url: info.url,
+              Type: false,
+              Type_2: 0,
+              CCS: 0,
+              J1772: 0,
+              address: info.formatted_address,
+            }
+            // เพิ่มเอกสารใหม่ในคอลเล็กชัน 'station'
+            await addDoc(colRef, dataObj);
+            alert("ADD");
+          });
+        }
       });
 
       var request = {
@@ -608,6 +590,22 @@ export default {
           }
         })
       });
+
+      var contentString2 =
+        '<div id="content">' +
+        '<h5 id="firstHeading" class="firstHeading">' + place.name + '</h5>' +
+        '<div id="bodyContent">' +
+        '<div ><p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br></div>' +
+        '<div class="left"><img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location=' + location + '&heading=' + heading + '&pitch=' + pitch + '&key=' + apiKey + '" alt="Street View Image" >' +
+        '<b>ระยะทาง :</b> ' + color.text + ' </div><br>' +
+
+        '<div class="left" > ยังได้อัปเดทข้อมูลกรุณาคลิก UPDATE เพื่อแจ้งแอดมิน <br></div>' +
+        `<div class="left"><button type="button" id="add-data" >ADD DATA</button></div>` +
+
+        '<div class="left"><p><a  target ="_blank" href="' + info.url + '">' +
+        'ดูใน Google Maps</a></div >' +
+        '</div>' +
+        '</div>';
     },
     //--------------------------------------resetmarkes------------------------------------//
     resetmarkes() {
@@ -809,7 +807,9 @@ select {
   margin-left: 5px;
   width: 120px;
 }
+
 .contentmap {
-  margin-top: 66px; /* แก้ไขค่าตามที่คุณต้องการ */
+  margin-top: 66px;
+  /* แก้ไขค่าตามที่คุณต้องการ */
 }
 </style>

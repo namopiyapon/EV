@@ -40,7 +40,7 @@
           Type<br>
           <select v-model="Type" id="Type" required>
             <option value="CCS">CCS</option>
-            <option value="type_2">type2</option>
+            <option value="Type_2">Type_2</option>
             <option value="J1772">J1772</option>
           </select>
         </div>

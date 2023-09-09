@@ -2,7 +2,8 @@
   <nav class="navbar navbar-expand-lg navbar-absolute" :class="{ 'bg-white': showMenu, 'navbar-transparent': !showMenu }">
     <div class="container-fluid">
       <div class="navbar-wrapper">
-        <div class="navbar-toggle d-inline" :class="{ toggled: $sidebar.showSidebar }" v-if="$route.name != 'Map' && $route.name != 'Give Feedback' &&$route.name != 'Register' &&$route.name != 'Login'&&$route.name != 'password'">
+        <div class="navbar-toggle d-inline" :class="{ toggled: $sidebar.showSidebar }"
+          v-if="$route.name != 'Map' && $route.name != 'Give Feedback' && $route.name != 'Register' && $route.name != 'Login' && $route.name != 'password'">
           <button type="button" class="navbar-toggler" @click="toggleSidebar">
             <span class="navbar-toggler-bar bar1"></span>
 
@@ -74,6 +75,17 @@
                   Give Feedback
                 </a>
               </li>
+              <!-- for admin -->
+              <li class="nav-link" v-if="admin">
+                <a href="/#/addstation" class="nav-item dropdown-item">
+                  ADD Station
+                </a>
+              </li>
+              <li class="nav-link" v-if="admin">
+                <a href="/#/station" class="nav-item dropdown-item">
+                  Edit Station
+                </a>
+              </li>
 
               <li class="dropdown-divider"></li>
 
@@ -96,6 +108,8 @@
 import DropDown from "@/components/Dropdown.vue";
 import Modal from "@/components/Modal.vue";
 import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
+import firebase from '@/Firebase.js'
+import { query, collection, where, getDocs } from "firebase/firestore"
 
 export default {
   components: {
@@ -107,6 +121,7 @@ export default {
     onAuthStateChanged(auth, (user) => {
       this.user = user;
     });
+    this.admin = this.getadmin()
   },
   data() {
     return {
@@ -114,9 +129,31 @@ export default {
       searchQuery: "",
       showMenu: false,
       user: null,
+      adminarr: [],
+      admin: null,
     };
   },
   methods: {
+    async getadmin(user) {
+      // ตรวจสอบว่ามีผู้ใช้ที่ลงชื่อเข้าใช้แล้ว (user) และไม่ใช่ผู้ดูแลระบบ
+      if (user) {
+        const q = query(collection(firebase.db, 'admin'), where('email', '==', user.email))
+        const querySnap = await getDocs(q);
+
+        querySnap.forEach((doc) => {
+          this.adminarr.push(doc.data())
+        })
+
+        // ตรวจสอบว่าผู้ใช้ปัจจุบันเป็นผู้ดูแลระบบหรือไม่
+        if (this.adminarr.length > 0 && this.adminarr[0].email === user.email) {
+          console.log(this.adminarr[0].email + " == " + user.email)
+          return true;
+        }
+      }
+
+      return false; // หรือค่าอื่น ๆ ที่เหมาะสมในกรณีที่ไม่มีผู้ใช้หรือผู้ดูแลระบบ
+    },
+
     toggleSidebar() {
       this.$sidebar.displaySidebar(!this.$sidebar.showSidebar);
     },

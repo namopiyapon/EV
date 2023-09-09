@@ -1,17 +1,18 @@
 import DashboardLayout from "@/pages/Layout/DashboardLayout.vue";
 import DashboardLayoutmap from "@/pages/Layout/DashboardLayoutmap.vue";
-import DashboardCharger from "@/pages/Layout/DashboardCharger.vue";
 import Dashboard from "@/pages/Dashboard.vue";
 import Profile from "@/pages/Profile.vue";
 import UserProfile from "@/pages/UserProfile.vue";
 import AddUserProfile from "@/pages/AddUserProfile.vue";
-import AddEVCharger from "@/pages/AddEVCharger.vue";
-import GiveEVCharger from "@/pages/GiveEVCharger.vue";
-import EVCharger from "@/pages/EVCharger.vue";
-import EVChargerFrom from "@/pages/EVChargerFrom.vue";
 import GiveFeedback from "@/pages/GiveFeedback.vue";
 import Register from "@/pages/Register.vue";
 import password from "@/pages/resetpassword.vue";
+import DashboardLayoutstation from "@/pages/Layout/DashboardLayoutstation.vue";
+import station from "@/pages/station.vue";
+import editstation from "@/pages/editstation.vue";
+import DashboardLayoutaddstation from "@/pages/Layout/DashboardLayoutaddstation.vue";
+import addstation from "@/pages/addstation.vue";
+import addeditstation from "@/pages/addeditstation.vue";
 
 
 import Login from "@/pages/Login.vue";
@@ -27,11 +28,6 @@ const routes = [
     path: "/dashboard",
     name: "Map",
     component: Dashboard,
-  },
-  {
-    path: "/evcharger",
-    name: "Give EV Charger",
-    component: GiveEVCharger,
   },
   {
     path: "/feedback",
@@ -79,23 +75,35 @@ const routes = [
   },
   {
     path: "/",
-    component: DashboardCharger,
-    redirect: "DashboardCharger",
+    component: DashboardLayoutstation,
+    redirect: "DashboardLayoutstation",
     children: [
       {
-        path: "/Addevcharger",
-        name: "AddEVCharger",
-        component: AddEVCharger,
+        path: "/station",
+        name: "station",
+        component: station,
       },
       {
-        path: "/editevcharger",
-        name: "EVCharger",
-        component: EVCharger,
+        path: "/editstation/:id",
+        name: "editstation",
+        component: editstation,
+      },
+    ],
+  },
+  {
+    path: "/",
+    component: DashboardLayoutaddstation,
+    redirect: "DashboardLayoutaddstation",
+    children: [
+      {
+        path: "/addstation",
+        name: "addstation",
+        component: addstation,
       },
       {
-        path: "/evchargerFrom",
-        name: "EVChargerFrom",
-        component: EVChargerFrom,
+        path: "/addeditstation/:id",
+        name: "addeditstation",
+        component: addeditstation,
       },
     ],
   },
