@@ -1,0 +1,3 @@
+[submodule "js-samples"]
+    path = js-samples
+    url = URL_OF_JS_SAMPLES_REPO
