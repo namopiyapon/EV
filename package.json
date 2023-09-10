@@ -15,7 +15,7 @@
     "bulma": "^0.9.4",
     "chart.js": "2.9.4",
     "core-js": "2.6.5",
-    "firebase": "^10.0.0",
+    "firebase": "^10.3.1",
     "firebase-admin": "^11.9.0",
     "google-polyline": "^1.0.3",
     "save": "^2.9.0",

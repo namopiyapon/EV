@@ -47,6 +47,7 @@
     </card>
   </div>
 </template>
+<!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCEwuKRd9Fqz_RCZoonrVZAbNuVzvrA8JU&libraries=geometry,places&v=weekly"></script> -->
 <script>
 import { Card } from "@/components/index";
 import axios from 'axios';
