@@ -348,16 +348,16 @@ export default {
     //---------------------------------------Matrix------------------------------------------//
     matrix(place) {
       // build request
-      const origin1 =  this.originlocstion;
-      const origin2 =  this.address;
-      const destinationA = place.name;
-      const destinationB = place.geometry.location;
+      const origin1 = place.geometry.location;
+      const origin2 = place.name;
+      const destinationA = this.address;
+      const destinationB = this.originlocstion;
       var service = new google.maps.DistanceMatrixService();
       return new Promise((resolve, reject) => {
         service.getDistanceMatrix(
           {
-            origins: [origin1, origin2],
-            destinations: [destinationA, destinationB],
+            origins: [destinationB, destinationA],
+            destinations: [origin1, origin2],
             travelMode: google.maps.TravelMode.DRIVING,
             unitSystem: google.maps.UnitSystem.METRIC,
             avoidHighways: false,
@@ -376,7 +376,7 @@ export default {
                 var duration = element.duration;
                 var from = origins[i];
                 var to = destinations[j];
-                // console.log("distance=> " + distance + "/ duration=>" + duration + "/ from=>" + from + "/ to=>" + to)
+                console.log("distance=> " + distance + "/ duration=>" + duration + "/ from=>" + from + "/ to=>" + to)
                 resolve(distance);
               }
             }
@@ -402,7 +402,7 @@ export default {
           if ((this.Typemycar == "CCS" && (sumTypeMarker[0] > 0 || sumTypeMarker[1] > 0))
             || (this.Typemycar == 'Type_2' && sumTypeMarker[1] > 0)
             || (this.Typemycar == 'J1772' && sumTypeMarker[2] > 0)) {
-            console.log("Typemycar " + this.Typemycar)
+            console.log("Typemycar " + this.Typemycar + " color.value " + color.value)
             if (Driving * 0.7 > color.value / 1000) {
               var pinBackground = new PinElement({
                 background: "#0cfb04",
@@ -449,13 +449,12 @@ export default {
       }
       //--------------------------------this.value => distance-----------------------------------//
       else if (this.radio2.checked) {
-        console.log("Typemycar " + this.Typemycar)
+        console.log("Typemycar " + this.Typemycar + " color.value " + color)
         if (this.Type == true) {
           if ((this.Typemycar == "CCS" && (sumTypeMarker[0] > 0 || sumTypeMarker[1] > 0))
             || (this.Typemycar == 'Type_2' && sumTypeMarker[1] > 0)
             || (this.Typemycar == 'J1772' && sumTypeMarker[2] > 0)) {
             if (this.value * 0.7 > color.value / 1000) {
-              // console.log("value*0.7 > color " + color.value)
               var pinBackground = new PinElement({
                 background: "#0cfb04",
                 borderColor: "#089c03",
