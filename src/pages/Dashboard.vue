@@ -31,10 +31,10 @@
 
               <div class="row" id="pac-container">
                 <div class="input-group">
-                  <input type="text" id="address" name="address" v-model="address">
+                  <input type="text" id="address" name="address" v-model="address" placeholder="สถานที่เริ่มต้น">
                   <i class="tim-icons icon-compass-05" @click="locatorButtonPressed"></i>
                 </div>
-                <input type="text" id="addressto" name="addressto" v-model="addressto">
+                <input type="text" id="addressto" name="addressto" v-model="addressto" placeholder="จุดหมายปลายทาง">
               </div>
 
             </div>
@@ -51,8 +51,9 @@
 <script>
 import { Card } from "@/components/index";
 import axios from 'axios';
-import { collection, where, query, getDocs, getDoc, doc, addDoc  } from "firebase/firestore"
+import { collection, where, query, getDocs, getDoc, doc, addDoc } from "firebase/firestore"
 import firebase from '@/Firebase.js'
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
   data() {
@@ -86,6 +87,7 @@ export default {
       Type_2: '',
       Typemycar: '',
       sumType: [],
+      user: null,
     };
   },
   components: {
@@ -323,12 +325,14 @@ export default {
 
     //-------------------------------SHOW FIREBASE--------------------------------//
     async getUsers() {
-      const q = query(collection(firebase.db, 'Usercar'), where('email', '==', "mo@gmail.com")) //this.$store.state.email
-      const querySnap = await getDocs(q);
-      querySnap.forEach((doc) => {
-        this.Usercar.push({ ID: doc.id, ...doc.data() })
-        // console.log(doc.data());
-      })
+      if (this.user) {
+        const q = query(collection(firebase.db, 'Usercar'), where('email', '==', this.user.email))
+        const querySnap = await getDocs(q);
+        querySnap.forEach((doc) => {
+          this.Usercar.push({ ID: doc.id, ...doc.data() });
+          // console.log(doc.data());
+        })
+      }
     },
 
     //-------------------------------CALLBACK--------------------------------//
@@ -545,7 +549,7 @@ export default {
         var addButton = document.getElementById('add-data');
         if (addButton) {
           // เพิ่มอีเวนต์ click listener
-          addButton.addEventListener('click',async function () {
+          addButton.addEventListener('click', async function () {
             // โค้ดที่ควรทำงานเมื่อปุ่มถูกคลิก
             const colRef = collection(firebase.db, 'station');
             const dataObj = {
@@ -648,6 +652,16 @@ export default {
   },
 
   mounted() {
+    const auth = getAuth();
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        this.user = user;
+        await this.getUsers(); // เรียกใช้งาน getUsers() เมื่อมีผู้ใช้ล็อกอิน
+      } else {
+        // ไม่มีผู้ใช้ล็อกอิน ให้ทำอย่างอื่นที่ต้องการ
+      }
+    });
+    //-----------user------------//
     this.radio1 = document.getElementById('battery');
     this.radio2 = document.getElementById('distance');
     this.updatePlaceholder();

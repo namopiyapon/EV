@@ -2,11 +2,11 @@
   <form @submit="onSuccess">
     <card class="cardcenter">
       <template slot="header">
-        <h5 class="title">Give Feedback</h5>
+        <h5 class="title">Feedback</h5>
       </template>
       <div class="row">
         <div class="col-md-12 text-left">
-          <base-input label="Topic" placeholder="topic" v-model="topic" required>
+          <base-input label="หัวเรื่อง" placeholder="หัวเรื่อง" v-model="topic" required>
           </base-input>
         </div>
       </div>
@@ -14,7 +14,7 @@
       <div class="row">
         <div class="col-md-12 text-left">
           <base-input>
-            <label>Details</label>
+            <label>รายละเอียด</label>
             <textarea rows="4" cols="80" class="form-control" placeholder="Here can be your description" v-model="about"
               required>
           </textarea>

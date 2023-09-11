@@ -160,7 +160,7 @@ export default {
       event.preventDefault();
       const check = await this.getUsers();
       if (check) {
-        console.log(check+"check")
+        console.log(check + "check")
         await updateDoc(doc(firebase.db, 'Usercar', this.userId), {
           namecar: this.namecar,
           Type: this.Type,
@@ -175,11 +175,17 @@ export default {
 
     },
     async ondelete(event) {
-      console.log('delete =>', this.userId)
-      setup();
-      event.preventDefault();
-      await deleteDoc(doc(firebase.db, 'Usercar', this.userId));
-      this.$router.push('/profile')
+      var r = confirm("คุณต้องการลบข้อมูลหรือไม่?");
+      if (r) {
+        console.log('delete =>', this.userId)
+        event.preventDefault();
+        await deleteDoc(doc(firebase.db, 'Usercar', this.userId));
+        this.$router.push('/profile')
+        // alert('คุณได้ลบข้อมูลแล้ว');
+      } else {
+        this.$router.push('/profile')
+      }
+
     },
 
   },

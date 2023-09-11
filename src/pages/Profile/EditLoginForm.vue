@@ -50,7 +50,7 @@ export default {
     async onSuccess(event) {
       event.preventDefault();
       const auth = getAuth();
-      alert("Login")
+      // alert("Login")
       signInWithEmailAndPassword(auth, this.form.email, this.form.password)
         .then(() => {
           //store

@@ -63,18 +63,10 @@ export default {
     onSuccess(event) {
       event.preventDefault();
       const auth = getAuth();
-      alert("Register")
+      // alert("Register")
       createUserWithEmailAndPassword(auth, this.model.email, this.model.password)
-
-        .then(async (userCredential) => {
-          //await updateProfile(userCredential.username, { displayName: this.model.username });
-          this.$store.commit('login', this.model.email)
-          this.$router.push("/dashboard").catch(() => { });
-
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
+      this.$store.commit('login', this.model.email)
+      this.$router.push("/dashboard")
 
       //this.$store.commit('login', this.model.email)
     },

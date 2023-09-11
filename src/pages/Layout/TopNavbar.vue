@@ -72,7 +72,7 @@
               </li>
               <li class="nav-link">
                 <a href="/#/Feedback" class="nav-item dropdown-item">
-                  Give Feedback
+                  Feedback
                 </a>
               </li>
               <!-- for admin -->

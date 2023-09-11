@@ -110,7 +110,7 @@ export default {
       if (!user) {
         return false; // ไม่มีผู้ใช้ล็อกอินอยู่
       }
-      const q = query(collection(firebase.db, 'Usercar'), where('email', '==', user.email));
+      const q = query(collection(firebase.db, 'Usercar'), where('email', '==', this.user.email));
       const querySnap = await getDocs(q);
 
       this.Usercar = querySnap.docs.map((doc) => ({
@@ -132,7 +132,7 @@ export default {
       const check = await this.getUsers();
       if (check) {
         this.createUser()
-        alert("ADD")
+        // alert("ADD")
         this.$router.push("/profile")
       } else {
         alert('มีชื่อนี้อยู่แล้ว กรุณาเปลี่ยนชื่อ')
