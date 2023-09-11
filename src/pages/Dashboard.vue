@@ -344,13 +344,14 @@ export default {
         }
       }
     },
+
     //---------------------------------------Matrix------------------------------------------//
     matrix(place) {
       // build request
-      const origin1 = place.geometry.location;
-      const origin2 = place.name;
-      const destinationA = this.address;
-      const destinationB = this.originlocstion;
+      const origin1 =  this.originlocstion;
+      const origin2 =  this.address;
+      const destinationA = place.name;
+      const destinationB = place.geometry.location;
       var service = new google.maps.DistanceMatrixService();
       return new Promise((resolve, reject) => {
         service.getDistanceMatrix(
