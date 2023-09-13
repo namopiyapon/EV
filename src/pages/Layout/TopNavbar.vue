@@ -13,7 +13,7 @@
           </button>
         </div>
 
-        <a class="navbar-brand" href="/#/dashboard" @click=""> แผนที่ </a>
+        <a class="navbar-brand" href="/#/dashboard" style: position =  "relative"> แผนที่ </a>
       </div>
 
       <button class="navbar-toggler" type="button" @click="toggleMenu" data-toggle="collapse" data-target="#navigation"
