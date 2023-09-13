@@ -6,40 +6,40 @@
         <!-- {{ getCountry() }} -->
       </div>
       <template slot="header">
-        <h5 class="title">Edit Profile</h5>
+        <h5 class="title">แก้ไขข้อมูลรถยนต์ไฟฟ้า</h5>
       </template>
       <div class="row">
         <div class="col-md-8 text-left">
           <!-- <p>name car : {{ Energy }}</p>  -->
-          <base-input label="namecar" placeholder="namecar" v-model="namecar" required>
+          <base-input label="ชื่อรถ" placeholder="กรุณาตั้งชื่อรถยนต์ของคุณ" v-model="namecar" required>
           </base-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-8 text-left">
-          <base-input label="Brand" v-model="Brand" placeholder="Brand" required>
+          <base-input label="แบรนด์" v-model="Brand" placeholder="กรุณาใช่ชื่อแบรนด์ของคุณ" required>
           </base-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-8 text-left">
-          <base-input label="Model" v-model="Model" placeholder="Model" required>
+          <base-input label="โมเดล" v-model="Model" placeholder="กรุณาใช่ชื่อโมเดลของคุณ" required>
           </base-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-4  text-left">
-          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km(only number)" id="DrivingRange"
+          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="กิโลเมตรต่อชั่วโมง" id="DrivingRange"
             required>
           </base-input>
         </div>
         <div class="col-md-4  text-left">
-          Type<br>
+          ประเภทหัวชาร์จ<br>
           <select v-model="Type" id="Type" required>
-            <option value="CCS">CCS</option>
+            <option value="CCS">CCS2</option>
             <option value="Type_2">Type_2</option>
             <option value="J1772">J1772</option>
           </select>
@@ -48,8 +48,8 @@
 
       <template slot="footer">
         <!-- <base-button type="success" fill>Save</base-button> -->
-        <button type="submit" class="custom-button" fill>Save</button>
-        <button type="reset" class="custom-button" fill>delete</button>
+        <button type="submit" class="custom-button" fill>บันทึก</button>
+        <button type="reset" class="custom-button" fill>ลบ</button>
       </template>
     </card>
   </form>

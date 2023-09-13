@@ -6,12 +6,12 @@
         <!-- {{ getCountry() }} -->
       </div>
       <template slot="header">
-        <h5 class="title">Edit Station</h5>
+        <h5 class="title">แก้ไขปั๊มชาร์จไฟฟ้า</h5>
       </template>
       <div class="row">
         <div class="col-md-8 text-left">
           <!-- <p>name car : {{ Energy }}</p>  -->
-          <base-input label="name" placeholder="name" v-model="name" disabled="disabled">
+          <base-input label="ชื่อ" placeholder="name" v-model="name" disabled="disabled">
           </base-input>
         </div>
       </div>
@@ -19,18 +19,18 @@
       <div class="row">
         <div class="col-md-8 text-left">
           <!-- <p>name car : {{ Energy }}</p>  -->
-          <base-input label="address" placeholder="address" v-model="address" disabled="disabled">
+          <base-input label="ที่อยู่" placeholder="address" v-model="address" disabled="disabled">
           </base-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-4 text-left">
-          <base-input label="lat" v-model="lat" placeholder="lat" disabled="disabled">
+          <base-input label="ละติจูด" v-model="lat" placeholder="lat" disabled="disabled">
           </base-input>
         </div>
         <div class="col-md-4 text-left">
-          <base-input label="lng" v-model="lng" placeholder="lng" disabled="disabled">
+          <base-input label="ลองติจูด" v-model="lng" placeholder="lng" disabled="disabled">
           </base-input>
         </div>
       </div>
@@ -59,8 +59,8 @@
 
       <template slot="footer">
         <!-- <base-button type="success" fill>Save</base-button> -->
-        <button type="submit" class="custom-button" fill>Save</button>
-        <button type="reset" class="custom-button" fill>delete</button>
+        <button type="submit" class="custom-button" fill>บันทึก</button>
+        <button type="reset" class="custom-button" fill>ลบ</button>
       </template>
     </card>
   </form>

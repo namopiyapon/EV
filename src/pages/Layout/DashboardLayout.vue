@@ -48,7 +48,7 @@ import DashboardContent from "./DashboardContent.vue";
 import MobileMenu from "./MobileMenu.vue";
 import SideBar from "@/components/SidebarPlugin/SideBar.vue";
 import SidebarLink from "@/components/SidebarPlugin/SidebarLink.vue";
-import { collection, where, query, getDocs ,orderBy } from "firebase/firestore"
+import { collection, where, query, getDocs, orderBy } from "firebase/firestore"
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import firebase from '@/Firebase.js'
 
@@ -100,7 +100,7 @@ export default {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           // สร้างคิวรี Firestore เมื่อผู้ใช้ล็อกอินอยู่
-          const q = query(collection(firebase.db, 'Usercar') , where('email', '==', user.email))
+          const q = query(collection(firebase.db, 'Usercar'), where('email', '==', user.email))
           const querySnap = await getDocs(q);
 
           querySnap.forEach((doc) => {

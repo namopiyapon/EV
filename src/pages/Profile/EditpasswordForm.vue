@@ -2,12 +2,12 @@
     <form @submit="onSuccess">
         <card class="cardcenter">
             <template slot="header">
-                <h5 class="title">Edit password</h5>
+                <h5 class="title">แก้ไขรหัสผ่าน</h5>
             </template>
             <div class="row">
                 <div class="col-md-12 text-left">
                     <p v-if="user">email: {{ user.email }}</p>
-                    <p v-else>Not logged in</p>
+                    <p v-else>ไม่ได้ล๊อคอิน</p>
                 </div>
             </div>
 
@@ -25,7 +25,7 @@
                 </div>
             </div>
             <template slot="footer">
-                <button type="submit" class="custom-button">Save</button> <br>
+                <button type="submit" class="custom-button">บันทึก</button> <br>
             </template>
         </card>
     </form>

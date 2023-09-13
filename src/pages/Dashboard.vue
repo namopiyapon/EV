@@ -1,6 +1,13 @@
 <template >
   <div class="contentmap">
     <card type="plain">
+      <div class="img">
+        
+        ระยะทางหมุด : <img src="./img/green.png" width="30" height="30"/> น้อยกว่า 70% ,
+        <img src="./img/orange.png" width="30" height="30"/> มากกว่า 70% แต่ไม่เกิน 100% ,
+        <img src="./img/red.png" width="30" height="30"/> มากกว่า 100% ,
+        <img src="./img/grey.png" width="30" height="30"/> ไม่มีหัวชาร์ที่ตรงกัน
+      </div>
 
       <!-- <template slot="header">
         <h4 class="card-title">Google Maps</h4>
@@ -11,17 +18,16 @@
             <div style="position: absolute; z-index: 1; " class="pac-card" id="pac-card">
 
               <div class="pac-controls">
-                <b>choose:</b>
                 <input type="radio" name="typevalue" id="battery" value="battery"
-                  @change="updatePlaceholder" /><b>battery</b>
+                  @change="updatePlaceholder" /><b>แบตเตอร์รี่</b>
                 <input type="radio" name="typevalue" id="distance" value="distance" checked
-                  @change="updatePlaceholder" /><b>distance</b><br>
+                  @change="updatePlaceholder" /><b>ระยะทาง</b><br>
                 <input type="text" id="value" name="value" v-model="value" :placeholder="placeholder">
                 <button type="submit" @click="onSuccess">Go</button>
               </div><br>
 
               <div>
-                <b>my car:</b>
+                <b>ชื่อรถ:</b>
                 <select v-model="myselect" id="myselect">
                   <option v-for="user in Usercar" :key="user.namecar" :value="user.ID">
                     {{ user.namecar }}
@@ -376,7 +382,7 @@ export default {
                 var duration = element.duration;
                 var from = origins[i];
                 var to = destinations[j];
-                console.log("distance=> " + distance + "/ duration=>" + duration + "/ from=>" + from + "/ to=>" + to)
+                // console.log("distance=> " + distance + "/ duration=>" + duration + "/ from=>" + from + "/ to=>" + to)
                 resolve(distance);
               }
             }
@@ -402,7 +408,7 @@ export default {
           if ((this.Typemycar == "CCS" && (sumTypeMarker[0] > 0 || sumTypeMarker[1] > 0))
             || (this.Typemycar == 'Type_2' && sumTypeMarker[1] > 0)
             || (this.Typemycar == 'J1772' && sumTypeMarker[2] > 0)) {
-            console.log("Typemycar " + this.Typemycar + " color.value " + color.value)
+            // console.log("Typemycar " + this.Typemycar + " color.value " + color.value)
             if (Driving * 0.7 > color.value / 1000) {
               var pinBackground = new PinElement({
                 background: "#0cfb04",
@@ -449,7 +455,7 @@ export default {
       }
       //--------------------------------this.value => distance-----------------------------------//
       else if (this.radio2.checked) {
-        console.log("Typemycar " + this.Typemycar + " color.value " + color)
+        // console.log("Typemycar " + this.Typemycar + " color.value " + color)
         if (this.Type == true) {
           if ((this.Typemycar == "CCS" && (sumTypeMarker[0] > 0 || sumTypeMarker[1] > 0))
             || (this.Typemycar == 'Type_2' && sumTypeMarker[1] > 0)
@@ -826,5 +832,11 @@ select {
 .contentmap {
   margin-top: 66px;
   /* แก้ไขค่าตามที่คุณต้องการ */
+}
+
+.img{
+  text-align: left;
+  margin-left: 5px;
+  margin-left: 5px;
 }
 </style>

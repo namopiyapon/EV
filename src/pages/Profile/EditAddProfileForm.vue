@@ -2,39 +2,39 @@
   <form @submit="onSuccess"> <!-- //@submit="addUsercar" -->
     <card>
       <template slot="header">
-        <h5 class="title">ADD Profile</h5>
+        <h5 class="title">เพิ่มข้อมูลรถยนต์ไฟฟ้า</h5>
       </template>
       <div class="row">
         <div class="col-md-8 text-left">
-          <base-input label="namecar" placeholder="namecar" v-model="namecar" required>
+          <base-input label="ชื่อรถ" placeholder="กรุณาตั้งชื่อรถยนต์ของคุณ" v-model="namecar" required>
           </base-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-8 text-left">
-          <base-input label="Brand" v-model="Brand" placeholder="Brand" required>
+          <base-input label="แบรนด์" v-model="Brand" placeholder="กรุณาใช่ชื่อแบรนด์ของคุณ" required>
           </base-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-8 text-left">
-          <base-input label="Model" v-model="Model" placeholder="Model" required>
+          <base-input label="โมเดล" v-model="Model" placeholder="กรุณาใช่ชื่อโมเดลของคุณ" required>
           </base-input>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-4  text-left">
-          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="Km(only number)" id="DrivingRange"
+          <base-input label="ระยะทางสูงสุดที่วิ่งได้" v-model="DrivingRange" placeholder="กิโลเมตรต่อชั่วโมง" id="DrivingRange"
             required>
           </base-input>
         </div>
         <div class="col-md-4  text-left">
-          Type<br>
+          ประเภทหัวชาร์จ<br>
           <select v-model="Type" id="Type">
-            <option value="CCS">CCS</option>
+            <option value="CCS">CCS2</option>
             <option value="type_2">type2</option>
             <option value="J1772">J1772</option>
           </select>
@@ -43,7 +43,7 @@
 
       <template slot="footer">
         <!-- <base-button type="success" fill>Save</base-button> -->
-        <button type="submit" class="custom-button" fill>Save</button>
+        <button type="submit" class="custom-button" fill>บันทึก</button>
       </template>
     </card>
   </form>
@@ -141,6 +141,7 @@ export default {
 
     },
     async createUser() {
+      console.log('-----')
       // 'users' collection reference
       const colRef = collection(firebase.db, 'Usercar')
       // data to send

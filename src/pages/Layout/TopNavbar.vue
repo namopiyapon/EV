@@ -13,7 +13,7 @@
           </button>
         </div>
 
-        <a class="navbar-brand" href="/#/dashboard" @click=""> MAP </a>
+        <a class="navbar-brand" href="/#/dashboard" @click=""> แผนที่ </a>
       </div>
 
       <button class="navbar-toggler" type="button" @click="toggleMenu" data-toggle="collapse" data-target="#navigation"
@@ -36,7 +36,7 @@
 
           <div v-if="!user">
             <a href="/#/login" class="nav-item dropdown-item">
-              Login
+              ล๊อคอิน
             </a>
           </div>
 
@@ -54,36 +54,36 @@
             <ul class="dropdown-menu dropdown-navbar" v-if="user">
               <li class="nav-link">
                 <a href="/#/dashboard" class="nav-item dropdown-item">
-                  MAP
+                  แผนที่
                 </a>
               </li>
               <li class="dropdown-divider"></li>
 
               <li class="nav-link">
                 <a href="/#/password" class="nav-item dropdown-item">
-                  Edit password
+                  แก้ไขรหัสผ่าน
                 </a>
               </li>
 
               <li class="nav-link">
                 <a href="/#/profile" class="nav-item dropdown-item">
-                  My Car
+                  รถยนต์ไฟฟ้า
                 </a>
               </li>
               <li class="nav-link">
                 <a href="/#/Feedback" class="nav-item dropdown-item">
-                  Feedback
+                  ข้อเสนอแนะ
                 </a>
               </li>
               <!-- for admin -->
               <li class="nav-link" v-if="admin">
                 <a href="/#/addstation" class="nav-item dropdown-item">
-                  ADD Station
+                  เพิ่มปั๊มชาร์จไฟฟ้า
                 </a>
               </li>
               <li class="nav-link" v-if="admin">
                 <a href="/#/station" class="nav-item dropdown-item">
-                  Edit Station
+                  แก้ไขปั๊มชาร์จไฟฟ้า
                 </a>
               </li>
 
@@ -91,7 +91,7 @@
 
               <li class="nav-link">
                 <a href="/#/login" class="nav-item dropdown-item" @click="signOut">
-                  Log out
+                  ล๊อคเอ้า
                 </a>
               </li>
             </ul>

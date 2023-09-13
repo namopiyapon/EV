@@ -2,7 +2,7 @@
   <form @submit="onSuccess">
     <card class="cardcenter">
       <template slot="header">
-        <h5 class="title">Register</h5>
+        <h5 class="title">สมัครสมาชิก</h5>
       </template>
       <div class="row">
         <div class="col-md-12 text-left">
@@ -21,7 +21,7 @@
 
       <template slot="footer">
         <!-- <base-button type="submit" variant="primary">Sign Up</base-button> -->
-        <button type="submit" class="custom-button">Sign Up</button>
+        <button type="submit" class="custom-button">สมัคร</button>
       </template>
 
     </card>

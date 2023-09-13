@@ -2,7 +2,7 @@
   <form @submit="onSuccess">
     <card class="cardcenter">
       <template slot="header">
-        <h5 class="title">Login</h5>
+        <h5 class="title">ล๊อคอิน</h5>
       </template>
       <div class="row">
         <div class="col-md-12 text-left">
@@ -18,8 +18,8 @@
         </div>
       </div>
       <template slot="footer">
-        <button type="submit" class="custom-button">Login</button>
-        <a href="/#/Register"> Register</a>
+        <button type="submit" class="custom-button">ล๊อคอิน</button>
+        <a href="/#/Register"> สมัครสมาชิก</a>
       </template>
     </card>
   </form>
