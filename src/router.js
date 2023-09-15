@@ -13,6 +13,7 @@ import editstation from "@/pages/editstation.vue";
 import DashboardLayoutaddstation from "@/pages/Layout/DashboardLayoutaddstation.vue";
 import addstation from "@/pages/addstation.vue";
 import addeditstation from "@/pages/addeditstation.vue";
+import uptype from "@/pages/uptype.vue";
 
 
 import Login from "@/pages/Login.vue";
@@ -48,6 +49,11 @@ const routes = [
     path: "/password",
     name: "password",
     component: password,
+  },
+  {
+    path: "/uptype",
+    name: "uptype",
+    component: uptype,
   },
     ],
   },

@@ -27,8 +27,8 @@
 
       <div class="row">
         <div class="col-md-4  text-left">
-          <base-input label="ระยะทางสูงสุดที่วิ่งได้" v-model="DrivingRange" placeholder="กิโลเมตรต่อชั่วโมง" id="DrivingRange"
-            required>
+          <base-input label="ระยะทางสูงสุดที่วิ่งได้" v-model="DrivingRange" placeholder="กิโลเมตรต่อชั่วโมง"
+            id="DrivingRange" required>
           </base-input>
         </div>
         <div class="col-md-4  text-left">
@@ -51,7 +51,7 @@
 <script>
 
 import { Card, BaseInput } from "@/components/index";
-import { collection, addDoc, query, where, getDocs  } from "firebase/firestore"
+import { collection, addDoc, query, where, getDocs } from "firebase/firestore"
 import firebase from './Firebase.js'
 import BaseButton from "@/components/BaseButton";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -69,6 +69,7 @@ export default {
       user: null,
       Usercar: [],
       num: 0,
+      dataArray: [],
     }
   },
   created() {

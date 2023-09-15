@@ -86,6 +86,11 @@
                   แก้ไขปั๊มชาร์จไฟฟ้า
                 </a>
               </li>
+              <li class="nav-link" v-if="admin">
+                <a href="/#/uptype" class="nav-item dropdown-item">
+                  ประเภทหัวชาร์จ
+                </a>
+              </li>
 
               <li class="dropdown-divider"></li>
 
