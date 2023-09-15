@@ -43,17 +43,10 @@
       </div>
 
       <div class="row">
-        <div class="col-md-2  text-left">
-          <base-input label="CCS" v-model="CCS" placeholder="CCS" id="CCS" class="ccs-input" required>
-          </base-input>
-        </div>
-        <div class="col-md-2  text-left">
-          <base-input label="type_2" v-model="Type_2" placeholder="Type_2" id="Type_2" class="ccs-input" required>
-          </base-input>
-        </div>
-        <div class="col-md-2  text-left">
-          <base-input label="J1772" v-model="J1772" placeholder="J1772" id="J1772" class="ccs-input" required>
-          </base-input>
+        <div class="col-md-2 text-left" v-for="(item, index) in types" :key="index">
+          <label>{{ types[index] }}</label>
+          <input type="text" class="custom-input" :value="numType[index]" :placeholder="types[index]"
+            @input="updateNumType(index, $event)" @keydown="onKeyDown(index, $event)" required />
         </div>
       </div>
 
@@ -93,6 +86,9 @@ export default {
       Usercar: [],
       num: 0,
       address: '',
+      types: [],
+      numType: [],
+      nameType: [],
     }
   },
   // updated() {
@@ -100,6 +96,7 @@ export default {
   // },
 
   mounted() {
+    this.gettype();
     this.userId = this.$route.params.id;
     this.getCountry()
     const auth = getAuth();
@@ -134,14 +131,38 @@ export default {
   },
 
   methods: {
+    updateNumType(index, event) {
+      this.$set(this.numType, index, event.target.value);
+    },
+    onKeyDown(index, event) {
+      const inputValue = event.target.value;
+
+      // ตรวจสอบและอนุญาตเฉพาะตัวเลขและจุด (.) ในการป้อน
+      if (
+        // (event.key === "." && inputValue.indexOf(".") === -1) || // อนุญาตให้ป้อนจุด (.) ได้เพียงครั้งเดียว
+        (event.key >= "0" && event.key <= "9") || // อนุญาตให้ป้อนตัวเลข
+        event.key === "Backspace" || // อนุญาตให้ใช้ปุ่ม Backspace
+        event.key === "Delete" || // อนุญาตให้ใช้ปุ่ม Delete
+        event.key === "ArrowLeft" || // อนุญาตให้ใช้ปุ่มลูกศรซ้าย
+        event.key === "ArrowRight" // อนุญาตให้ใช้ปุ่มลูกศรขวา
+      ) {
+        // อนุญาตให้ป้อนข้อมูล
+      } else {
+        event.preventDefault(); // ป้องกันการป้อนข้อมูลที่ไม่ถูกต้อง
+      }
+    },
+    async gettype() {
+      const q = query(collection(firebase.db, "type"));
+      const querySnap = await getDocs(q);
+      this.types = querySnap.docs.map((doc) => doc.data().type);
+    },
 
     async getCountry() {
       const docSnap = await getDoc(doc(firebase.db, 'station', this.userId))
       if (docSnap.exists()) {
-        this.Type_2 = docSnap.data().Type_2
         this.Type = docSnap.data().Type
-        this.J1772 = docSnap.data().J1772
-        this.CCS = docSnap.data().CCS
+        this.numType = docSnap.data().numType
+        this.nameType = docSnap.data().nameType
         this.name = docSnap.data().name
         this.lat = docSnap.data().lat
         this.lng = docSnap.data().lng
@@ -155,10 +176,9 @@ export default {
     async onSuccess(event) {
       event.preventDefault();
       await updateDoc(doc(firebase.db, 'station', this.userId), {
-        Type_2: this.Type_2,
         Type: true,
-        J1772: this.J1772,
-        CCS: this.CCS,
+        numType: this.numType,
+        nameType: this.nameType,
       })
       this.$router.push('/station')
     },
@@ -188,5 +208,4 @@ export default {
   },
 };
 </script>
-<style>
-</style>
+<style></style>

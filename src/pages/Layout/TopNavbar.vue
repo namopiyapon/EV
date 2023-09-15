@@ -2,8 +2,10 @@
   <nav class="navbar navbar-expand-lg navbar-absolute" :class="{ 'bg-white': showMenu, 'navbar-transparent': !showMenu }">
     <div class="container-fluid">
       <div class="navbar-wrapper">
+
         <div class="navbar-toggle d-inline" :class="{ toggled: $sidebar.showSidebar }"
           v-if="$route.name != 'Map' && $route.name != 'Give Feedback' && $route.name != 'Register' && $route.name != 'Login' && $route.name != 'password'">
+
           <button type="button" class="navbar-toggler" @click="toggleSidebar">
             <span class="navbar-toggler-bar bar1"></span>
 
@@ -13,7 +15,9 @@
           </button>
         </div>
 
-        <a class="navbar-brand" href="/#/dashboard" style: position =  "relative"> แผนที่ </a>
+        
+
+        <a class="navbar-brand" href="/#/dashboard" style: position="absolute"> แผนที่ </a>
       </div>
 
       <button class="navbar-toggler" type="button" @click="toggleMenu" data-toggle="collapse" data-target="#navigation"

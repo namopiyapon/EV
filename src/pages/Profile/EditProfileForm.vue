@@ -38,10 +38,8 @@
         </div>
         <div class="col-md-4  text-left">
           ประเภทหัวชาร์จ<br>
-          <select v-model="Type" id="Type" required>
-            <option value="CCS">CCS2</option>
-            <option value="Type_2">Type_2</option>
-            <option value="J1772">J1772</option>
+          <select v-model="Type" id="Type">
+            <option v-for="item in type" :key="item" :value="item">{{ item }}</option>
           </select>
         </div>
       </div>
@@ -79,6 +77,8 @@ export default {
       userId: null,
       Usercar: [],
       num: 0,
+      type: [],
+      namecarold: '',
     }
   },
   // updated() {
@@ -86,8 +86,9 @@ export default {
   // },
 
   mounted() {
+    this.gettype();
     this.userId = this.$route.params.id;
-    this.getCountry()
+    this.getUsercar()
     const auth = getAuth();
 
     onAuthStateChanged(auth, (user) => {
@@ -117,6 +118,13 @@ export default {
   },
 
   methods: {
+    async gettype() {
+      const q = query(collection(firebase.db, 'type'))
+      const querySnap = await getDocs(q);
+      querySnap.forEach((doc) => {
+        this.type.push(doc.data().type)
+      })
+    },
     async getUsers() {
       const auth = getAuth();
       const user = auth.currentUser;
@@ -130,9 +138,9 @@ export default {
       this.Usercar = querySnap.docs.map((doc) => ({
         namecar: doc.data().namecar, // เลือกเฉพาะฟิล 'namecar'
       }));
-
+      
       for (var i = 0; i < this.Usercar.length; i++) {
-        if (this.Usercar[i].namecar == this.namecar) {
+        if (this.Usercar[i].namecar == this.namecar && this.Usercar[i].namecar != this.namecarold) {
           this.num++;
         }
       }
@@ -143,9 +151,10 @@ export default {
       }
     },
 
-    async getCountry() {
+    async getUsercar() {
       const docSnap = await getDoc(doc(firebase.db, 'Usercar', this.userId))
       if (docSnap.exists()) {
+        this.namecarold = docSnap.data().namecar
         this.namecar = docSnap.data().namecar
         this.Type = docSnap.data().Type
         this.Brand = docSnap.data().Brand

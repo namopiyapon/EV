@@ -2,11 +2,13 @@
   <div class="contentmap">
     <card type="plain">
       <div class="img">
-        
-        ระยะทางหมุด : <img src="./img/green.png" width="30" height="30"/> น้อยกว่า 70% ,
-        <img src="./img/orange.png" width="30" height="30"/> มากกว่า 70% แต่ไม่เกิน 100% ,
-        <img src="./img/red.png" width="30" height="30"/> มากกว่า 100% ,
-        <img src="./img/grey.png" width="30" height="30"/> ไม่มีหัวชาร์ที่ตรงกัน
+        <img src="./img/A.png" width="25" height="30" /> ตำแหน่งเริ่มต้น ,
+        <img src="./img/B.png" width="25" height="30" /> ตำแหน่งปลายทาง <br>
+        ระยะทางหมุด : 
+        <img src="./img/green.png" width="30" height="30" /> น้อยกว่า 70% ,
+        <img src="./img/orange.png" width="30" height="30" /> มากกว่า 70% แต่ไม่เกิน 100% ,
+        <img src="./img/red.png" width="30" height="30" /> มากกว่า 100% ,
+        <img src="./img/grey.png" width="30" height="30" /> ไม่มีหัวชาร์ที่ตรงกัน
       </div>
 
       <!-- <template slot="header">
@@ -57,7 +59,7 @@
 <script>
 import { Card } from "@/components/index";
 import axios from 'axios';
-import { collection, where, query, getDocs, getDoc, doc, addDoc } from "firebase/firestore"
+import { collection, where, query, getDocs, getDoc, doc, setDoc } from "firebase/firestore"
 import firebase from '@/Firebase.js'
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
@@ -88,12 +90,15 @@ export default {
       copymarks: [],
       station: [],
       placeholder: '',
-      CCS: '',
+      CCS2: '',
       Type: '',
       Type_2: '',
       Typemycar: '',
       sumType: [],
       user: null,
+      types: [],
+      numtypes: [],
+      nametypes: [],
     };
   },
   components: {
@@ -137,6 +142,13 @@ export default {
     }
   },
   methods: {
+    async gettype() {
+      const q = query(collection(firebase.db, 'type'))
+      const querySnap = await getDocs(q);
+      querySnap.forEach((doc) => {
+        this.types.push(doc.data().type)
+      })
+    },
 
     onSuccess(event) {
       this.route();
@@ -399,55 +411,60 @@ export default {
       const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
 
       var color = await this.matrix(place);
-      const sumTypeMarker = await this.getstation(place);
+      await this.getstation(place);
+      console.log(this.types + "***")
       //--------------------------------this.value => battery-----------------------------------//
       var Driving;
+      var pinBackground;
       if (this.radio1.checked) {
         Driving = this.DrivingRange * (this.value / 100)
         if (this.Type == true) { //updeat แล้ว
-          if ((this.Typemycar == "CCS" && (sumTypeMarker[0] > 0 || sumTypeMarker[1] > 0))
-            || (this.Typemycar == 'Type_2' && sumTypeMarker[1] > 0)
-            || (this.Typemycar == 'J1772' && sumTypeMarker[2] > 0)) {
-            // console.log("Typemycar " + this.Typemycar + " color.value " + color.value)
-            if (Driving * 0.7 > color.value / 1000) {
-              var pinBackground = new PinElement({
-                background: "#0cfb04",
-                borderColor: "#089c03",
-                glyphColor: "#089c03",
-              });
-            } else if (Driving > color.value / 1000) {
-              var pinBackground = new PinElement({
-                background: "#fb6f04",
-                borderColor: "#b04d02",
-                glyphColor: "#b04d02",
-              });
+          for (var i = 0; i < this.types.length; i++) {
+            if ((this.Typemycar == this.nametypes[i]) && (numtypes[i] > 0)) {
+              if (Driving * 0.7 > color.value / 1000) {
+                pinBackground = new PinElement({
+                  background: "#0cfb04",
+                  borderColor: "#089c03",
+                  glyphColor: "#089c03",
+                });
+                break;
+              } else if (Driving > color.value / 1000) {
+                pinBackground = new PinElement({
+                  background: "#fb6f04",
+                  borderColor: "#b04d02",
+                  glyphColor: "#b04d02",
+                });
+                break;
+              } else {
+                pinBackground = new PinElement({
+                  background: "#fb0404",
+                });
+                break;
+              }
             } else {
-              var pinBackground = new PinElement({
-                background: "#fb0404",
+              pinBackground = new PinElement({
+                background: "#6b6b6b",
+                borderColor: "#8a8a8a",
+                glyphColor: "#8a8a8a",
               });
+              break;
             }
-          } else {
-            var pinBackground = new PinElement({
-              background: "#6b6b6b",
-              borderColor: "#8a8a8a",
-              glyphColor: "#8a8a8a",
-            });
           }
         } else { //อื่นๆ 
           if (Driving * 0.7 > color.value / 1000) {
-            var pinBackground = new PinElement({
+            pinBackground = new PinElement({
               background: "#0cfb04",
               borderColor: "#089c03",
               glyphColor: "#089c03",
             });
           } else if (Driving > color.value / 1000) {
-            var pinBackground = new PinElement({
+            pinBackground = new PinElement({
               background: "#fb6f04",
               borderColor: "#b04d02",
               glyphColor: "#b04d02",
             });
           } else {
-            var pinBackground = new PinElement({
+            pinBackground = new PinElement({
               background: "#fb0404",
             });
           }
@@ -455,51 +472,52 @@ export default {
       }
       //--------------------------------this.value => distance-----------------------------------//
       else if (this.radio2.checked) {
-        // console.log("Typemycar " + this.Typemycar + " color.value " + color)
+        console.log("this.types.length " + this.types.length)
         if (this.Type == true) {
-          if ((this.Typemycar == "CCS" && (sumTypeMarker[0] > 0 || sumTypeMarker[1] > 0))
-            || (this.Typemycar == 'Type_2' && sumTypeMarker[1] > 0)
-            || (this.Typemycar == 'J1772' && sumTypeMarker[2] > 0)) {
-            if (this.value * 0.7 > color.value / 1000) {
-              var pinBackground = new PinElement({
-                background: "#0cfb04",
-                borderColor: "#089c03",
-                glyphColor: "#089c03",
-              });
-            } else if (this.value > color.value / 1000) {
-              var pinBackground = new PinElement({
-                background: "#fb6f04",
-                borderColor: "#b04d02",
-                glyphColor: "#b04d02",
-              });
+          for (var i = 0; i < this.types.length; i++) {
+            console.log(this.Typemycar + "==" + this.nametypes[i] + " && " + this.numtypes[i] + "> 0")
+            if ((this.Typemycar == this.nametypes[i]) && (this.numtypes[i] > 0)) {
+              if (this.value * 0.7 > color.value / 1000) {
+                pinBackground = new PinElement({
+                  background: "#0cfb04",
+                  borderColor: "#089c03",
+                  glyphColor: "#089c03",
+                });
+              } else if (this.value > color.value / 1000) {
+                pinBackground = new PinElement({
+                  background: "#fb6f04",
+                  borderColor: "#b04d02",
+                  glyphColor: "#b04d02",
+                });
+              } else {
+                pinBackground = new PinElement({
+                  background: "#fb0404",
+                });
+              }
             } else {
-              var pinBackground = new PinElement({
-                background: "#fb0404",
+              pinBackground = new PinElement({
+                background: "#6b6b6b",
+                borderColor: "#8a8a8a",
+                glyphColor: "#8a8a8a",
               });
             }
-          } else {
-            var pinBackground = new PinElement({
-              background: "#6b6b6b",
-              borderColor: "#8a8a8a",
-              glyphColor: "#8a8a8a",
-            });
           }
         } else {
           if (this.value * 0.7 > color.value / 1000) {
             // console.log("value*0.7 > color " + color.value)
-            var pinBackground = new PinElement({
+            pinBackground = new PinElement({
               background: "#0cfb04",
               borderColor: "#089c03",
               glyphColor: "#089c03",
             });
           } else if (this.value > color.value / 1000) {
-            var pinBackground = new PinElement({
+            pinBackground = new PinElement({
               background: "#fb6f04",
               borderColor: "#b04d02",
               glyphColor: "#b04d02",
             });
           } else {
-            var pinBackground = new PinElement({
+            pinBackground = new PinElement({
               background: "#fb0404",
             });
           }
@@ -525,7 +543,8 @@ export default {
           maxWidth: 300,
           ariaLabel: "Uluru",
         });
-        this.sumType = await this.getstation(place);
+        await this.getstation(place);
+        // console.log('this.Type' + this.Type)
         if (this.Type) {
           var contentString1 =
             '<div id="content">' +
@@ -533,12 +552,17 @@ export default {
             '<div id="bodyContent">' +
             '<div ><p><b>ที่อยู่ :</b> ' + info.formatted_address + ' <br></div>' +
             '<div class="left"><img src="https://maps.googleapis.com/maps/api/streetview?size=100x100&location=' + location + '&heading=' + heading + '&pitch=' + pitch + '&key=' + apiKey + '" alt="Street View Image" >' +
-            '<b>ระยะทาง :</b> ' + color.text + ' </div><br>' +
+            '<b>ระยะทาง :</b> ' + color.text + ' </div><br>';
 
-            '<div class="left" ><b>CCS => </b> ' + this.sumType[0] + ' <br>' +
-            '<b>Type-2 => </b> ' + this.sumType[1] + ' <br>' +
-            '<b>J1772 => </b> ' + this.sumType[2] + ' <br><br></div>' +
+          for (var i = 0; i < this.numtypes.length; i++) {
+            contentString1 += '<div><b>' + this.nametypes[i] + ' => </b> ' + this.numtypes[i] + ' <br>';
+          }
 
+          // '<div class="left" ><b>this.nameType[0] => </b> ' + this.numType[0] + ' <br>' +
+          // '<b>this.nameType[0] => </b> ' + this.numType[1] + ' <br>' +
+          // '<b>this.nameType[0] => </b> ' + this.numType[2] + ' <br><br></div>' +
+
+          contentString1 +=
             '<div class="left"><p><a  target ="_blank" href="' + info.url + '">' +
             'ดูใน Google Maps</a></div >' +
 
@@ -555,23 +579,21 @@ export default {
         var addButton = document.getElementById('add-data');
         if (addButton) {
           // เพิ่มอีเวนต์ click listener
-          addButton.addEventListener('click', async function () {
+          addButton.addEventListener('click', async () => {
             // โค้ดที่ควรทำงานเมื่อปุ่มถูกคลิก
-            const colRef = collection(firebase.db, 'station');
+            const colRef = doc(firebase.db, 'station', place.place_id)
             const dataObj = {
               name: place.name,
               lat: place.geometry.location.lat(),
               lng: place.geometry.location.lng(),
               url: info.url,
               Type: false,
-              Type_2: 0,
-              CCS: 0,
-              J1772: 0,
+              nameType: this.types,
               address: info.formatted_address,
             }
             // เพิ่มเอกสารใหม่ในคอลเล็กชัน 'station'
-            await addDoc(colRef, dataObj);
-            alert("ADD");
+            const docRef = await setDoc(colRef, dataObj)
+            alert("ADD" + this.types);
           });
         }
       });
@@ -628,18 +650,17 @@ export default {
 
     //---------------------------get firebase-----------------------------------------//
     async getstation(place) {
-      const sumType = [];
       const docSnap = await getDoc(doc(firebase.db, 'station', place.place_id))
+      // console.log("place.place_id"+ place.place_id)
       if (docSnap.exists()) {
         this.Type = docSnap.data().Type;
-        let Type_2 = docSnap.data().Type_2;
-        let CCS = docSnap.data().CCS;
-        let J1772 = docSnap.data().J1772;
-        sumType[0] = Type_2;
-        sumType[1] = CCS;
-        sumType[2] = J1772;
+        this.nametypes = docSnap.data().nameType; 
+        this.numtypes = docSnap.data().numType; 
+        // console.log(this.nametypes + "/" + this.numtypes)
+        // for (var i = 0; i < nameType.length; i++) {
+        //   sumType[i] = nameType[i];
+        // }
         // console.log('sumType = ' + sumType)
-        return sumType
       } else {
         // console.log('Document does not exist')
         this.Type = false;
@@ -658,6 +679,7 @@ export default {
   },
 
   mounted() {
+    this.gettype();
     const auth = getAuth();
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -834,7 +856,7 @@ select {
   /* แก้ไขค่าตามที่คุณต้องการ */
 }
 
-.img{
+.img {
   text-align: left;
   margin-left: 5px;
   margin-left: 5px;

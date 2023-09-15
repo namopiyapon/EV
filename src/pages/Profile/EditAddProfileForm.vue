@@ -34,9 +34,7 @@
         <div class="col-md-4  text-left">
           ประเภทหัวชาร์จ<br>
           <select v-model="Type" id="Type">
-            <option value="CCS">CCS2</option>
-            <option value="type_2">type2</option>
-            <option value="J1772">J1772</option>
+            <option v-for="item in type" :key="item" :value="item">{{ item }}</option>
           </select>
         </div>
       </div>
@@ -70,6 +68,7 @@ export default {
       Usercar: [],
       num: 0,
       dataArray: [],
+      type: [],
     }
   },
   created() {
@@ -77,6 +76,7 @@ export default {
 
   },
   mounted() {
+    this.gettype()
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       this.user = user;
@@ -104,6 +104,13 @@ export default {
   },
 
   methods: {
+    async gettype() {
+      const q = query(collection(firebase.db, 'type'))
+      const querySnap = await getDocs(q);
+      querySnap.forEach((doc) => {
+        this.type.push(doc.data().type)
+      })
+    },
     async getUsers() {
       const auth = getAuth();
       const user = auth.currentUser;
@@ -142,7 +149,6 @@ export default {
 
     },
     async createUser() {
-      console.log('-----')
       // 'users' collection reference
       const colRef = collection(firebase.db, 'Usercar')
       // data to send
