@@ -60,23 +60,25 @@ export default {
 
 
   methods: {
-    onSuccess(event) {
+    async onSuccess(event) {
       event.preventDefault();
-      const auth = getAuth();
-      // alert("Register")
-      createUserWithEmailAndPassword(auth, this.model.email, this.model.password)
-      this.$store.commit('login', this.model.email)
-      this.$router.push("/dashboard")
+      try {
+        const auth = getAuth();
+        const credential = await createUserWithEmailAndPassword(auth, this.model.email, this.model.password);
+        // alert('User registered:', credential.user);
+        this.$router.push("/dashboard")
+      } catch (error) {
+        if (error.code === 'auth/weak-password') {
+          this.error = 'รหัสผ่านที่ให้ไว้ไม่รัดกุมเกินไป';
+        } else if (error.code === 'auth/email-already-in-use') {
+          this.error = 'มีบัญชีสำหรับอีเมลนั้นอยู่แล้ว';
+        } else {
+          this.error = error.message;
+        }
+        alert('Error creating user:'+ this.error);
+      }
+    }
 
-      //this.$store.commit('login', this.model.email)
-    },
-    // onReset(event) {
-
-    //   event.preventDefault();
-    //   this.model.email = "";
-    //   this.model.password = "";
-    //   alert("Reset");
-    // },
   },
 
 };

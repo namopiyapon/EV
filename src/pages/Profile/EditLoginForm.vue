@@ -49,15 +49,21 @@ export default {
   methods: {
     async onSuccess(event) {
       event.preventDefault();
-      const auth = getAuth();
-      // alert("Login")
-      signInWithEmailAndPassword(auth, this.form.email, this.form.password)
-        .then(() => {
-          //store
-          this.$store.commit('login', this.form.email)
-          // this.$cookies.set("email", this.form.email, 60*60);
-          this.$router.push("/dashboard")
-        })
+      try {
+        const auth = getAuth();
+        await signInWithEmailAndPassword(auth, this.form.email, this.form.password);
+        console.log('Logged in user:', this.form.email);
+        this.$router.push("/dashboard")
+      } catch (error) {
+        if (error.code === 'auth/user-not-found') {
+          this.error = 'ไม่พบผู้ใช้สำหรับอีเมลนั้น';
+        } else if (error.code === 'auth/wrong-password') {
+          this.error = 'ระบุรหัสผ่านผิดสำหรับผู้ใช้รายนั้น';
+        } else {
+          this.error = error.message;
+        }
+        alert('Error logging: '+ this.error);
+      }
     },
   },
   components: {
