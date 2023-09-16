@@ -4,7 +4,7 @@
       <div class="img">
         <img src="./img/A.png" width="25" height="30" /> ตำแหน่งเริ่มต้น ,
         <img src="./img/B.png" width="25" height="30" /> ตำแหน่งปลายทาง <br>
-        ระยะทางหมุด : 
+        ระยะทางหมุด :
         <img src="./img/green.png" width="30" height="30" /> น้อยกว่า 70% ,
         <img src="./img/orange.png" width="30" height="30" /> มากกว่า 70% แต่ไม่เกิน 100% ,
         <img src="./img/red.png" width="30" height="30" /> มากกว่า 100% ,
@@ -20,10 +20,15 @@
             <div style="position: absolute; z-index: 1; " class="pac-card" id="pac-card">
 
               <div class="pac-controls">
-                <input type="radio" name="typevalue" id="battery" value="battery"
-                  @change="updatePlaceholder" /><b>แบตเตอร์รี่</b>
+                <input type="radio" name="typeCity" id="bkk" value="bkk" checked
+                  @change="updatePlaceholder" /><b>หาใน1กม.</b>
+                <input type="radio" name="typeCity" id="countryside" value="countryside"
+                  @change="updatePlaceholder" /><b>หาใน10กม.</b><br>
                 <input type="radio" name="typevalue" id="distance" value="distance" checked
-                  @change="updatePlaceholder" /><b>ระยะทาง</b><br>
+                  @change="updatePlaceholder" /><b>ระยะทาง</b>
+                <input type="radio" name="typevalue" id="battery" value="battery"
+                  @change="updatePlaceholder" /><b>แบตเตอร์รี่</b><br>
+
                 <input type="text" id="value" name="value" v-model="value" :placeholder="placeholder">
                 <button type="submit" @click="onSuccess">Go</button>
               </div><br>
@@ -99,6 +104,8 @@ export default {
       types: [],
       numtypes: [],
       nametypes: [],
+      countryside: false,
+      bkk: false,
     };
   },
   components: {
@@ -231,12 +238,22 @@ export default {
 
           const service = new google.maps.places.PlacesService(this.map);
           for (let j = 0; j < this.waypoints.length; j += 40) {
-
-            service.nearbySearch({
+            if (this.bkk.checked) { //กรุงเทพค้นหา 1 กิโล
+              service.nearbySearch({
               location: { lat: this.waypoints[j][0], lng: this.waypoints[j][1] },
               radius: '1000',
               name: ['electric vehicle charging station', 'EA anywhere', 'Charging Station', 'PTT Charging Station', 'MG Super Charge Charging Station', 'EleXA Charging Station', 'EGAT Charging Station'],
             }, this.callback);
+            }else if(this.countryside.checked){ //ต่างจังหวัดค้นหา 10 กิโล
+              service.nearbySearch({
+              location: { lat: this.waypoints[j][0], lng: this.waypoints[j][1] },
+              radius: '10000',
+              name: ['electric vehicle charging station', 'EA anywhere', 'Charging Station', 'PTT Charging Station', 'MG Super Charge Charging Station', 'EleXA Charging Station', 'EGAT Charging Station'],
+            }, this.callback);
+            }
+
+
+            
           }
         },
       );
@@ -412,7 +429,7 @@ export default {
 
       var color = await this.matrix(place);
       await this.getstation(place);
-      console.log(this.types + "***")
+      // console.log(this.types + "***")
       //--------------------------------this.value => battery-----------------------------------//
       var Driving;
       var pinBackground;
@@ -472,10 +489,10 @@ export default {
       }
       //--------------------------------this.value => distance-----------------------------------//
       else if (this.radio2.checked) {
-        console.log("this.types.length " + this.types.length)
+        // console.log("this.types.length " + this.types.length)
         if (this.Type == true) {
           for (var i = 0; i < this.types.length; i++) {
-            console.log(this.Typemycar + "==" + this.nametypes[i] + " && " + this.numtypes[i] + "> 0")
+            // console.log(this.Typemycar + "==" + this.nametypes[i] + " && " + this.numtypes[i] + "> 0")
             if ((this.Typemycar == this.nametypes[i]) && (this.numtypes[i] > 0)) {
               if (this.value * 0.7 > color.value / 1000) {
                 pinBackground = new PinElement({
@@ -654,8 +671,8 @@ export default {
       // console.log("place.place_id"+ place.place_id)
       if (docSnap.exists()) {
         this.Type = docSnap.data().Type;
-        this.nametypes = docSnap.data().nameType; 
-        this.numtypes = docSnap.data().numType; 
+        this.nametypes = docSnap.data().nameType;
+        this.numtypes = docSnap.data().numType;
         // console.log(this.nametypes + "/" + this.numtypes)
         // for (var i = 0; i < nameType.length; i++) {
         //   sumType[i] = nameType[i];
@@ -692,6 +709,8 @@ export default {
     //-----------user------------//
     this.radio1 = document.getElementById('battery');
     this.radio2 = document.getElementById('distance');
+    this.bkk = document.getElementById('bkk');
+    this.countryside = document.getElementById('countryside');
     this.updatePlaceholder();
     //---------------ตรวจสอบและอนุญาตเฉพาะตัวเลขและจุด (.) ในการป้อน-----------------------//
     const inputField = document.getElementById('value');
