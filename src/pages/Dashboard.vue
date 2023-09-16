@@ -2,14 +2,13 @@
   <div class="contentmap">
     <card type="plain">
       <div class="img">
-        <img src="./img/A.png" width="25" height="30" /> ตำแหน่งเริ่มต้น ,
-        <img src="./img/B.png" width="25" height="30" /> ตำแหน่งปลายทาง 
-        (*ตัวเลือกหาใน1กม. เหมาะสำหรับเดินทางในกรุงเทพและปริมณฑล)<br>
-        ระยะทางหมุด :
-        <img src="./img/green.png" width="30" height="30" /> น้อยกว่า 70% ,
-        <img src="./img/orange.png" width="30" height="30" /> มากกว่า 70% แต่ไม่เกิน 100% ,
-        <img src="./img/red.png" width="30" height="30" /> มากกว่า 100% ,
-        <img src="./img/grey.png" width="30" height="30" /> ไม่มีหัวชาร์ที่ตรงกัน
+        <img src="./img/A.png" width="20" height="25" /> ตำแหน่งเริ่มต้น ,
+        <img src="./img/B.png" width="20" height="25" /> ตำแหน่งปลายทาง ,
+        *ตัวเลือกหาใน10กม. เหมาะสำหรับเดินทางในต่างจังหวัด<br>
+        <img src="./img/green.png" width="25" height="25" /><img src="./img/power.png" width="20" height="20" /> เหลือมากกว่า 30%,
+        <img src="./img/orange.png" width="25" height="25" /><img src="./img/low-battery-level.png" width="20" height="20" /> เหลือต่ำกว่า 30%,
+        <img src="./img/red.png" width="25" height="25" /><img src="./img/low.png" width="20" height="20" /> ไม่พอต่อการเดินทาง,
+        <img src="./img/grey.png" width="25" height="25" /> ไม่มีหัวชาร์ที่ตรงกัน
       </div>
 
       <!-- <template slot="header">
@@ -842,6 +841,7 @@ export default {
 /* ปรับแต่งสไตล์ของ .pac-card */
 .pac-card {
   /* background-color: #fff; */
+  background-color: rgba(255, 255, 255, 0.5);
   border: 0;
   border-radius: 2px;
   box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.5);
@@ -880,5 +880,7 @@ select {
   text-align: left;
   margin-left: 5px;
   margin-left: 5px;
+  font-size: 10px;
 }
+
 </style>
