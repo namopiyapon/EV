@@ -3,7 +3,8 @@
     <card type="plain">
       <div class="img">
         <img src="./img/A.png" width="25" height="30" /> ตำแหน่งเริ่มต้น ,
-        <img src="./img/B.png" width="25" height="30" /> ตำแหน่งปลายทาง <br>
+        <img src="./img/B.png" width="25" height="30" /> ตำแหน่งปลายทาง 
+        (*ตัวเลือกหาใน1กม. เหมาะสำหรับเดินทางในกรุงเทพและปริมณฑล)<br>
         ระยะทางหมุด :
         <img src="./img/green.png" width="30" height="30" /> น้อยกว่า 70% ,
         <img src="./img/orange.png" width="30" height="30" /> มากกว่า 70% แต่ไม่เกิน 100% ,
