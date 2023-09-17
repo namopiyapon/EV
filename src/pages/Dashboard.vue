@@ -572,7 +572,7 @@ export default {
             '<b>ระยะทาง :</b> ' + color.text + ' </div><br>';
 
           for (var i = 0; i < this.numtypes.length; i++) {
-            contentString1 += '<div><b>' + this.nametypes[i] + ' => </b> ' + this.numtypes[i] + ' <br>';
+            contentString1 += '<div><b>' + this.nametypes[i] + ' จำนวน </b> ' + this.numtypes[i] + ' <br>';
           }
 
           // '<div class="left" ><b>this.nameType[0] => </b> ' + this.numType[0] + ' <br>' +

@@ -76,7 +76,7 @@
               </li>
               <li class="nav-link">
                 <a href="/#/Feedback" class="nav-item dropdown-item">
-                  ข้อเสนอแนะ
+                  ติดต่อผู้ดูแล
                 </a>
               </li>
               <!-- for admin -->

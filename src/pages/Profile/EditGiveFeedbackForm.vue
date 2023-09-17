@@ -2,7 +2,7 @@
   <form @submit="onSuccess">
     <card class="cardcenter">
       <template slot="header">
-        <h5 class="title">ข้อเสนอแนะ</h5>
+        <h5 class="title">ติดต่อผู้ดูแล</h5>
       </template>
       <div class="row">
         <div class="col-md-12 text-left">
