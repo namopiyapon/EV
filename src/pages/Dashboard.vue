@@ -703,9 +703,11 @@ export default {
         this.user = user;
         await this.getUsers(); // เรียกใช้งาน getUsers() เมื่อมีผู้ใช้ล็อกอิน
       } else {
-        // ไม่มีผู้ใช้ล็อกอิน ให้ทำอย่างอื่นที่ต้องการ
+        this.$router.push("/login")
+        alert("กรุณาล๊อคอิน");
       }
     });
+
     //-----------user------------//
     this.radio1 = document.getElementById('battery');
     this.radio2 = document.getElementById('distance');
