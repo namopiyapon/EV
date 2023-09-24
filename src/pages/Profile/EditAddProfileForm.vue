@@ -1,5 +1,5 @@
 <template>
-  <form @submit="onSuccess"> <!-- //@submit="addUsercar" -->
+  <form @submit="onSubmit"> <!-- //@submit="onSuccess" -->
     <card>
       <template slot="header">
         <h5 class="title">เพิ่มข้อมูลรถยนต์ไฟฟ้า</h5>
@@ -34,14 +34,14 @@
         <div class="col-md-4  text-left">
           ประเภทหัวชาร์จ<br>
           <select v-model="Type" id="Type">
-            <option v-for="item in type" :key="item" :value="item">{{ item }}</option>
+            <option v-for="item in typearray" :key="item" :value="item">{{ item }}</option>
           </select>
         </div>
       </div>
 
       <template slot="footer">
         <!-- <base-button type="success" fill>Save</base-button> -->
-        <button type="submit" class="custom-button" fill>บันทึก</button>
+        <button type="submit" class="custom-button">บันทึก</button>
       </template>
     </card>
   </form>
@@ -68,7 +68,7 @@ export default {
       Usercar: [],
       num: 0,
       dataArray: [],
-      type: [],
+      typearray: [],
     }
   },
   created() {
@@ -108,7 +108,7 @@ export default {
       const q = query(collection(firebase.db, 'type'))
       const querySnap = await getDocs(q);
       querySnap.forEach((doc) => {
-        this.type.push(doc.data().type)
+        this.typearray.push(doc.data().type)
       })
     },
     async getUsers() {
@@ -131,22 +131,31 @@ export default {
         }
       }
       if (this.num > 0) {
+        console.log('false')
         return false;
       } else {
+        console.log('true')
         return true;
       }
     },
-    async onSuccess(event) {
-      const check = await this.getUsers();
-      if (check) {
-        this.createUser()
-        // alert("ADD")
-        this.$router.push("/profile")
-      } else {
-        alert('มีชื่อนี้อยู่แล้ว กรุณาเปลี่ยนชื่อ')
-      }
-      event.preventDefault();
 
+    async onSubmit(event) {
+      event.preventDefault(); // หยุดการส่งฟอร์มเพื่อป้องกันการรีโหลดหน้าใหม่
+      // ตรวจสอบค่า required ใน input fields ที่คุณต้องการ
+      if (!this.namecar || !this.Brand || !this.Model || !this.DrivingRange || !this.Type) {
+        // หากมี input field ใดที่ไม่ผ่านเงื่อนไข required
+        alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+      } else {
+        const check = await this.getUsers();
+        if (check) {
+          await this.createUser();
+          // รายการคำสั่งที่คุณต้องการให้ทำหลังจากบันทึกข้อมูลเสร็จสมบูรณ์
+          console.log('บันทึกข้อมูลสำเร็จ');
+          this.$router.push("/profile");
+        } else {
+          alert('มีชื่อนี้อยู่แล้ว กรุณาเปลี่ยนชื่อ');
+        }
+      }
     },
     async createUser() {
       // 'users' collection reference
@@ -161,10 +170,10 @@ export default {
         email: this.user.email,
       }
       // create document and return reference to it
-      const docRef = await addDoc(colRef, dataObj)
+      const docRef = await addDoc(colRef, dataObj);
       // access auto-generated ID with '.id'
-      console.log('Document was created with ID:', docRef.id)
-    }
+      console.log('Document was created with ID:', docRef.id);
+    },
 
   },
 
