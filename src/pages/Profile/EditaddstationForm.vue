@@ -43,6 +43,10 @@
       </div>
 
       <div class="row">
+        <p style= "padding-left: 15px;" >จำนวนหัวชาร์จ: </p><br>
+      </div>
+
+      <div class="row">
         <div class="col-md-2 text-left" v-for="(item, index) in types" :key="index">
           <label>{{ types[index] }}</label>
           <input type="text" class="custom-input" :value="numType[index]" :placeholder="types[index]"
@@ -78,9 +82,6 @@ export default {
       url: '',
       lng: '',
       lat: '',
-      CCS: '',
-      Type_2: '',
-      J1772: '',
       user: null,
       userId: null,
       Usercar: [],

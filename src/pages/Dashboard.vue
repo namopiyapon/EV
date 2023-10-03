@@ -5,9 +5,12 @@
         <img src="./img/A.png" width="20" height="25" /> ตำแหน่งเริ่มต้น ,
         <img src="./img/B.png" width="20" height="25" /> ตำแหน่งปลายทาง ,
         *ตัวเลือกหาใน10กม. เหมาะสำหรับเดินทางในต่างจังหวัด<br>
-        <img src="./img/green.png" width="25" height="25" /><img src="./img/power.png" width="20" height="20" /> เหลือมากกว่า 30%,
-        <img src="./img/orange.png" width="25" height="25" /><img src="./img/low-battery-level.png" width="20" height="20" /> เหลือต่ำกว่า 30%,
-        <img src="./img/red.png" width="25" height="25" /><img src="./img/low.png" width="20" height="20" /> ไม่พอต่อการเดินทาง,
+        <img src="./img/green.png" width="25" height="25" /><img src="./img/power.png" width="20" height="20" />
+        เหลือมากกว่า 30%,
+        <img src="./img/orange.png" width="25" height="25" /><img src="./img/low-battery-level.png" width="20"
+          height="20" /> เหลือต่ำกว่า 30%,
+        <img src="./img/red.png" width="25" height="25" /><img src="./img/low.png" width="20" height="20" />
+        ไม่พอต่อการเดินทาง,
         <img src="./img/grey.png" width="25" height="25" /> ไม่มีหัวชาร์ที่ตรงกัน
       </div>
 
@@ -19,20 +22,28 @@
           <section>
             <div style="position: absolute; z-index: 1; " class="pac-card" id="pac-card">
 
-              <div class="pac-controls">
+              <div class="pac-controls row">
+                <b>รัศมีการค้นหา:</b>
                 <input type="radio" name="typeCity" id="bkk" value="bkk" checked
-                  @change="updatePlaceholder" /><b>หาใน1กม.</b>
+                  /><b>1กม.</b>
                 <input type="radio" name="typeCity" id="countryside" value="countryside"
-                  @change="updatePlaceholder" /><b>หาใน10กม.</b><br>
+                 /><b>10กม.</b>
+              </div>
+              <li class="dropdown-divider"></li>
+              <div class="pac-controls row">
+                <b>หน่วยที่ใช้:</b>
                 <input type="radio" name="typevalue" id="distance" value="distance" checked
                   @change="updatePlaceholder" /><b>ระยะทาง</b>
                 <input type="radio" name="typevalue" id="battery" value="battery"
-                  @change="updatePlaceholder" /><b>แบตเตอร์รี่</b><br>
-
-                <input type="text" id="value" name="value" v-model="value" :placeholder="placeholder">
-                <button type="submit" @click="onSuccess">Go</button>
+                  @change="updatePlaceholder" /><b>%แบต</b>
               </div><br>
 
+              <div class="pac-controls row">
+                <b>เหลือ:</b>
+                <input type="text" id="value" name="value" v-model="value" :placeholder="placeholder">
+                <button type="submit" @click="onSuccess">Go</button>
+              </div>
+              <li class="dropdown-divider"></li>
               <div>
                 <b>ชื่อรถ:</b>
                 <select v-model="myselect" id="myselect">
@@ -48,7 +59,7 @@
                   <i class="tim-icons icon-compass-05" @click="locatorButtonPressed"></i>
                 </div>
                 <input type="text" id="addressto" name="addressto" v-model="addressto" placeholder="จุดหมายปลายทาง">
-              </div>
+              </div><br>
 
             </div>
           </section>
@@ -239,21 +250,25 @@ export default {
           const service = new google.maps.places.PlacesService(this.map);
           for (let j = 0; j < this.waypoints.length; j += 40) {
             if (this.bkk.checked) { //กรุงเทพค้นหา 1 กิโล
-              service.nearbySearch({
-              location: { lat: this.waypoints[j][0], lng: this.waypoints[j][1] },
-              radius: '1000',
-              name: ['electric vehicle charging station', 'EA anywhere', 'Charging Station', 'PTT Charging Station', 'MG Super Charge Charging Station', 'EleXA Charging Station', 'EGAT Charging Station'],
-            }, this.callback);
-            }else if(this.countryside.checked){ //ต่างจังหวัดค้นหา 10 กิโล
-              service.nearbySearch({
-              location: { lat: this.waypoints[j][0], lng: this.waypoints[j][1] },
-              radius: '10000',
-              name: ['electric vehicle charging station', 'EA anywhere', 'Charging Station', 'PTT Charging Station', 'MG Super Charge Charging Station', 'EleXA Charging Station', 'EGAT Charging Station'],
-            }, this.callback);
+              service.textSearch({
+                location: { lat: this.waypoints[j][0], lng: this.waypoints[j][1] },
+                radius: '1000',
+                query: 'EV charging station'
+
+                // 'electric vehicle charging station','EA anywhere', 'Charging Station', 'PTT Charging Station', 'MG Super Charge Charging Station', 'EleXA Charging Station', 'EGAT Charging Station'
+              }, this.callback);
+            } else if (this.countryside.checked) { //ต่างจังหวัดค้นหา 10 กิโล
+              service.textSearch({
+                location: { lat: this.waypoints[j][0], lng: this.waypoints[j][1] },
+                radius: '3000',
+                query: 'EV charging station'
+
+                //, 'EA anywhere', 'Charging Station', 'PTT Charging Station', 'MG Super Charge Charging Station', 'EleXA Charging Station', 'EGAT Charging Station'
+              }, this.callback);
             }
 
 
-            
+
           }
         },
       );
@@ -437,7 +452,8 @@ export default {
         Driving = this.DrivingRange * (this.value / 100)
         if (this.Type == true) { //updeat แล้ว
           for (var i = 0; i < this.types.length; i++) {
-            if ((this.Typemycar == this.nametypes[i]) && (numtypes[i] > 0)) {
+
+            if ((this.Typemycar == this.nametypes[i]) && (this.numtypes[i] > 0)) {
               if (Driving * 0.7 > color.value / 1000) {
                 pinBackground = new PinElement({
                   background: "#0cfb04",
@@ -491,27 +507,32 @@ export default {
       else if (this.radio2.checked) {
         // console.log("this.types.length " + this.types.length)
         if (this.Type == true) {
+          var n = 0;
           for (var i = 0; i < this.types.length; i++) {
-            // console.log(this.Typemycar + "==" + this.nametypes[i] + " && " + this.numtypes[i] + "> 0")
+            console.log(this.Typemycar + "==" + this.nametypes[i] + " && " + this.numtypes[i] + "> 0")
             if ((this.Typemycar == this.nametypes[i]) && (this.numtypes[i] > 0)) {
-              if (this.value * 0.7 > color.value / 1000) {
+              n++;
+              if (this.value * 0.7 > color.value / 1000 && n > 0) {
+                console.log(this.value * 0.7 + " > " + color.value / 1000)
                 pinBackground = new PinElement({
                   background: "#0cfb04",
                   borderColor: "#089c03",
                   glyphColor: "#089c03",
                 });
-              } else if (this.value > color.value / 1000) {
+              } else if (this.value > color.value / 1000 && n > 0) {
+                console.log(this.value + " > " + color.value / 1000)
                 pinBackground = new PinElement({
                   background: "#fb6f04",
                   borderColor: "#b04d02",
                   glyphColor: "#b04d02",
                 });
-              } else {
+              } else if (n > 0) {
+                console.log(this.value + " ? " + color.value / 1000)
                 pinBackground = new PinElement({
                   background: "#fb0404",
                 });
               }
-            } else {
+            } else if (n == 0) {
               pinBackground = new PinElement({
                 background: "#6b6b6b",
                 borderColor: "#8a8a8a",
@@ -543,11 +564,11 @@ export default {
       }
 
       //-----------------colorMarker--------------------//
-
       const marker = new AdvancedMarkerElement({
         map: this.map,
         position: place.geometry.location,
         content: pinBackground.element,
+
       });
       this.copymarks.push(marker);
 
@@ -771,7 +792,6 @@ export default {
 
 /* ปรับแต่งสไตล์ของ icon ด้านขวาของ input */
 .tim-icons.icon-compass-05 {
-  font-size: 20px;
   position: absolute;
   top: 50%;
   right: 25px;
@@ -784,8 +804,8 @@ export default {
 #address {
   padding-right: 35px;
   width: 100%;
-  font-size: 14px;
-  padding: 5px 10px;
+  font-size: 5px;
+  padding: 2px 10px;
   /* ปรับแต่ง padding และ font-size */
   border: none;
   border-radius: 4px;
@@ -798,8 +818,8 @@ export default {
 #addressto {
   padding-right: 35px;
   width: 100%;
-  font-size: 14px;
-  padding: 5px 10px;
+  font-size: 5px;
+  padding: 2px 10px;
   /* ปรับแต่ง padding และ font-size */
   border: none;
   border-radius: 4px;
@@ -810,11 +830,10 @@ export default {
 
 /* ปรับแต่งสไตล์ของปุ่ม Go */
 .pac-controls button {
-  margin-top: 10px;
   background-color: #007BFF;
   color: #fff;
   border: none;
-  padding: 5px 10px;
+  padding: 2px 10px;
   cursor: pointer;
 }
 
@@ -824,15 +843,19 @@ export default {
 
 /* ปรับแต่งสไตล์ของ input และ select ใน #pac-container */
 .pac-controls input[type="text"] {
-  padding-right: 35px;
-  width: 70%;
-  font-size: 14px;
-  padding: 5px 10px;
+  width: 50%;
+  height: 100%;
+  font-size: 5px;
+  padding: 2px 10px;
   /* ปรับแต่ง padding และ font-size */
   border: none;
   border-radius: 4px;
   background-color: #f1f1f1;
   margin-right: 5px;
+}
+
+.pac-controls {
+  margin-left: 7px;
 }
 
 #pac-container select {
@@ -843,7 +866,7 @@ export default {
 /* ปรับแต่งสไตล์ของ .pac-card */
 .pac-card {
   /* background-color: #fff; */
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255);
   border: 0;
   border-radius: 2px;
   box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.5);
@@ -851,7 +874,7 @@ export default {
   font: 400 18px Roboto, Arial, sans-serif;
   font-family: Roboto;
   padding: 2px 5px;
-  font-size: 13px;
+  font-size: 5px;
   width: 180px;
   /* ปรับความกว้างตามที่คุณต้องการ */
 
@@ -859,6 +882,7 @@ export default {
 
 /* ปรับแต่งสไตล์ของ select */
 select {
+  padding: 2px 10px;
   border: none;
   border-radius: 4px;
   background-color: #f1f1f1;
@@ -884,5 +908,4 @@ select {
   margin-left: 5px;
   font-size: 10px;
 }
-
 </style>

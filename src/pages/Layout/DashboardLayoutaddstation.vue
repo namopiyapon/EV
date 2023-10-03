@@ -10,7 +10,7 @@
           <i class="tim-icons icon-single-02"></i>
           <template>
             <div class="row">
-              <p>{{ sta.ID }} </p>
+              <p>{{ sta.address }} </p>
             </div>
           </template>
         </sidebar-link>

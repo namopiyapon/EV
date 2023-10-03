@@ -74,11 +74,11 @@
                   รถยนต์ไฟฟ้า
                 </a>
               </li>
-              <li class="nav-link">
+              <!-- <li class="nav-link">
                 <a href="/#/Feedback" class="nav-item dropdown-item">
                   ติดต่อผู้ดูแล
                 </a>
-              </li>
+              </li> -->
               <!-- for admin -->
               <li class="nav-link" v-if="admin">
                 <a href="/#/addstation" class="nav-item dropdown-item">
