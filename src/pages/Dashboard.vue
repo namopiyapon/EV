@@ -22,14 +22,14 @@
           <section>
             <div style="position: absolute; z-index: 1; " class="pac-card" id="pac-card">
 
-              <div class="pac-controls row">
+              <!-- <div class="pac-controls row">
                 <b>รัศมีการค้นหา:</b>
                 <input type="radio" name="typeCity" id="bkk" value="bkk" checked
                   /><b>1กม.</b>
                 <input type="radio" name="typeCity" id="countryside" value="countryside"
                  /><b>10กม.</b>
               </div>
-              <li class="dropdown-divider"></li>
+              <li class="dropdown-divider"></li> -->
               <div class="pac-controls row">
                 <b>หน่วยที่ใช้:</b>
                 <input type="radio" name="typevalue" id="distance" value="distance" checked
@@ -248,27 +248,33 @@ export default {
           // PolygonBound.setMap(this.map);
 
           const service = new google.maps.places.PlacesService(this.map);
-          for (let j = 0; j < this.waypoints.length; j += 40) {
-            if (this.bkk.checked) { //กรุงเทพค้นหา 1 กิโล
-              service.textSearch({
-                location: { lat: this.waypoints[j][0], lng: this.waypoints[j][1] },
-                radius: '1000',
-                query: 'EV charging station'
+          const radius = 1000; // รัศมีที่คุณต้องการ
+          const results = [];
 
-                // 'electric vehicle charging station','EA anywhere', 'Charging Station', 'PTT Charging Station', 'MG Super Charge Charging Station', 'EleXA Charging Station', 'EGAT Charging Station'
-              }, this.callback);
-            } else if (this.countryside.checked) { //ต่างจังหวัดค้นหา 10 กิโล
-              service.textSearch({
-                location: { lat: this.waypoints[j][0], lng: this.waypoints[j][1] },
-                radius: '3000',
-                query: 'EV charging station'
+          for (let j = 0; j < this.waypoints.length; j++) {
+            const currentPosition = new google.maps.LatLng(this.waypoints[j][0], this.waypoints[j][1]);
 
-                //, 'EA anywhere', 'Charging Station', 'PTT Charging Station', 'MG Super Charge Charging Station', 'EleXA Charging Station', 'EGAT Charging Station'
-              }, this.callback);
-            }
+            // สร้างคำขอเริ่มต้น
+            const request = {
+              location: currentPosition,
+              query: 'EV charging station'
+            };
+            service.textSearch(request, (results, status) => {
+              if (status === google.maps.places.PlacesServiceStatus.OK) {
+                // ตรวจสอบว่าสถานที่อยู่ภายในรัศมีหรือไม่
+                const filteredResults = results.filter(result => {
+                  const placeLocation = result.geometry.location;
+                  const distance = google.maps.geometry.spherical.computeDistanceBetween(currentPosition, placeLocation);
+                  return distance <= radius;
+                });
 
-
-
+                // เรียก callback ที่คุณระบุ (this.callback) และส่งผลลัพธ์ที่คัดกรองแล้ว
+                this.callback(filteredResults, status);
+              } else {
+                // กรณีค้นหาไม่สำเร็จ สามารถจัดการผลลัพธ์เสริมได้ตามต้องการ
+                this.callback([], status);
+              }
+            });
           }
         },
       );
@@ -278,8 +284,8 @@ export default {
       const R = 6378137;
       const pi = 3.14;
       //distance in meters
-      const upper_offset = 100;
-      const lower_offset = -100;
+      const upper_offset = 500;
+      const lower_offset = -500;
       const Lat_up = upper_offset / R;
       const Lat_down = lower_offset / R;
       //OffsetPosition, decimal degrees

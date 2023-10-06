@@ -38,31 +38,9 @@ export default {
       this.user = user;
     });
     // console.log(textData);
-    this.readFile1()
   },
 
   methods: {
-    readFile1() {
-      var textModule = require('./xxx.txt')
-
-      var file = this.textModule.files[0];
-      const reader = new FileReader();
-      if (file.name.includes(".txt")) {
-        reader.onload = (res) => {
-          this.content = res.target.result;
-        };
-        reader.onerror = (err) => console.log(err);
-        reader.readAsText(textModule);
-      } else {
-        this.content = "check the console for file output";
-        reader.onload = (res) => {
-          console.log(res.target.result);
-        };
-        reader.onerror = (err) => console.log(err);
-        reader.readAsText(textModule);
-      }
-
-    },
     readFile() {
       const inputFile = document.getElementById('myfile');
       const file = inputFile.files[0];
