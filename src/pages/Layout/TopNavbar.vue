@@ -4,7 +4,7 @@
       <div class="navbar-wrapper">
 
         <div class="navbar-toggle d-inline" :class="{ toggled: $sidebar.showSidebar }"
-          v-if="$route.name != 'Map' && $route.name != 'Give Feedback' && $route.name != 'Register' && $route.name != 'Login' && $route.name != 'password'">
+          v-if="$route.name != 'Map' && $route.name != 'Give Feedback' && $route.name != 'Register' && $route.name != 'Login' && $route.name != 'password'&& $route.name != 'uptype'">
 
           <button type="button" class="navbar-toggler" @click="toggleSidebar">
             <span class="navbar-toggler-bar bar1"></span>

@@ -8,6 +8,8 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@syncfusion/ej2-buttons": "^23.1.39",
+    "@syncfusion/ej2-lists": "^23.1.36",
     "@vue/composition-api": "^1.7.1",
     "@vue/reactivity": "^3.3.4",
     "api": "^6.1.1",

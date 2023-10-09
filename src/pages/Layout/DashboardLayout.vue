@@ -19,7 +19,7 @@
       <sidebar-link to="/adduser">
         <i class="tim-icons icon-simple-add"></i>
         <template v-if="!isRTL">
-          <p>ADD</p>
+          <p>เพิ่ม</p>
         </template>
       </sidebar-link>
 

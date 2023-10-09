@@ -11,7 +11,7 @@
       <div class="row">
         <div class="col-md-8 text-left">
           <!-- <p>name car : {{ Energy }}</p>  -->
-          <base-input label="ชื่อรถ" placeholder="กรุณาตั้งชื่อรถยนต์ของคุณ" v-model="namecar" required>
+          <base-input label="เลขทะเบียน" placeholder="เลขทะเบียนรถของคุณ" v-model="namecar" required>
           </base-input>
         </div>
       </div>
@@ -32,7 +32,7 @@
 
       <div class="row">
         <div class="col-md-4  text-left">
-          <base-input label="DrivingRange" v-model="DrivingRange" placeholder="กิโลเมตรต่อชั่วโมง" id="DrivingRange"
+          <base-input label="ระยะทางสูงสุดที่วิ่งได้" v-model="DrivingRange" placeholder="กิโลเมตร" id="DrivingRange"
             required>
           </base-input>
         </div>

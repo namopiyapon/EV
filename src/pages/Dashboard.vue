@@ -2,16 +2,12 @@
   <div class="contentmap">
     <card type="plain">
       <div class="img">
-        <img src="./img/A.png" width="20" height="25" /> ตำแหน่งเริ่มต้น ,
-        <img src="./img/B.png" width="20" height="25" /> ตำแหน่งปลายทาง ,
-        *ตัวเลือกหาใน10กม. เหมาะสำหรับเดินทางในต่างจังหวัด<br>
-        <img src="./img/green.png" width="25" height="25" /><img src="./img/power.png" width="20" height="20" />
-        เหลือมากกว่า 30%,
-        <img src="./img/orange.png" width="25" height="25" /><img src="./img/low-battery-level.png" width="20"
-          height="20" /> เหลือต่ำกว่า 30%,
-        <img src="./img/red.png" width="25" height="25" /><img src="./img/low.png" width="20" height="20" />
-        ไม่พอต่อการเดินทาง,
-        <img src="./img/grey.png" width="25" height="25" /> ไม่มีหัวชาร์ที่ตรงกัน
+        <img src="./img/A.png" width="15" height="20" />ตำแหน่งเริ่มต้น,
+        <img src="./img/B.png" width="15" height="20" />ตำแหน่งปลายทาง,
+        <img src="./img/green.png" width="20" height="20" /><img src="./img/power.png" width="15" height="15" />เหลือมากกว่า 30%,
+        <img src="./img/orange.png" width="20" height="20" /><img src="./img/low-battery-level.png" width="15" height="15" />เหลือต่ำกว่า 30%,
+        <img src="./img/red.png" width="20" height="20" /><img src="./img/low.png" width="15" height="15" />ไม่พอต่อการเดินทาง,
+        <img src="./img/grey.png" width="20" height="20" />ไม่มีหัวชาร์ที่ตรงกัน
       </div>
 
       <!-- <template slot="header">
@@ -45,10 +41,10 @@
               </div>
               <li class="dropdown-divider"></li>
               <div>
-                <b>ชื่อรถ:</b>
+                <b>รถยนต์:</b>
                 <select v-model="myselect" id="myselect">
                   <option v-for="user in Usercar" :key="user.namecar" :value="user.ID">
-                    {{ user.namecar }}
+                    {{ user.namecar }} {{ user.Type }}
                   </option>
                 </select><a href="/#/profile"> เพิ่ม</a>
               </div><br>
@@ -888,7 +884,7 @@ export default {
 
 /* ปรับแต่งสไตล์ของ select */
 select {
-  padding: 2px 10px;
+  padding: 2px;
   border: none;
   border-radius: 4px;
   background-color: #f1f1f1;

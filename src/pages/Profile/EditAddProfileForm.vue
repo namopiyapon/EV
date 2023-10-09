@@ -6,7 +6,7 @@
       </template>
       <div class="row">
         <div class="col-md-8 text-left">
-          <base-input label="ชื่อรถ" placeholder="กรุณาตั้งชื่อรถยนต์ของคุณ" v-model="namecar" required>
+          <base-input label="เลขทะเบียน" placeholder="เลขทะเบียนรถของคุณ" v-model="namecar" required>
           </base-input>
         </div>
       </div>
@@ -27,7 +27,7 @@
 
       <div class="row">
         <div class="col-md-4  text-left">
-          <base-input label="ระยะทางสูงสุดที่วิ่งได้" v-model="DrivingRange" placeholder="กิโลเมตรต่อชั่วโมง"
+          <base-input label="ระยะทางสูงสุดที่วิ่งได้" v-model="DrivingRange" placeholder="กิโลเมตร"
             id="DrivingRange" required>
           </base-input>
         </div>
