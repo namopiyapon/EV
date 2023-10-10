@@ -27,11 +27,15 @@
               </div>
               <li class="dropdown-divider"></li> -->
               <div class="pac-controls row">
-                <b>หน่วยที่ใช้:</b>
+                <b>กำหนด:</b>
+              </div>
+              <div class="pac-controls row">
                 <input type="radio" name="typevalue" id="distance" value="distance" checked
-                  @change="updatePlaceholder" /><b>ระยะทาง</b>
+                  @change="updatePlaceholder" /><b>ระยะทางที่เหลือ</b>
+              </div>
+              <div class="pac-controls row">
                 <input type="radio" name="typevalue" id="battery" value="battery"
-                  @change="updatePlaceholder" /><b>%แบต</b>
+                  @change="updatePlaceholder" /><b>แบตเตอร์รี่ที่เหลือ</b>
               </div><br>
 
               <div class="pac-controls row">
