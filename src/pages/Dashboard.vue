@@ -457,30 +457,32 @@ export default {
       if (this.radio1.checked) {
         Driving = this.DrivingRange * (this.value / 100)
         if (this.Type == true) { //updeat แล้ว
+          var n = 0;
           for (var i = 0; i < this.types.length; i++) {
 
             if ((this.Typemycar == this.nametypes[i]) && (this.numtypes[i] > 0)) {
-              if (Driving * 0.7 > color.value / 1000) {
+              n++;
+              if (Driving * 0.7 > color.value / 1000 && n > 0) {
                 pinBackground = new PinElement({
                   background: "#0cfb04",
                   borderColor: "#089c03",
                   glyphColor: "#089c03",
                 });
                 break;
-              } else if (Driving > color.value / 1000) {
+              } else if (Driving > color.value / 1000 && n > 0) {
                 pinBackground = new PinElement({
                   background: "#fb6f04",
                   borderColor: "#b04d02",
                   glyphColor: "#b04d02",
                 });
                 break;
-              } else {
+              } else if(n > 0) {
                 pinBackground = new PinElement({
                   background: "#fb0404",
                 });
                 break;
               }
-            } else {
+            } else if(n == 0) {
               pinBackground = new PinElement({
                 background: "#6b6b6b",
                 borderColor: "#8a8a8a",
