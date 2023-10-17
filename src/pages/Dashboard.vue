@@ -812,7 +812,7 @@ export default {
 #address {
   padding-right: 35px;
   width: 100%;
-  font-size: 10px;
+  font-size: 15px;
   padding: 2px 10px;
   /* ปรับแต่ง padding และ font-size */
   border: none;
@@ -826,7 +826,7 @@ export default {
 #addressto {
   padding-right: 35px;
   width: 100%;
-  font-size: 10px;
+  font-size: 15px;
   padding: 2px 10px;
   /* ปรับแต่ง padding และ font-size */
   border: none;
@@ -853,7 +853,7 @@ export default {
 .pac-controls input[type="text"] {
   width: 50%;
   height: 100%;
-  font-size: 10px;
+  font-size: 15px;
   padding: 2px 10px;
   /* ปรับแต่ง padding และ font-size */
   border: none;
@@ -882,8 +882,8 @@ export default {
   font: 400 18px Roboto, Arial, sans-serif;
   font-family: Roboto;
   padding: 2px 5px;
-  font-size: 10px;
-  width: 180px;
+  font-size: 15px;
+  width: 220px;
   /* ปรับความกว้างตามที่คุณต้องการ */
 
 }
@@ -914,6 +914,6 @@ select {
   text-align: left;
   margin-left: 5px;
   margin-left: 5px;
-  font-size: 10px;
+  font-size: 15px;
 }
 </style>
