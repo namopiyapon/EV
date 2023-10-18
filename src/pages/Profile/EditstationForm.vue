@@ -184,10 +184,15 @@ export default {
       this.$router.push('/station')
     },
     async ondelete(event) {
+      var r = confirm("คุณต้องการลบข้อมูลหรือไม่?");
+      if (r) {
       console.log('delete =>', this.userId)
       event.preventDefault();
       await deleteDoc(doc(firebase.db, 'station', this.userId));
       this.$router.push('/station')
+    } else {
+        this.$router.push('/station')
+      }
     },
 
   },

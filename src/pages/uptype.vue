@@ -2,7 +2,7 @@
   <form>
     <card class="cardcenter">
       <template slot="header">
-        <h5 class="title">อัพไฟล์ ประเภทหัวชาร์จ</h5>
+        <h5 class="title">ประเภทหัวชาร์จ</h5>
       </template>
 
       <div id='container'>
